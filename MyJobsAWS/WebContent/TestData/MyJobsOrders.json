@@ -1,0 +1,1259 @@
+{"order":[
+    {
+            "orderno":"000050646820",
+            "type": "ZPM2",
+            "priority": "",
+            "startdate": "00000000 000000",
+            "contact": "",
+    "telno": "",
+    "shorttext": "Centrifugal Horizontal Spindle Pump (6M)",
+      "longtext": "Centrifugal Horizontal Spindle Pump (6M)  Test text here from the order long text ",
+    "address": "Canterbury Way, THETFORD, IP24 1DT",
+    "postcode": "IP24 1DT",
+              "funcloc": "THETST-2G-SLD-PS05-SLP005",
+              "equipment": "000000000002120472",
+              "notifno": "",
+              "changed_by": "",
+              "changed_date": "00000000",
+              "changed_time": "000000",
+              "operation":
+                  [{"opno": "0010", "type": "SMEPIS" , "priority": "0010" , "shorttext": "(212)Cent Hori Spindle Pump Mech Service"
+,"startdate": "20151116 153000"
+,"enddate": "20150821 000001"
+, "duration": "60.0 ","status": "ONSITE" }
+  ],
+
+ "operationsplit":
+                  [{"opno": "0010", "duration": "60.0 ","assignedto": "00084832" }
+                ],
+
+ "operationinfo":
+                  [{ "orderno":"000050646820","opno": "0010", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+
+                ],
+ "jobdets":
+                  [{ "orderno":"000050646820","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"5" ,
+"priority_desc":"5 - Low" ,
+"pmactivity_code":"T93" ,
+"pmactivity_desc":"SITE Routine maint M&E" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:30:00" ,
+"duration":"45 " ,
+"equipment_code":"000000000002120472" ,
+"equipment_desc":"Centrifugal (Horiz Spindle)" ,
+"equipment_gis":"58553000-28357000" ,
+"funcloc_code":"THETST-2G-SLD-PS05-SLP005" ,
+"funcloc_desc":"Sludge Pump - Import Pump A Tank 5" ,
+"funcloc_gis":"58553000-28357000",
+"site":"THETST"}
+
+,{ "orderno":"000050704134","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"6" ,
+"priority_desc":"A6 - Within 2 weeks" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"11:30:00" ,
+"duration":"60 " ,
+"equipment_code":"000000000002110728" ,
+"equipment_desc":"Round Tank (Flat Floor)" ,
+"equipment_gis":"56443000-27404000" ,
+"funcloc_code":"ISLMSP-2A-PUM-TS01-WET001" ,
+"funcloc_desc":"Wet Well" ,
+"funcloc_gis":"56443000-27404000",
+"site":"ISLMSP"}
+
+,{ "orderno":"000050704165","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"1" ,
+"priority_desc":"A1 - Within 4 hours" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:00:00" ,
+"duration":"15 " ,
+"equipment_code":"000000000001174485" ,
+"equipment_desc":"Rectangular Tank" ,
+"equipment_gis":"55584000-28799000" ,
+"funcloc_code":"LPORST-2E-AES-TS01-ATA001" ,
+"funcloc_desc":"Aeration Tank - Ditch" ,
+"funcloc_gis":"55584000-28799000",
+"site":"LPORST"}
+
+
+                ],
+ "priorityicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_filename":"PRI_MP005.png" ,
+"icon_txt":"Low" ,
+"tooltip":"X" ,
+"tooltip_desc":"Low" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_filename":"PRI_RE0A6.png" ,
+"icon_txt":"Within 2 Weeks" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 2 Weeks" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_filename":"PRI_RE0A1.png" ,
+"icon_txt":"Within 4 Hours" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 4 Hours" ,
+"command":"NO_COMMAND"}
+
+
+                ],
+                 "jobicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZPPM.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"PPM Job" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050646820","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+
+                ],
+                 "tconf":
+                  [  ],
+
+                 "partner":
+                  [ ],
+                 "userstatus":
+                  [
+    { "type": "OV" , "orderno": "000050646820"  , "opno": "0010", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OR" , "orderno": "000050646820"  , "opno": "", "inact": "", "status": "E0001","statuscode": "INIT",
+  "statusdesc": "Initial"  },
+
+    { "type": "OR" , "orderno": "000050646820"  , "opno": "", "inact": "", "status": "E0006","statuscode": "WCUP",
+  "statusdesc": "Work centre Updated"  }
+ ],
+
+"component":
+                  [ ],
+
+                 "asset":
+                  [ ]
+},
+    {
+            "orderno":"000050683964",
+            "type": "ZSA1",
+            "priority": "",
+            "startdate": "20151023 094231",
+            "contact": "",
+    "telno": "",
+    "shorttext": "Pump lift",
+      "longtext": "",
+    "address": "WILBURTON - TWENTY PENCE ROAD, ELY, CB6 3PU",
+    "postcode": "CB6 3PU",
+              "funcloc": "WILTSP-2A-PUM-PS01-WEP001",
+              "equipment": "000000000000092300",
+              "notifno": "000010181523",
+              "changed_by": "",
+              "changed_date": "00000000",
+              "changed_time": "000000",
+              "operation":
+                  [{"opno": "0010", "type": "SMEPIS" , "priority": "0010" , "shorttext": "Lift / Remove Pump"
+,"startdate": "20151023 100000"
+,"enddate": "20151024 000000"
+, "duration": "14.0 ","status": "ONSITE" },{"opno": "0020", "type": "SMEPIS" , "priority": "0020" , "shorttext": "Lift / Remove Pump (2 Man)"
+,"startdate": "00000000 000000"
+,"enddate": "20151024 000000"
+, "duration": "14.0 ","status": "ONSITE" }
+  ],
+
+ "operationsplit":
+                  [{"opno": "0010", "duration": "14.0 ","assignedto": "00084832" },{"opno": "0020", "duration": "14.0 ","assignedto": "00084832" }
+                ],
+
+ "operationinfo":
+                  [{ "orderno":"000050683964","opno": "0010", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+,{ "orderno":"000050683964","opno": "0020", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+
+                ],
+ "jobdets":
+                  [{ "orderno":"000050646820","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"5" ,
+"priority_desc":"5 - Low" ,
+"pmactivity_code":"T93" ,
+"pmactivity_desc":"SITE Routine maint M&E" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:30:00" ,
+"duration":"45 " ,
+"equipment_code":"000000000002120472" ,
+"equipment_desc":"Centrifugal (Horiz Spindle)" ,
+"equipment_gis":"58553000-28357000" ,
+"funcloc_code":"THETST-2G-SLD-PS05-SLP005" ,
+"funcloc_desc":"Sludge Pump - Import Pump A Tank 5" ,
+"funcloc_gis":"58553000-28357000",
+"site":"THETST"}
+
+,{ "orderno":"000050704134","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"6" ,
+"priority_desc":"A6 - Within 2 weeks" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"11:30:00" ,
+"duration":"60 " ,
+"equipment_code":"000000000002110728" ,
+"equipment_desc":"Round Tank (Flat Floor)" ,
+"equipment_gis":"56443000-27404000" ,
+"funcloc_code":"ISLMSP-2A-PUM-TS01-WET001" ,
+"funcloc_desc":"Wet Well" ,
+"funcloc_gis":"56443000-27404000",
+"site":"ISLMSP"}
+
+,{ "orderno":"000050704165","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"1" ,
+"priority_desc":"A1 - Within 4 hours" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:00:00" ,
+"duration":"15 " ,
+"equipment_code":"000000000001174485" ,
+"equipment_desc":"Rectangular Tank" ,
+"equipment_gis":"55584000-28799000" ,
+"funcloc_code":"LPORST-2E-AES-TS01-ATA001" ,
+"funcloc_desc":"Aeration Tank - Ditch" ,
+"funcloc_gis":"55584000-28799000",
+"site":"LPORST"}
+
+
+                ],
+ "priorityicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_filename":"PRI_MP005.png" ,
+"icon_txt":"Low" ,
+"tooltip":"X" ,
+"tooltip_desc":"Low" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_filename":"PRI_RE0A6.png" ,
+"icon_txt":"Within 2 Weeks" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 2 Weeks" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_filename":"PRI_RE0A1.png" ,
+"icon_txt":"Within 4 Hours" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 4 Hours" ,
+"command":"NO_COMMAND"}
+
+
+                ],
+                 "jobicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZPPM.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"PPM Job" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050646820","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+
+                ],
+                 "tconf":
+                  [
+    { "activity": "0010", "confno": "0016979450" , "date": "20151023"  , "time": "094231" , "enddate": "20151023"  , "endtime": "094231"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Accepted"  },
+
+    { "activity": "0010", "confno": "0016979450" , "date": "20151023"  , "time": "094319" , "enddate": "20151023"  , "endtime": "094319"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "On-Site"  }
+  ],
+
+                 "partner":
+                  [ ],
+                 "userstatus":
+                  [
+    { "type": "OV" , "orderno": "000050683964"  , "opno": "0010", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OV" , "orderno": "000050683964"  , "opno": "0010", "inact": "", "status": "E0011","statuscode": "SITE",
+  "statusdesc": "On Site"  },
+
+    { "type": "OV" , "orderno": "000050683964"  , "opno": "0020", "inact": "", "status": "E0001","statuscode": "UNDE",
+  "statusdesc": "Undeployed"  },
+
+    { "type": "OR" , "orderno": "000050683964"  , "opno": "", "inact": "", "status": "E0001","statuscode": "INIT",
+  "statusdesc": "Initial"  }
+ ],
+
+"component":
+                  [ ],
+
+                 "asset":
+                  [
+    { "id": "1 ",  "notifno": "000010181523","funcloc": "WILTSP-2A-PUM-PS01-WEP001" , "funclocdesc": "Wet Well Pump 1", "equipment": "000000000000092300",
+  "equidescr": "Submersible Pump"   }
+ ]
+},
+    {
+            "orderno":"000050683965",
+            "type": "ZSA1",
+            "priority": "",
+            "startdate": "00000000 000000",
+            "contact": "",
+    "telno": "",
+    "shorttext": "Pump lift",
+      "longtext": "",
+    "address": "Town Lots, ELY, CB7 5UZ",
+    "postcode": "CB7 5UZ",
+              "funcloc": "SOHNSP-2A-PUM-PS02-DWP002",
+              "equipment": "000000000000079994",
+              "notifno": "000010181525",
+              "changed_by": "",
+              "changed_date": "00000000",
+              "changed_time": "000000",
+              "operation":
+                  [{"opno": "0010", "type": "SMEPIS" , "priority": "0010" , "shorttext": "Lift / Remove Pump"
+,"startdate": "20151023 090000"
+,"enddate": "20151024 000000"
+, "duration": "14.0 ","status": "ONSITE" },{"opno": "0020", "type": "SMEPIS" , "priority": "0020" , "shorttext": "Lift / Remove Pump (2 Man)"
+,"startdate": "20151023 090000"
+,"enddate": "20151024 000000"
+, "duration": "14.0 ","status": "ONSITE" }
+  ],
+
+ "operationsplit":
+                  [{"opno": "0010", "duration": "14.0 ","assignedto": "00084832" },{"opno": "0020", "duration": "14.0 ","assignedto": "00084832" }
+                ],
+
+ "operationinfo":
+                  [{ "orderno":"000050683965","opno": "0010", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+,{ "orderno":"000050683965","opno": "0020", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+
+                ],
+ "jobdets":
+                  [{ "orderno":"000050646820","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"5" ,
+"priority_desc":"5 - Low" ,
+"pmactivity_code":"T93" ,
+"pmactivity_desc":"SITE Routine maint M&E" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:30:00" ,
+"duration":"45 " ,
+"equipment_code":"000000000002120472" ,
+"equipment_desc":"Centrifugal (Horiz Spindle)" ,
+"equipment_gis":"58553000-28357000" ,
+"funcloc_code":"THETST-2G-SLD-PS05-SLP005" ,
+"funcloc_desc":"Sludge Pump - Import Pump A Tank 5" ,
+"funcloc_gis":"58553000-28357000",
+"site":"THETST"}
+
+,{ "orderno":"000050704134","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"6" ,
+"priority_desc":"A6 - Within 2 weeks" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"11:30:00" ,
+"duration":"60 " ,
+"equipment_code":"000000000002110728" ,
+"equipment_desc":"Round Tank (Flat Floor)" ,
+"equipment_gis":"56443000-27404000" ,
+"funcloc_code":"ISLMSP-2A-PUM-TS01-WET001" ,
+"funcloc_desc":"Wet Well" ,
+"funcloc_gis":"56443000-27404000",
+"site":"ISLMSP"}
+
+,{ "orderno":"000050704165","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"1" ,
+"priority_desc":"A1 - Within 4 hours" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:00:00" ,
+"duration":"15 " ,
+"equipment_code":"000000000001174485" ,
+"equipment_desc":"Rectangular Tank" ,
+"equipment_gis":"55584000-28799000" ,
+"funcloc_code":"LPORST-2E-AES-TS01-ATA001" ,
+"funcloc_desc":"Aeration Tank - Ditch" ,
+"funcloc_gis":"55584000-28799000",
+"site":"LPORST"}
+
+
+                ],
+ "priorityicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_filename":"PRI_MP005.png" ,
+"icon_txt":"Low" ,
+"tooltip":"X" ,
+"tooltip_desc":"Low" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_filename":"PRI_RE0A6.png" ,
+"icon_txt":"Within 2 Weeks" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 2 Weeks" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_filename":"PRI_RE0A1.png" ,
+"icon_txt":"Within 4 Hours" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 4 Hours" ,
+"command":"NO_COMMAND"}
+
+
+                ],
+                 "jobicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZPPM.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"PPM Job" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050646820","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+
+                ],
+                 "tconf":
+                  [  ],
+
+                 "partner":
+                  [ ],
+                 "userstatus":
+                  [
+    { "type": "OV" , "orderno": "000050683965"  , "opno": "0010", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OV" , "orderno": "000050683965"  , "opno": "0020", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OR" , "orderno": "000050683965"  , "opno": "", "inact": "", "status": "E0001","statuscode": "INIT",
+  "statusdesc": "Initial"  }
+ ],
+
+"component":
+                  [ ],
+
+                 "asset":
+                  [
+    { "id": "1 ",  "notifno": "000010181525","funcloc": "SOHNSP-2A-PUM-PS02-DWP002" , "funclocdesc": "Dry Well Pump 2", "equipment": "000000000000079994",
+  "equidescr": "Dry Well Submersible"   }
+ ]
+},
+    {
+            "orderno":"000050698381",
+            "type": "ZSA1",
+            "priority": "",
+            "startdate": "00000000 000000",
+            "contact": "",
+    "telno": "",
+    "shorttext": "Example notification/order AWX 2",
+      "longtext": "",
+    "address": "Fieldside, ELY, CB6 3DA",
+    "postcode": "CB6 3DA",
+              "funcloc": "ELYFSP-2A-PUM-PS02-GRL002",
+              "equipment": "000000000001679475",
+              "notifno": "000010183034",
+              "changed_by": "",
+              "changed_date": "00000000",
+              "changed_time": "000000",
+              "operation":
+                  [{"opno": "0010", "type": "SMEPIS" , "priority": "0010" , "shorttext": "Electrical Defect Work"
+,"startdate": "20151109 120000"
+,"enddate": "20151109 000000"
+, "duration": "14.0 ","status": "ONSITE" }
+  ],
+
+ "operationsplit":
+                  [{"opno": "0010", "duration": "14.0 ","assignedto": "00084832" }
+                ],
+
+ "operationinfo":
+                  [{ "orderno":"000050698381","opno": "0010", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+
+                ],
+ "jobdets":
+                  [{ "orderno":"000050646820","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"5" ,
+"priority_desc":"5 - Low" ,
+"pmactivity_code":"T93" ,
+"pmactivity_desc":"SITE Routine maint M&E" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:30:00" ,
+"duration":"45 " ,
+"equipment_code":"000000000002120472" ,
+"equipment_desc":"Centrifugal (Horiz Spindle)" ,
+"equipment_gis":"58553000-28357000" ,
+"funcloc_code":"THETST-2G-SLD-PS05-SLP005" ,
+"funcloc_desc":"Sludge Pump - Import Pump A Tank 5" ,
+"funcloc_gis":"58553000-28357000",
+"site":"THETST"}
+
+,{ "orderno":"000050704134","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"6" ,
+"priority_desc":"A6 - Within 2 weeks" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"11:30:00" ,
+"duration":"60 " ,
+"equipment_code":"000000000002110728" ,
+"equipment_desc":"Round Tank (Flat Floor)" ,
+"equipment_gis":"56443000-27404000" ,
+"funcloc_code":"ISLMSP-2A-PUM-TS01-WET001" ,
+"funcloc_desc":"Wet Well" ,
+"funcloc_gis":"56443000-27404000",
+"site":"ISLMSP"}
+
+,{ "orderno":"000050704165","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"1" ,
+"priority_desc":"A1 - Within 4 hours" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:00:00" ,
+"duration":"15 " ,
+"equipment_code":"000000000001174485" ,
+"equipment_desc":"Rectangular Tank" ,
+"equipment_gis":"55584000-28799000" ,
+"funcloc_code":"LPORST-2E-AES-TS01-ATA001" ,
+"funcloc_desc":"Aeration Tank - Ditch" ,
+"funcloc_gis":"55584000-28799000",
+"site":"LPORST"}
+
+
+                ],
+ "priorityicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_filename":"PRI_MP005.png" ,
+"icon_txt":"Low" ,
+"tooltip":"X" ,
+"tooltip_desc":"Low" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_filename":"PRI_RE0A6.png" ,
+"icon_txt":"Within 2 Weeks" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 2 Weeks" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_filename":"PRI_RE0A1.png" ,
+"icon_txt":"Within 4 Hours" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 4 Hours" ,
+"command":"NO_COMMAND"}
+
+
+                ],
+                 "jobicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZPPM.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"PPM Job" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050646820","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+
+                ],
+                 "tconf":
+                  [  ],
+
+                 "partner":
+                  [ ],
+                 "userstatus":
+                  [
+    { "type": "OV" , "orderno": "000050698381"  , "opno": "0010", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OR" , "orderno": "000050698381"  , "opno": "", "inact": "", "status": "E0001","statuscode": "INIT",
+  "statusdesc": "Initial"  }
+ ],
+
+"component":
+                  [ ],
+
+                 "asset":
+                  [
+    { "id": "1 ",  "notifno": "000010183034","funcloc": "ELYFSP-2A-PUM-PS02-GRL002" , "funclocdesc": "Guide Rails 2 Wet Well Pump 2", "equipment": "000000000001679475",
+  "equidescr": "Guide Rails"   }
+ ]
+},
+    {
+            "orderno":"000050704134",
+            "type": "ZSA1",
+            "priority": "",
+            "startdate": "20151116 115150",
+            "contact": "",
+    "telno": "",
+    "shorttext": "Example notification/order AWX 4",
+      "longtext": "",
+    "address": "ISLEHAM - ROBINS CLOSE SP, ELY, CB7 5US",
+    "postcode": "CB7 5US",
+              "funcloc": "ISLMSP-2A-PUM-TS01-WET001",
+              "equipment": "000000000002110728",
+              "notifno": "000010183214",
+              "changed_by": "",
+              "changed_date": "00000000",
+              "changed_time": "000000",
+              "operation":
+                  [{"opno": "0010", "type": "SMEPIS" , "priority": "0010" , "shorttext": "Electrical Defect Work"
+,"startdate": "20151116 113000"
+,"enddate": "20151117 000000"
+, "duration": "14.0 ","status": "ONSITE" }
+  ],
+
+ "operationsplit":
+                  [{"opno": "0010", "duration": "14.0 ","assignedto": "00084832" }
+                ],
+
+ "operationinfo":
+                  [{ "orderno":"000050704134","opno": "0010", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+
+                ],
+ "jobdets":
+                  [{ "orderno":"000050646820","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"5" ,
+"priority_desc":"5 - Low" ,
+"pmactivity_code":"T93" ,
+"pmactivity_desc":"SITE Routine maint M&E" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:30:00" ,
+"duration":"45 " ,
+"equipment_code":"000000000002120472" ,
+"equipment_desc":"Centrifugal (Horiz Spindle)" ,
+"equipment_gis":"58553000-28357000" ,
+"funcloc_code":"THETST-2G-SLD-PS05-SLP005" ,
+"funcloc_desc":"Sludge Pump - Import Pump A Tank 5" ,
+"funcloc_gis":"58553000-28357000",
+"site":"THETST"}
+
+,{ "orderno":"000050704134","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"6" ,
+"priority_desc":"A6 - Within 2 weeks" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"11:30:00" ,
+"duration":"60 " ,
+"equipment_code":"000000000002110728" ,
+"equipment_desc":"Round Tank (Flat Floor)" ,
+"equipment_gis":"56443000-27404000" ,
+"funcloc_code":"ISLMSP-2A-PUM-TS01-WET001" ,
+"funcloc_desc":"Wet Well" ,
+"funcloc_gis":"56443000-27404000",
+"site":"ISLMSP"}
+
+,{ "orderno":"000050704165","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"1" ,
+"priority_desc":"A1 - Within 4 hours" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:00:00" ,
+"duration":"15 " ,
+"equipment_code":"000000000001174485" ,
+"equipment_desc":"Rectangular Tank" ,
+"equipment_gis":"55584000-28799000" ,
+"funcloc_code":"LPORST-2E-AES-TS01-ATA001" ,
+"funcloc_desc":"Aeration Tank - Ditch" ,
+"funcloc_gis":"55584000-28799000",
+"site":"LPORST"}
+
+
+                ],
+ "priorityicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_filename":"PRI_MP005.png" ,
+"icon_txt":"Low" ,
+"tooltip":"X" ,
+"tooltip_desc":"Low" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_filename":"PRI_RE0A6.png" ,
+"icon_txt":"Within 2 Weeks" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 2 Weeks" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_filename":"PRI_RE0A1.png" ,
+"icon_txt":"Within 4 Hours" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 4 Hours" ,
+"command":"NO_COMMAND"}
+
+
+                ],
+                 "jobicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZPPM.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"PPM Job" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050646820","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+
+                ],
+                 "tconf":
+                  [
+    { "activity": "0010", "confno": "0017002377" , "date": "20151116"  , "time": "115150" , "enddate": "20151116"  , "endtime": "115150"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Accepted"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151116"  , "time": "115236" , "enddate": "20151116"  , "endtime": "115236"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "On-Site"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151117"  , "time": "181242" , "enddate": "20151117"  , "endtime": "181242"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "parked"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151117"  , "time": "181758" , "enddate": "20151117"  , "endtime": "181758"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Accepted"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151118"  , "time": "174346" , "enddate": "20151118"  , "endtime": "174346"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Alarm text"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151118"  , "time": "174910" , "enddate": "20151118"  , "endtime": "174910"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Accepted"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151118"  , "time": "175148" , "enddate": "20151118"  , "endtime": "175148"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "On-Site"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151118"  , "time": "180024" , "enddate": "20151118"  , "endtime": "180024"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "sda"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151120"  , "time": "143309" , "enddate": "20151120"  , "endtime": "143309"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "On-Site"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151120"  , "time": "144706" , "enddate": "20151120"  , "endtime": "144706"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Taking Lunch"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151120"  , "time": "144719" , "enddate": "20151120"  , "endtime": "144719"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "Accepted"  },
+
+    { "activity": "0010", "confno": "0017002377" , "date": "20151120"  , "time": "144735" , "enddate": "20151120"  , "endtime": "144735"   ,
+                              "duration": "0.0 " , "empid": "00084832", "final": "" , "description": "On-Site"  }
+  ],
+
+                 "partner":
+                  [ ],
+                 "userstatus":
+                  [
+    { "type": "OV" , "orderno": "000050704134"  , "opno": "0010", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OV" , "orderno": "000050704134"  , "opno": "0010", "inact": "", "status": "E0011","statuscode": "SITE",
+  "statusdesc": "On Site"  },
+
+    { "type": "OR" , "orderno": "000050704134"  , "opno": "", "inact": "", "status": "E0001","statuscode": "INIT",
+  "statusdesc": "Initial"  }
+ ],
+
+"component":
+                  [ ],
+
+                 "asset":
+                  [
+    { "id": "1 ",  "notifno": "000010183214","funcloc": "ISLMSP-2A-PUM-TS01-WET001" , "funclocdesc": "Wet Well", "equipment": "000000000002110728",
+  "equidescr": "Round Tank (Flat Floor)"   }
+ ]
+},
+    {
+            "orderno":"000050704165",
+            "type": "ZSA1",
+            "priority": "",
+            "startdate": "00000000 000000",
+            "contact": "",
+    "telno": "",
+    "shorttext": "text",
+      "longtext": "",
+    "address": "LITTLEPORT STW, ELY, CB6 1SE",
+    "postcode": "CB6 1SE",
+              "funcloc": "LPORST-2E-AES-TS01-ATA001",
+              "equipment": "000000000001174485",
+              "notifno": "000010183230",
+              "changed_by": "",
+              "changed_date": "00000000",
+              "changed_time": "000000",
+              "operation":
+                  [{"opno": "0010", "type": "SMEPIS" , "priority": "0010" , "shorttext": "Electrical Reset"
+,"startdate": "20151116 150000"
+,"enddate": "20151116 000000"
+, "duration": "14.0 ","status": "ONSITE" }
+  ],
+
+ "operationsplit":
+                  [{"opno": "0010", "duration": "14.0 ","assignedto": "00084832" }
+                ],
+
+ "operationinfo":
+                  [{ "orderno":"000050704165","opno": "0010", "type": "" ,
+                "value1": "00000000" , "value2":"000000"}
+
+
+                ],
+ "jobdets":
+                  [{ "orderno":"000050646820","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"5" ,
+"priority_desc":"5 - Low" ,
+"pmactivity_code":"T93" ,
+"pmactivity_desc":"SITE Routine maint M&E" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:30:00" ,
+"duration":"45 " ,
+"equipment_code":"000000000002120472" ,
+"equipment_desc":"Centrifugal (Horiz Spindle)" ,
+"equipment_gis":"58553000-28357000" ,
+"funcloc_code":"THETST-2G-SLD-PS05-SLP005" ,
+"funcloc_desc":"Sludge Pump - Import Pump A Tank 5" ,
+"funcloc_gis":"58553000-28357000",
+"site":"THETST"}
+
+,{ "orderno":"000050704134","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"6" ,
+"priority_desc":"A6 - Within 2 weeks" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"11:30:00" ,
+"duration":"60 " ,
+"equipment_code":"000000000002110728" ,
+"equipment_desc":"Round Tank (Flat Floor)" ,
+"equipment_gis":"56443000-27404000" ,
+"funcloc_code":"ISLMSP-2A-PUM-TS01-WET001" ,
+"funcloc_desc":"Wet Well" ,
+"funcloc_gis":"56443000-27404000",
+"site":"ISLMSP"}
+
+,{ "orderno":"000050704165","opno": "0010",  "eworkcentre":"MT032" ,"oworkcentre":"MT032" ,
+"priority_code":"1" ,
+"priority_desc":"A1 - Within 4 hours" ,
+"pmactivity_code":"T59" ,
+"pmactivity_desc":"Scheduled Defect" ,
+"oppmactivity_code":"SMEPIS" ,
+"oppmactivity_desc":"WW Maint in shift" ,
+"start_date":"2015-11-16" ,
+"start_time":"15:00:00" ,
+"duration":"15 " ,
+"equipment_code":"000000000001174485" ,
+"equipment_desc":"Rectangular Tank" ,
+"equipment_gis":"55584000-28799000" ,
+"funcloc_code":"LPORST-2E-AES-TS01-ATA001" ,
+"funcloc_desc":"Aeration Tank - Ditch" ,
+"funcloc_gis":"55584000-28799000",
+"site":"LPORST"}
+
+
+                ],
+ "priorityicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_filename":"PRI_MP005.png" ,
+"icon_txt":"Low" ,
+"tooltip":"X" ,
+"tooltip_desc":"Low" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_filename":"PRI_RE0A6.png" ,
+"icon_txt":"Within 2 Weeks" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 2 Weeks" ,
+"command":"NO_COMMAND"}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_filename":"PRI_RE0A1.png" ,
+"icon_txt":"Within 4 Hours" ,
+"tooltip":"X" ,
+"tooltip_desc":"Within 4 Hours" ,
+"command":"NO_COMMAND"}
+
+
+                ],
+                 "jobicons":
+                  [{ "orderno":"000050646820","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZPPM.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"PPM Job" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050646820","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704134","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"JOB_TYPE" ,
+"icon_position":"1 " ,
+"icon_filename":"WT_ZSA1.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Scheduled Order" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+,{ "orderno":"000050704165","opno": "0010",  "icon_type":"LOC_HIST_REF" ,
+"icon_position":"2 " ,
+"icon_filename":"LOC_HISTORY.png" ,
+"icon_txt":"" ,
+"tooltip":"X" ,
+"tooltip_desc":"Location History" ,
+"command":"NO_COMMAND",
+"grid":"",
+"grid_vals":""}
+
+
+                ],
+                 "tconf":
+                  [  ],
+
+                 "partner":
+                  [ ],
+                 "userstatus":
+                  [
+    { "type": "OV" , "orderno": "000050704165"  , "opno": "0010", "inact": "", "status": "E0003","statuscode": "DEPL",
+  "statusdesc": "Deployed"  },
+
+    { "type": "OR" , "orderno": "000050704165"  , "opno": "", "inact": "", "status": "E0001","statuscode": "INIT",
+  "statusdesc": "Initial"  }
+ ],
+
+"component":
+                  [ ],
+
+                 "asset":
+                  [
+    { "id": "1 ",  "notifno": "000010183230","funcloc": "LPORST-2E-AES-TS01-ATA001" , "funclocdesc": "Aeration Tank - Ditch", "equipment": "000000000001174485",
+  "equidescr": "Rectangular Tank"   }
+ ]
+}
+
+]
+}
+
