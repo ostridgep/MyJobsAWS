@@ -30,7 +30,7 @@
 <script src="myresources/js/NotificationFunctions.js"></script>
 <script src="myresources/js/Globals1.js"></script>
 <script src="myresources/js/DG5.js"></script>
-
+<script src="myresources/js/gmaps.js"></script>
 <style>
 .formHdr {
 				font-weight: bold;
@@ -67,7 +67,7 @@
 			</style>
 
 <script type="text/javascript">
-function loadScript(src,callback){
+/* function loadScript(src,callback){
 	  
     var script = document.createElement("script");
     script.type = "text/javascript";
@@ -81,8 +81,9 @@ loadScript('http://maps.googleapis.com/maps/api/js?sensor=false',
 	
 	  directionsDisplay = new google.maps.DirectionsRenderer(); 
 	  directionsService = new google.maps.DirectionsService(); 
-	});
-
+	}); */
+directionsDisplay = new google.maps.DirectionsRenderer(); 
+directionsService = new google.maps.DirectionsService(); 
 html5sql.openDatabase("com.pjo.myjobsbackfill","myjobsbackfill", 5*1024*1024);		
 
 var xmlDoc="";
@@ -327,13 +328,14 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                                              text: "Save",
                                              tap: [ function(oEvt) { 
                                                 
-                                                
-                                                    //createTConf(CurrentOrderNo,CurrentOpNo,sap.ui.getCore().byId("Employee").getSelectedItem().getKey(),sap.ui.getCore().byId("tconfType").getSelectedButton(),
-                                                //            sap.ui.getCore().byId("tconfStart").getValue(),sap.ui.getCore().byId("tconfEnd").getValue(),sap.ui.getCore().byId("Duration").getValue(),
-                                                //            sap.ui.getCore().byId("tconfType").getSelectedButton(),sap.ui.getCore().byId("Description").getValue())
-                                                	formChangeStatusOnSite.close()       
+ 												if(sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").getValue()>1){
+ 													formChangeStatusOnSite.close()       
                                                 	changeStatus("SITE")
                                                        prepareChangeStatus()
+ 														}else{
+ 															DisplayErrorMessage("On Site Job Error", "Travel Time must be > 0")
+ 														}
+                                                	
                                                        
                                                        
                                                          } ]
@@ -406,9 +408,16 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                                                     //createTConf(CurrentOrderNo,CurrentOpNo,sap.ui.getCore().byId("Employee").getSelectedItem().getKey(),sap.ui.getCore().byId("tconfType").getSelectedButton(),
                                                 //            sap.ui.getCore().byId("tconfStart").getValue(),sap.ui.getCore().byId("tconfEnd").getValue(),sap.ui.getCore().byId("Duration").getValue(),
                                                 //            sap.ui.getCore().byId("tconfType").getSelectedButton(),sap.ui.getCore().byId("Description").getValue())
-                                                 formChangeStatusPark.close()    
-                                                changeStatus("PARK")   
-                                                 prepareChangeStatus()     
+												if((sap.ui.getCore().byId("StatusParkActualWorkControl").getValue()>1)&&
+												(sap.ui.getCore().byId("StatusParkReasonText").getValue().length>0)){
+	                                                formChangeStatusPark.close()    
+	                                                 changeStatus("PARK")   
+	                                                 prepareChangeStatus()  
+												}else{
+													DisplayErrorMessage("Park Job Error", "Duration must be > 0\n and Reason must be completed")
+												}
+													
+   
                                                        
                                                          } ]
                                             
@@ -416,7 +425,7 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                                          new sap.m.Button( {
                                              text: "Cancel",
                                              tap: [ function(oEvt) {         
-                                                        
+                                            	
                                                 formChangeStatusPark.close()} ]   
                                          })
                                          ],                                
@@ -495,12 +504,14 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                                              text: "Save",
                                              tap: [ function(oEvt) { 
                                                 
-                                                
-                                                    //createTConf(CurrentOrderNo,CurrentOpNo,sap.ui.getCore().byId("Employee").getSelectedItem().getKey(),sap.ui.getCore().byId("tconfType").getSelectedButton(),
-                                                //            sap.ui.getCore().byId("tconfStart").getValue(),sap.ui.getCore().byId("tconfEnd").getValue(),sap.ui.getCore().byId("Duration").getValue(),
-                                                //            sap.ui.getCore().byId("tconfType").getSelectedButton(),sap.ui.getCore().byId("Description").getValue())
-                                                       
-                                                       formChangeStatusUpdate.close()
+                                            	 if((sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue()>0)&&
+                                            			 (sap.ui.getCore().byId("StatusUpdateRemainingWorkControl").getValue()>0)&&
+         												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
+                                            		 formChangeStatusUpdate.close()  
+         												}else{
+         													DisplayErrorMessage("Update Job Error", "Actual Work must be > 0\n Remaining Work must be > 0\n and Reason must be completed")
+         												}    
+                                                      
                                                        
                                                          } ]
                                             
@@ -602,14 +613,15 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                                              tap: [ function(oEvt) { 
                                                 
                                                 
-                                                    //createTConf(CurrentOrderNo,CurrentOpNo,sap.ui.getCore().byId("Employee").getSelectedItem().getKey(),sap.ui.getCore().byId("tconfType").getSelectedButton(),
-                                                //            sap.ui.getCore().byId("tconfStart").getValue(),sap.ui.getCore().byId("tconfEnd").getValue(),sap.ui.getCore().byId("Duration").getValue(),
-                                                //            sap.ui.getCore().byId("tconfType").getSelectedButton(),sap.ui.getCore().byId("Description").getValue())
-                                                      
-                                                       formChangeStatusReject.close()
-                                                      
-                                                       changeStatus("REJ1")   
-                                                        prepareChangeStatus()                                                          
+                                            	 if(sap.ui.getCore().byId("StatusRejectReasonText").getValue().length>0){
+                                            		 formChangeStatusReject.close()
+                                                     
+                                                     changeStatus("REJ1")   
+                                                      prepareChangeStatus()   
+         												}else{
+         													DisplayErrorMessage("Reject Job Error", "Reason must be completed")
+         												}        
+                                                                                                              
                                                          } ]
                                             
                                          }),   
@@ -649,8 +661,7 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
 
                      ],
                      beforeOpen:function(){
-                           //sap.ui.getCore().getElementById('StatusOnSiteAcceptedTime').setValue(getDate()+getTime())
-                           //sap.ui.getCore().getElementById('StatusOnSiteTime').setValue(getDate()+getTime())
+                    	 BuildChangeStatusReject()
                      }
               }).addStyleClass("sapUiSizeCompact");          
               
@@ -1029,16 +1040,20 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 					    	var xgroup=sap.ui.getCore().byId("NewGroup").getSelectedItem().getKey().split("|")
 					    	var xcode=sap.ui.getCore().byId("NewCode").getSelectedItem().getKey().split("|")
 					    	var xpriority=sap.ui.getCore().byId("NewPriority").getSelectedItem().getKey().split("|")
-					    	
-							createNotification(xntype[0],xpriority[0],xgroup[0],xcode[0],sap.ui.getCore().byId("NewGroup").getSelectedItem().getText(),
-								sap.ui.getCore().byId("NewCode").getSelectedItem().getText(),sap.ui.getCore().byId("NewDescription").getValue(),
-								sap.ui.getCore().byId("NewDetails").getValue(),
-								sap.ui.getCore().byId("NewNotifStart").getValue(),
-								sap.ui.getCore().byId("NewFuncLoc").getValue(),
-								sap.ui.getCore().byId("NewEquipment").getValue())
+					    	if(sap.ui.getCore().byId("NewDescription").getValue().length>0){
+					    		createNotification(xntype[0],xpriority[0],xgroup[0],xcode[0],sap.ui.getCore().byId("NewGroup").getSelectedItem().getText(),
+										sap.ui.getCore().byId("NewCode").getSelectedItem().getText(),sap.ui.getCore().byId("NewDescription").getValue(),
+										sap.ui.getCore().byId("NewDetails").getValue(),
+										sap.ui.getCore().byId("NewNotifStart").getValue(),
+										sap.ui.getCore().byId("NewFuncLoc").getValue(),
+										sap.ui.getCore().byId("NewEquipment").getValue())
 
 
-									formNewNotif.close()
+											formNewNotif.close()
+										}else{
+											DisplayErrorMessage("Create Job - Error", "Description is Mandatory")
+										}
+							
 							  } ]
 					   
 					}),   
@@ -1056,7 +1071,7 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 				content : [
 								
 								
-								new sap.m.Label({text:"Coding"}),
+								new sap.m.Label({text:"Notification Type"}),
 								new sap.m.Select('NewType',{
 									
 									items: [
@@ -1068,6 +1083,7 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 										BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
 									}
 								}),
+								new sap.m.Label({text:"Work Type Group"}),
 								new sap.m.Select('NewGroup',{
 									
 									items: [
@@ -1079,6 +1095,7 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 										
 									}
 								}),
+								new sap.m.Label({text:"Work Type Code"}),
 								new sap.m.Select('NewCode',{
 									
 									items: [
@@ -1135,7 +1152,9 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 							]
  					})
 
-            ]
+            ],
+	contentWidth:"60%",
+	contentHeight: "85%",
 	 }).addStyleClass("sapUiSizeCompact");
 var formSignature = new sap.m.Dialog("dlgSignature",{
     title:"Signature",
@@ -4070,7 +4089,7 @@ function rebuildTimeConfs()
 									new sap.m.Button("Add1", {
 					   					 text: "create",
 					  					 press: [ function(){
-					  						startFloc="LGF"
+					  						
 					  						formNewNotif.open(); 
 					  						
 					  							}]
@@ -4242,9 +4261,8 @@ function BuildNotificationTypes(){
 
 	var SQLStatement="";
 	var FirstVal="";
-	SQLStatement="SELECT MyRefNotifTypes.type , MyRefNotifTypes.description, MyRefNotifTypes.priority_type, profile from MyRefNotifTypes "
-	SQLStatement+="join RefNotifprofile on MyRefNotifTypes.type = RefNotifprofile.notif_type "
-	SQLStatement+="where MyRefNotifTypes.scenario = 'MAMDEMOLG'"
+	SQLStatement="SELECT * from refnotificationtypes where level_number = '2'"
+	
 	
 		html5sql.process(SQLStatement,
 		 function(transaction, results, rowsArray){
@@ -4253,8 +4271,8 @@ function BuildNotificationTypes(){
 					item = rowsArray[n];
 					sap.ui.getCore().getElementById("NewType").addItem(
 							new sap.ui.core.Item({
-								key: item.type+"|"+item.priority_type+"|"+item.profile, 
-								text: item.description
+								key: item.notiftype+"|"+item.notifprofile+"|"+item.priotype, 
+								text: item.notifdesc
 							}))
 					
 				}
@@ -4271,15 +4289,15 @@ function BuildNotificationTypes(){
 	function BuildPriorities(selectedId){
 		
 var x = selectedId.split("|")
-var priority_type = x[1];
-var profile=x[2];
+var priority_type = x[2];
+var profile=x[1];
 	var HTMLToOutput='';
 
 	var SQLStatement="";
 	var FirstVal="";
-	SQLStatement="SELECT priority , description "
+	SQLStatement="SELECT * "
 	SQLStatement+="from MyRefPriorityTypes "
-	SQLStatement+="where scenario = 'MAMDEMO' and type = '"+priority_type+"'"
+	SQLStatement+="where type = '"+priority_type+"'"
 	var HTMLToOutput="";
 		html5sql.process(SQLStatement,
 		 function(transaction, results, rowsArray){
@@ -4309,9 +4327,10 @@ var profile=x[2];
 
 		var SQLStatement="";
 		var FirstVal="";
+		
 		SQLStatement="SELECT *  "
-		SQLStatement+="from RefCodeGroups "
-		SQLStatement+="where scenario = 'MAMDEMO' and catalog_type = 'X' and profile = '"+profile+"'"
+		SQLStatement+="from refpaicodes "
+		SQLStatement+="where level = '1'  and catalogue = 'W' and stsma = '"+profile+"'"
 		var HTMLToOutput="";
 			html5sql.process(SQLStatement,
 			 function(transaction, results, rowsArray){
@@ -4322,8 +4341,8 @@ var profile=x[2];
 						item = rowsArray[n];
 						sap.ui.getCore().getElementById("NewGroup").addItem(
 								new sap.ui.core.Item({
-									key: profile+"|"+item.code_cat_group,
-									text: item.codegroup_text
+									key: profile+"|"+item.codegrp,
+									text: item.kurztext_group
 								}))
 					}
 					
@@ -4342,8 +4361,8 @@ var profile=x[2];
 		var res = Group.split("|")
 		
 		SQLStatement="SELECT *  "
-		SQLStatement+="from RefCodes "
-		SQLStatement+="where scenario = 'MAMDEMO' and profile = '"+res[0]+"' and code_cat_group = '"+res[1]+"'"
+		SQLStatement+="from refpaicodes "
+		SQLStatement+="where level = '2'  and catalogue = 'W' and stsma = '"+res[0]+"' and codegrp = '"+res[1]+"'"
 		var HTMLToOutput="";
 			html5sql.process(SQLStatement,
 			 function(transaction, results, rowsArray){
@@ -4355,7 +4374,7 @@ var profile=x[2];
 						sap.ui.getCore().getElementById("NewCode").addItem(
 								new sap.ui.core.Item({
 									key: item.code,
-									text: item.code_text
+									text: item.kurztext_code
 								}))
 					}
 			 },
@@ -4765,7 +4784,7 @@ function BuildChangeStatusUpdate(){
 								
 									for (var n = 0; n < rowsArray.length; n++) {
 										item = rowsArray[n];
-										sap.ui.getCore().getElementById("StatusUpdateVarianceCode").addItem(
+										sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
 												new sap.ui.core.Item({
 													key: item.dev_reason,
 													text: item.dev_reas_txt
@@ -4786,7 +4805,49 @@ function BuildChangeStatusUpdate(){
 			);
 
 		}
+function BuildChangeStatusReject(){
 
+
+
+
+		var SQLStatement="";
+		var FirstVal="";
+		SQLStatement="select * from refactivity where action = 'P'  and  work_center = '"+CurrentJobWorkCentre+"'"
+		var HTMLToOutput="";
+					html5sql.process("select * from refvariancesrfv where job_activity = 'REJ'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
+							 function(transaction, results, rowsArray){
+								
+								sap.ui.getCore().getElementById("StatusRejectVarianceCode").destroyItems();
+								
+									for (var n = 0; n < rowsArray.length; n++) {
+										item = rowsArray[n];
+										sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
+												new sap.ui.core.Item({
+													key: item.dev_reason,
+													text: item.dev_reas_txt
+												}))
+									}
+								
+									
+							 },
+							 function(error, statement){
+								
+							 }        
+							)
+					
+			 
+
+		}
+jQuery.sap.require("sap.m.MessageBox");
+function DisplayErrorMessage(msgtitle,msgbody){
+sap.m.MessageBox.show(
+    msgbody, {
+        icon: sap.m.MessageBox.Icon.ERROR,
+        title: msgtitle,
+        actions: [sap.m.MessageBox.Action.OK]
+    }
+  );   
+}
 
 
 
