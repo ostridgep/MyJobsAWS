@@ -1032,14 +1032,23 @@ function updateOrderLatLong(orderno, fname, latlong)
 
 function updateOperationStatus(orderno, opno, code, status)
 {
+	sqltimestamp=""
+	
+	if(code=='ACPT'){
+		sqltimestamp=", acpt_date = '"+statusUpdateDate+"', acpt_time ='"+statusUpdateTime+"'"
+	}else if(code=='SITE'){
+		sqltimestamp=", onsite_date = '"+statusUpdateDate+"', onsite_time ='"+statusUpdateTime+"'"
+	}else if(code=='PARK'){
+		sqltimestamp=", park_date = '"+statusUpdateDate+"', park_time ='"+statusUpdateTime+"'"
+	}
 
-	html5sql.process("update  myuserstatus set statuscode = '"+code+"', statusdesc = '"+status+"', inact = 'Local' where type = 'OV' and orderno = '"+orderno+"' and opno = '"+ opno+"';",
+	html5sql.process("update  myjobdets set status = '"+code+"', status_s = '"+code+"', status_l =  '"+code+"'"+sqltimestamp+" where  orderno = '"+orderno+"' and opno = '"+ opno+"';",
 		function(){
-			
+				
 				html5sql.process("insert into mystatus (orderno, opno, state,  stsma, status, statusdesc) values("+
 					 "'"+orderno+"','"+opno+"','NEW','ZMAM_1', '"+code+"','"+status+"');",				
 				function(){
-					
+				
 				 },
 				 function(error, statement){
 					opMessage("Error: " + error.message + " when InsertOperationStatus processing " + statement);
@@ -1047,7 +1056,6 @@ function updateOperationStatus(orderno, opno, code, status)
 				);
 		},
 		function(error, statement){
-		 
 		opMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
 		
 		}
@@ -1341,7 +1349,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS FuncLocs			  	( id integer primary key autoincrement, flid TEXT, description TEXT, swerk TEXT, level TEXT, parentid TEXT, children TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS Equipments			  	( id integer primary key autoincrement, eqid TEXT, description TEXT, flid TEXT);'+
 					'CREATE TABLE IF NOT EXISTS MyMenuBar 		        ( id integer primary key autoincrement, scenario TEXT, level TEXT, item TEXT, position TEXT, type TEXT,  subitem TEXT, command TEXT, item2 TEXT);'+	
-					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT);'+	
+					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT, acpt_date TEXT, acpt_time TEXT, onsite_date TEXT, onsite_time TEXT,park_date TEXT, park_time TEXT, status TEXT, status_l TEXT, status_s TEXT);'+	
 						
 					 'CREATE TABLE IF NOT EXISTS TSActivities		    ( id integer primary key autoincrement, code TEXT, skill TEXT,  subskill TEXT, description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS TSNPJobs			    ( id integer primary key autoincrement, jobno TEXT, subtype TEXT,  description TEXT);'+
@@ -1781,7 +1789,7 @@ function createDB(type){
 
 
 function requestDEMOData(page){
-	
+		
 		opMessage("DEMOLoad "+page);
 		
 		$.getJSON("TestData/"+page,function(data,status){ 	
@@ -1844,7 +1852,11 @@ function requestDEMOData(page){
 				surveysCB(data);
 
 			}
-  });
+  })
+  .fail(function(data,status) {
+    alert( "error:"+status+":"+data );
+  })
+
 }
 function orderCB(MyOrders){
 var sqlDelete="";
@@ -1983,29 +1995,38 @@ var changeddatetime=[];
 				//Loop and write JobDets
 				for(var pcnt=0; pcnt < MyOrders.order[cntx].jobdets.length ; pcnt++)
 					{
-										
-					   sqlstatement+='INSERT INTO MyJobDets (orderno, opno, eworkcentre, oworkcentre, priority_code, priority_desc, pmactivity_code, pmactivity_desc,oppmactivity_code, oppmactivity_desc, start_date, start_time, duration, equipment_code, equipment_desc, equipment_gis, funcloc_code, funcloc_desc, funcloc_gis, site) VALUES ('+
-						'"'+MyOrders.order[cntx].jobdets[pcnt].orderno+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].opno+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].eworkcentre+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].oworkcentre+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].priority_code+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].priority_desc+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].pmactivity_code+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].pmactivity_desc+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].oppmactivity_code+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].oppmactivity_desc+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].start_date+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].start_time+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].duration+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].equipment_code+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].equipment_desc+'","'+
-						MyOrders.order[cntx].jobdets[pcnt].equipment_gis+'","'+
-						MyOrders.order[cntx].jobdets[pcnt].funcloc_code+'","'+ 
-						MyOrders.order[cntx].jobdets[pcnt].funcloc_desc+'","'+
-						MyOrders.order[cntx].jobdets[pcnt].funcloc_gis+'","'+
-						MyOrders.order[cntx].jobdets[pcnt].site+'");';
-					
+						if(MyOrders.order[cntx].jobdets[pcnt].orderno.length>1){				
+						   sqlstatement+='INSERT INTO MyJobDets (orderno, opno, eworkcentre, oworkcentre, priority_code, priority_desc, pmactivity_code, pmactivity_desc,oppmactivity_code, oppmactivity_desc, start_date, start_time, duration, equipment_code, equipment_desc, equipment_gis, funcloc_code, funcloc_desc, funcloc_gis, acpt_date, acpt_time, onsite_date, onsite_time, park_date, park_time, status, status_l, status_s, site) VALUES ('+
+							'"'+MyOrders.order[cntx].jobdets[pcnt].orderno+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].opno+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].eworkcentre+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].oworkcentre+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].priority_code+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].priority_desc+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].pmactivity_code+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].pmactivity_desc+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].oppmactivity_code+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].oppmactivity_desc+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].start_date+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].start_time+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].duration+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].equipment_code+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].equipment_desc+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].equipment_gis+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].funcloc_code+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].funcloc_desc+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].funcloc_gis+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].acpt_date+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].acpt_time+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].onsite_date+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].onsite_time+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].park_date+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].park_time+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].status+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].status_l+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].status_s+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].site+'");';
+						}
 					
 				}				
 				
@@ -2049,7 +2070,10 @@ var changeddatetime=[];
 	
 
 					}
-				sqlstatements.push(sqlstatement);
+				if(MyOrders.order[cntx].jobdets.length>1){
+					sqlstatements.push(sqlstatement);
+				}
+				
 				sqlstatement=""
 
 				
@@ -3240,6 +3264,7 @@ var sqlstatement="";
 	
 function refdataCB(MyReference){
 var sqlstatement="";
+
 opMessage("Callback Reference Data triggured");
 	    
 	if(MyReference.scenario.length>0){
@@ -3269,7 +3294,7 @@ opMessage("Callback Reference Data triggured");
 				sqlstatement="";
 				opMessage("Loading Scenario "+MyReference.scenario[cntx].scenario + " Reference Data");
 				//Loop and write MenuBar to DB
-
+		
 				opMessage("Loading "+MyReference.scenario[cntx].appbar.length+" Menu Bar");
 				for(var opscnt=0; opscnt < MyReference.scenario[cntx].appbar.length ; opscnt++)
 					{	
@@ -3320,7 +3345,11 @@ opMessage("Callback Reference Data triggured");
 						opMessage("Loading "+MyReference.scenario[cntx].pai_codes.length+" PAI Codes");
 						for(var opscnt=0; opscnt < MyReference.scenario[cntx].pai_codes.length ; opscnt++)
 							{	
-							
+							y=unescape(MyReference.scenario[cntx].pai_codes[opscnt].kurztext_code)
+							x=y.replace(/'/g, "");;
+							x=x.replace(/"/g, "");;
+							x=x.replace("\/", " ");;
+							x=x.replace(/&/g, "");;	
 							sqlstatement+='INSERT INTO REFPAICODES (scenario , userid , level , stsma,	plant, work_cntr , catalogue , codegrp , kurztext_group,	code , kurztext_code) VALUES  ('+
 								 '"'+MyReference.scenario[cntx].scenario+'",'+
 								 '"'+MyReference.scenario[cntx].pai_codes[opscnt].userid+'",'+
@@ -3332,7 +3361,7 @@ opMessage("Callback Reference Data triggured");
 								 '"'+MyReference.scenario[cntx].pai_codes[opscnt].codegrp+'",'+
 								 '"'+MyReference.scenario[cntx].pai_codes[opscnt].kurztext_group+'",'+
 								 '"'+MyReference.scenario[cntx].pai_codes[opscnt].code+'",'+
-								 '"'+MyReference.scenario[cntx].pai_codes[opscnt].kurztext_code+'");';
+								 '"'+x+'");';
 						}
 //Loop and write Notification Types to DB
 
@@ -3350,7 +3379,7 @@ opMessage("Callback Reference Data triggured");
 								 '"'+MyReference.scenario[cntx].notification_types[opscnt].notifprofile+'",'+
 								 '"'+MyReference.scenario[cntx].notification_types[opscnt].priotype+'",'+
 								 '"'+MyReference.scenario[cntx].notification_types[opscnt].priority+'",'+
-								 '"'+MyReference.scenario[cntx].notification_types[opscnt].prioritydesc+'");';
+								 '"'+unescape(MyReference.scenario[cntx].notification_types[opscnt].prioritydesc)+'");';
 						}	
 //Loop and write VariancesRFV to DB
 
@@ -3366,7 +3395,7 @@ opMessage("Callback Reference Data triggured");
 								 '"'+MyReference.scenario[cntx].variancesrfv[opscnt].work_cntr+'",'+
 								 '"'+MyReference.scenario[cntx].variancesrfv[opscnt].job_activity+'",'+
 								 '"'+MyReference.scenario[cntx].variancesrfv[opscnt].dev_reason+'",'+
-								 '"'+MyReference.scenario[cntx].variancesrfv[opscnt].dev_reas_txt+'",'+
+								 '"'+unescape(MyReference.scenario[cntx].variancesrfv[opscnt].dev_reas_txt)+'",'+
 								 '"'+MyReference.scenario[cntx].variancesrfv[opscnt].mandate+'");';
 						}
 //Loop and write Activity to DB
