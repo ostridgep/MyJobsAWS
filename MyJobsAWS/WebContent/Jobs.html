@@ -85,7 +85,7 @@ loadScript('http://maps.googleapis.com/maps/api/js?sensor=false',
 directionsDisplay = new google.maps.DirectionsRenderer(); 
 directionsService = new google.maps.DirectionsService(); 
 html5sql.openDatabase("com.pjo.myjobsbackfill","myjobsbackfill", 5*1024*1024);		
-
+var SearchMode=""
 var xmlDoc="";
 var sites=[];
 var plants=[];
@@ -115,6 +115,9 @@ var selectedFormQuestionGroupTitle;
 var CurrentOrderNo="";
 var CurrentOpNo="";
 var CurrentJobWorkCentre=""
+var CurrentJobFL=""
+var CurrentJobEQ=""
+var CurrentJobProfile=""
 var currentNotifNo="";
 
 var currentOrderListItem="";
@@ -193,7 +196,7 @@ var formSearchAsset = new sap.m.Dialog("dlgSearchAsset",{
                                       text: "Cancel",
                                       type: sap.m.ButtonType.Reject,
                                       tap: [ function(oEvt) {         
-                                                 
+                                             
                                          formSearchAsset.close()} ]   
                                   })
                                   ],                                
@@ -248,11 +251,18 @@ var formSearchAsset = new sap.m.Dialog("dlgSearchAsset",{
                      new sap.m.Table("AssetSearchResults",{
                            mode: sap.m.ListMode.SingleSelectMaster,
                            selectionChange: function(evt){
-                                  
+                                
                                   selectedAssetSearch=evt.getParameter("listItem").getId()
                                   x=selectedAssetSearch.split(":")
-                                  sap.ui.getCore().byId('NewFuncLoc').setValue(x[1])
-                                  sap.ui.getCore().byId('NewEquipment').setValue(x[2])
+                                  if(SearchMode=="NOTIF"){
+                                  	sap.ui.getCore().byId('NewFuncLoc').setValue(x[1])
+                                  	sap.ui.getCore().byId('NewEquipment').setValue(x[2])
+                                  }
+                                  if(SearchMode=="CLOSE"){
+                                	
+                                  	sap.ui.getCore().byId('Close_FunctionalLocation').setValue(x[1])
+                                  	sap.ui.getCore().byId('Close_Equipment').setValue(x[2])
+                                  	}
                                   formSearchAsset.close()
                          },
                            columns:[
@@ -305,7 +315,7 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
             contentHeight: "85%",
       beforeOpen:function(){
         
-
+		BuildCloseScreen();
 
       },
       afterOpen:function(){  
@@ -392,8 +402,10 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                     		statusUpdateDate=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8)
                     		statusUpdateTime=	t.substring(0,2)+":"+t.substring(2,4)+":"+t.substring(4,6)
                            BuildChangeStatusOnSite()
-                     }
-              }).addStyleClass("sapUiSizeCompact");   
+                     },
+                    contentWidth:"50%",
+                 	contentHeight: "30%",
+              })
        
        var formChangeStatusPark = new sap.m.Dialog("dlgStatusPark",{
              title:"Park Job",
@@ -493,8 +505,10 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                        
                     	 BuildChangeStatusPark()
 
-                     }
-              }).addStyleClass("sapUiSizeCompact");          
+                     },
+                     contentWidth:"50%",
+                 	contentHeight: "50%",
+              })      
        var formChangeStatusUpdate = new sap.m.Dialog("dlgStatusUpdate",{
              title:"Update Job",
              modal: true,
@@ -601,8 +615,9 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
                      ],
                      beforeOpen:function(){
                            BuildChangeStatusUpdate()
-                     }
-              }).addStyleClass("sapUiSizeCompact");          
+                     },contentWidth:"50%",
+                 	contentHeight: "60%",
+              })       
 var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
              title:"Reject Job",
              modal: true,
@@ -662,8 +677,10 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                      ],
                      beforeOpen:function(){
                     	 BuildChangeStatusReject()
-                     }
-              }).addStyleClass("sapUiSizeCompact");          
+                     },
+                     contentWidth:"50%",
+                  	contentHeight: "45%",
+              })   
               
 
 var formMaterialSearch = new sap.m.Dialog("dlgMaterial",{
@@ -1137,6 +1154,7 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 				tooltip: "Search for Functional Locations..",
 				
 				search: [function(event){
+						SearchMode="NOTIF"
 						formSearchAsset.open()
 						//selectedFloc="LGF"
 				 		//buildFlocList("LGF");
@@ -1154,8 +1172,8 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 
             ],
 	contentWidth:"60%",
-	contentHeight: "85%",
-	 }).addStyleClass("sapUiSizeCompact");
+	contentHeight: "70%",
+	 })
 var formSignature = new sap.m.Dialog("dlgSignature",{
     title:"Signature",
    
@@ -2118,7 +2136,7 @@ function changeStatus(Status){
 	
 	 if(Status=="DEPL"){
 		 StatusState=sap.ui.core.ValueState.None
-		 StatusText="Dispatched"
+		 StatusText="Deployed"
 		 StatusIcon="create"
 	 }else if(Status=="ACPT"){
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "ACPT", "Job Accepted")
@@ -2268,7 +2286,7 @@ html5sql.process(SQLStatement,
                                   StatusState=sap.ui.core.ValueState.Warning
                                   StatusIcon="pause"
                            }else if(item.status_s=="DEPL"){
-                                  StatusText="Dispatched"
+                                  StatusText="Deployed"
                                          StatusState=sap.ui.core.ValueState.None
                                          StatusIcon="create"
                                   }else {
@@ -2344,10 +2362,16 @@ function buildDetails(){
 	number:'',
 	numberUnit:'',
 	attributes: [
+	             new sap.m.ObjectAttribute('JobTypeDesc',{
+	                   
+	                }),
 	               	                new sap.m.ObjectAttribute('StartDate',{
 	            	                   
 	            	                }),
 	            	                new sap.m.ObjectAttribute('EndDate',{
+	            	                    
+	            	                }),
+	            	                new sap.m.ObjectAttribute('Site',{
 	            	                    
 	            	                }),
 	            	                new sap.m.ObjectAttribute('Address',{
@@ -2452,10 +2476,10 @@ var surveyID;
 var jobicons=[]
 
 
-       SQLStatement="SELECT MyNotifications.pcode, MyNotifications.type as jobtype, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
+       SQLStatement="SELECT MyNotifications.pcode, MyNotifications.type as jobtype, refnotificationtypes.notifprofile,MyRefOrderTypes.description as JobDescription, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
 	   SQLStatement+=" MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, "
 	   SQLStatement+=" MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext, "
-	   SQLStatement+=" MyOperations.shorttext as operationdesc , MyOrders.contact , MyJobDets.eworkcentre, MyJobDets.status_s, MyJobDets.equipment_gis, MyJobDets.funcloc_gis, " 
+	   SQLStatement+=" MyOperations.shorttext as operationdesc , MyOrders.contact , MyJobDets.eworkcentre, MyJobDets.status_s,MyJobDets.site, MyJobDets.equipment_code, MyJobDets.equipment_desc,MyJobDets.equipment_gis, MyJobDets.funcloc_code, MyJobDets.funcloc_desc, MyJobDets.funcloc_gis, " 
        SQLStatement+="(SELECT GROUP_CONCAT(status ) "
        SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) as opstat,"
        SQLStatement+="(SELECT GROUP_CONCAT(statuscode ) "
@@ -2482,6 +2506,8 @@ var jobicons=[]
                      
               SQLStatement+="left join myorders on myoperations.orderno = myorders.orderno "
                      SQLStatement+="left join mynotifications on myorders.notifno = mynotifications.notifno "
+                     SQLStatement+="left join refnotificationtypes on mynotifications.type = refnotificationtypes.notiftype and refnotificationtypes.level_number='2'"
+                    	 SQLStatement+=" left join myrefordertypes on myorders.type = myrefordertypes.type "
                      SQLStatement+=" where myoperations.orderno = '"+orderno+"'"
                      SQLStatement+=" and myoperations.opno = '"+opno+"'"
 
@@ -2544,7 +2570,7 @@ html5sql.process(SQLStatement,
                            StatusIcon="create"
                      }else if(item.status_s=="DEPL"){
                            currentStatus="DEPL"
-                           StatusText="Dispatched"
+                           StatusText="Deployed"
                                   StatusState=sap.ui.core.ValueState.None
                                   StatusIcon="create"
                            }else {
@@ -2572,7 +2598,7 @@ html5sql.process(SQLStatement,
 					currentEquipment_GIS=rowsArray[0].equipment_gis;
 					currentFuncLoc_GIS=rowsArray[0].funcloc_gis; 
 					
-                     sap.ui.getCore().getElementById('HEADER').setTitle(rowsArray[0].operationdesc)
+                     sap.ui.getCore().getElementById('HEADER').setTitle(rowsArray[0].orderdesc)
                      sap.ui.getCore().getElementById('HEADER').setNumber(rowsArray[0].orderno+"-"+rowsArray[0].opno)
                      sap.ui.getCore().getElementById('HEADER').setNumberUnit(jobType)
                      sap.ui.getCore().getElementById('HEADER').destroyStatuses()
@@ -2588,7 +2614,9 @@ html5sql.process(SQLStatement,
                      CurrentOrderNo=rowsArray[0].orderno
                      CurrentOpNo=rowsArray[0].opno
                      CurrentJobWorkCentre=rowsArray[0].eworkcentre
-                     
+                     CurrentJobProfile=rowsArray[0].notifprofile
+                     CurrentJobFL =rowsArray[0].funcloc_code 
+                     CurrentJobEQ =rowsArray[0].equipment_code 
 /*                      if(currentStatus=="JFIN"){
                            
                            sap.ui.getCore().getElementById('tconfFooterChangeStatus').setEnabled(false)
@@ -2598,19 +2626,23 @@ html5sql.process(SQLStatement,
                             sap.ui.getCore().getElementById('tconfFooterChangeStatus').setEnabled(true)
                            sap.ui.getCore().getElementById('changeStatus').setEnabled(true)
                      } */
+
                        sap.ui.getCore().getElementById('NotifNo').setTitle("Notification No")
                        sap.ui.getCore().getElementById('NotifNo').setText(rowsArray[0].notifno)
+                       sap.ui.getCore().getElementById('JobTypeDesc').setTitle("Job Type")
+                       sap.ui.getCore().getElementById('JobTypeDesc').setText(rowsArray[0].JobDescription)
                        sap.ui.getCore().getElementById('StartDate').setTitle("Start Date")
                        sap.ui.getCore().getElementById('StartDate').setText(formatDate(rowsArray[0].startdate))
                        sap.ui.getCore().getElementById('EndDate').setTitle("End Date ")
                        sap.ui.getCore().getElementById('EndDate').setText(formatDate(rowsArray[0].enddate))
-
+                       sap.ui.getCore().getElementById('Site').setTitle("Site ")      
+                       sap.ui.getCore().getElementById('Site').setText(rowsArray[0].site)  
                        sap.ui.getCore().getElementById('Address').setTitle("Address ")    
                        sap.ui.getCore().getElementById('Address').setText(rowsArray[0].address) 
                        sap.ui.getCore().getElementById('FuncLoc').setTitle("Funcloc ")    
-                       sap.ui.getCore().getElementById('FuncLoc').setText(rowsArray[0].funcloc) 
+                       sap.ui.getCore().getElementById('FuncLoc').setText(rowsArray[0].funcloc_code+" "+rowsArray[0].funcloc_desc) 
                        sap.ui.getCore().getElementById('Equipment').setTitle("Equipment ")      
-                       sap.ui.getCore().getElementById('Equipment').setText(rowsArray[0].equipment)  
+                       sap.ui.getCore().getElementById('Equipment').setText(rowsArray[0].equipment_code+" "+rowsArray[0].equipment_desc)  
 					  
 					   //sap.ui.getCore().getElementById('Equipment').setCustomContent(sap.m.icon("images/"+jobicons[0]))				   
                        Longtext=rowsArray[0].orderlongtext    
@@ -4121,7 +4153,7 @@ function rebuildTimeConfs()
 	}
 
 	oSplitApp.placeAt("body");
-	selectListDefault();
+	//selectListDefault();
 </script>
 </head>
 <body id="body" class="sapUiBody">
@@ -4838,6 +4870,237 @@ function BuildChangeStatusReject(){
 			 
 
 		}
+function BuildChangeStatusUpdate(){
+	sap.ui.getCore().getElementById("StatusUpdateActualWork").setValue("0")
+		sap.ui.getCore().getElementById("StatusUpdateActualWorkControl").setValue(0)
+	sap.ui.getCore().getElementById("StatusUpdateRemainingWork").setValue("0")
+	sap.ui.getCore().getElementById("StatusUpdateRemainingWorkControl").setValue(0)
+	sap.ui.getCore().getElementById("StatusUpdateReasonText").setValue("")
+	sap.ui.getCore().getElementById("StatusUpdateReasonDetails").setValue("")
+
+
+
+		var SQLStatement="";
+		var FirstVal="";
+		SQLStatement="select * from refactivity where action = 'P'  and  work_center = '"+CurrentJobWorkCentre+"'"
+		var HTMLToOutput="";
+			html5sql.process(SQLStatement,
+			 function(transaction, results, rowsArray){
+				
+				sap.ui.getCore().getElementById("StatusUpdateActivityCode").destroyItems();
+				
+					for (var n = 0; n < rowsArray.length; n++) {
+						item = rowsArray[n];
+						sap.ui.getCore().getElementById("StatusUpdateActivityCode").addItem(
+								new sap.ui.core.Item({
+									key: item.activity,
+									text: item.activity_desc
+								}))
+					}
+					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
+							 function(transaction, results, rowsArray){
+								
+								sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
+								
+									for (var n = 0; n < rowsArray.length; n++) {
+										item = rowsArray[n];
+										sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
+												new sap.ui.core.Item({
+													key: item.dev_reason,
+													text: item.dev_reas_txt
+												}))
+									}
+								
+									
+							 },
+							 function(error, statement){
+								
+							 }        
+							)
+					
+			 },
+			 function(error, statement){
+				
+			 }        
+			);
+
+		}
+function BuildCloseScreen(){
+	sap.ui.getCore().getElementById("Close_FunctionalLocation").setValue(CurrentJobFL)
+	sap.ui.getCore().getElementById("Close_Equipment").setValue(CurrentJobEQ)
+	sap.ui.getCore().getElementById("Close_LongText").setValue("")
+
+if (CurrentJobProfile==null){
+	/* sap.ui.getCore().getElementById("Close_ProblemGroup").disabled=true
+	sap.ui.getCore().getElementById("Close_ProblemCode").disabled=true
+	sap.ui.getCore().getElementById("Close_ActionGroup").disabled=true
+	sap.ui.getCore().getElementById("Close_ActionCode").disabled=true
+	sap.ui.getCore().getElementById("Close_ImpactGroup").disabled=true
+	sap.ui.getCore().getElementById("Close_ImpactCode").disabled=true */
+	return
+}else{
+/* 	sap.ui.getCore().getElementById("Close_ProblemGroup").disabled=false
+	sap.ui.getCore().getElementById("Close_ProblemCode").disabled=false
+	sap.ui.getCore().getElementById("Close_ActionGroup").disabled=false
+	sap.ui.getCore().getElementById("Close_ActionCode").disabled=false
+	sap.ui.getCore().getElementById("Close_ImpactGroup").disabled=false
+	sap.ui.getCore().getElementById("Close_ImpactCode").disabled=false */
+}
+
+
+		var SQLStatement="";
+		var FirstVal="";
+		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
+		
+		var HTMLToOutput="";
+			html5sql.process(SQLStatement,
+			 function(transaction, results, rowsArray){
+				
+				sap.ui.getCore().getElementById("Close_ProblemGroup").destroyItems();
+				sap.ui.getCore().getElementById("Close_ProblemCode").destroyItems();
+					for (var n = 0; n < rowsArray.length; n++) {
+						item = rowsArray[n];
+						sap.ui.getCore().getElementById("Close_ProblemGroup").addItem(
+								new sap.ui.core.Item({
+									key: item.codegrp,
+									text: item.kurztext_group
+								}))
+					}
+					SQLStatement="select * from refpaicodes where catalogue = 'R' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
+					html5sql.process(SQLStatement,
+							 function(transaction, results, rowsArray){
+								
+								sap.ui.getCore().getElementById("Close_ActionGroup").destroyItems();
+								sap.ui.getCore().getElementById("Close_ActionCode").destroyItems();
+									for (var n = 0; n < rowsArray.length; n++) {
+										item = rowsArray[n];
+										sap.ui.getCore().getElementById("Close_ActionGroup").addItem(
+												new sap.ui.core.Item({
+													key: item.codegrp,
+													text: item.kurztext_group
+												}))
+									}
+								
+									SQLStatement="select * from refpaicodes where catalogue = 'S' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
+									html5sql.process(SQLStatement,
+											 function(transaction, results, rowsArray){
+												
+												sap.ui.getCore().getElementById("Close_ImpactGroup").destroyItems();
+												sap.ui.getCore().getElementById("Close_ImpactCode").destroyItems();
+													for (var n = 0; n < rowsArray.length; n++) {
+														item = rowsArray[n];
+														sap.ui.getCore().getElementById("Close_ImpactGroup").addItem(
+																new sap.ui.core.Item({
+																	key: item.codegrp,
+																	text: item.kurztext_group
+																}))
+													}
+												
+													
+											 },
+											 function(error, statement){
+												
+											 }        
+											)
+							 },
+							 function(error, statement){
+								
+							 }        
+							)
+					
+			 },
+			 function(error, statement){
+				
+			 }        
+			);
+
+		}
+function BuildCloseProblemCodes(grp){
+	
+		var SQLStatement="";
+		var FirstVal="";
+		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"'"
+		
+		var HTMLToOutput="";
+			html5sql.process(SQLStatement,
+			 function(transaction, results, rowsArray){
+				
+				
+				sap.ui.getCore().getElementById("Close_ProblemCode").destroyItems();
+					for (var n = 0; n < rowsArray.length; n++) {
+						item = rowsArray[n];
+						sap.ui.getCore().getElementById("Close_ProblemCode").addItem(
+								new sap.ui.core.Item({
+									key: item.code,
+									text: item.kurztext_code
+								}))
+					}
+
+					
+			 },
+			 function(error, statement){
+				
+			 }        
+			);
+
+		}
+function BuildCloseActionCodes(grp){
+	
+	var SQLStatement="";
+	var FirstVal="";
+	SQLStatement="select * from refpaicodes where catalogue = 'R' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"'"
+	
+	var HTMLToOutput="";
+		html5sql.process(SQLStatement,
+		 function(transaction, results, rowsArray){
+			
+
+			sap.ui.getCore().getElementById("Close_ActionCode").destroyItems();
+				for (var n = 0; n < rowsArray.length; n++) {
+					item = rowsArray[n];
+					sap.ui.getCore().getElementById("Close_ActionCode").addItem(
+							new sap.ui.core.Item({
+								key: item.code,
+								text: item.kurztext_code
+							}))
+				}
+
+				
+		 },
+		 function(error, statement){
+			
+		 }        
+		);
+
+	}
+function BuildCloseImpactCodes(grp){
+	
+	var SQLStatement="";
+	var FirstVal="";
+	SQLStatement="select * from refpaicodes where catalogue = 'S' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"'"
+	
+
+		html5sql.process(SQLStatement,
+		 function(transaction, results, rowsArray){
+			
+			sap.ui.getCore().getElementById("Close_ImpactCode").destroyItems();
+				for (var n = 0; n < rowsArray.length; n++) {
+					item = rowsArray[n];
+					sap.ui.getCore().getElementById("Close_ImpactCode").addItem(
+							new sap.ui.core.Item({
+								key: item.code,
+								text: item.kurztext_code
+							}))
+				}
+
+				
+		 },
+		 function(error, statement){
+			
+		 }        
+		);
+
+	}
 jQuery.sap.require("sap.m.MessageBox");
 function DisplayErrorMessage(msgtitle,msgbody){
 sap.m.MessageBox.show(

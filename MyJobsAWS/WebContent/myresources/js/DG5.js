@@ -1,14 +1,15 @@
 var oLayout1 = new sap.ui.layout.form.GridLayout();
+var oLayout1a = new sap.ui.layout.form.GridLayout();
               var oLayout2 = new sap.ui.layout.form.ResponsiveLayout();
               var oLayout3 = new sap.ui.layout.form.ResponsiveGridLayout();
 
               var oForm1 = new sap.ui.layout.form.Form("DG51F1",{
                      
                      editable: true,
-                     layout: oLayout1,
+                     layout: oLayout1a,
                      formContainers: [
 
-                           new sap.ui.layout.form.FormContainer("DG51F1C2",{
+                           new sap.ui.layout.form.FormContainer("DG51F1C1",{
                                   
                                   formElements: [
                                          new sap.ui.layout.form.FormElement({
@@ -26,98 +27,203 @@ var oLayout1 = new sap.ui.layout.form.GridLayout();
                                                 fields: [                         new sap.m.Button( {
                                                     text: "Select Asset",
                                                     type:     sap.m.ButtonType.Success,
-                                                    tap: [ function(oEvt) {         
-                                                               
-                                                       //formHistoryDocument.close()
+                                                    tap: [ function(oEvt) {  
+                                                    	SearchMode="CLOSE"
+                                                    		
+                                                    	formSearchAsset.open() 
+                                                    
+                                                    	
                                                                 } ]
                                                 })
                                                 ]
                                          }),
                                          new sap.ui.layout.form.FormElement({
-                                                label: "Problem Code",
-                                                fields: [new sap.m.Select('Close_ProblemCode',{
-                                                       
-                                                       items: [
-                                                              
-                                                       ],
-
-                                                       change: function(oControlEvent) {
-                                                              
-                                                              //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
-                                                       }
-                                                }),
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Action Code",
-                                                fields: [new sap.m.Select('Close_ActionCode',{
-                                                       
-                                                       items: [
-                                                              
-                                                       ],
-
-                                                       change: function(oControlEvent) {
-                                                              
-                                                              //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
-                                                       }
-                                                }),
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Impact Code",
-                                                fields: [new sap.m.Select('Close_ImpactCode',{
-                                                       
-                                                       items: [
-                                                              
-                                                       ],
-
-                                                       change: function(oControlEvent) {
-                                                              
-                                                              //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
-                                                       }
-                                                }),
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Long Text",
-                                                fields: [new sap.m.Input("Close_LongText",{type: sap.m.InputType.Input, enabled: true})
-                                                ]
-                                         }),
+                                             label: "In Shift Time",
+                                             fields: [new sap.m.Slider('Close_InShiftTimeControl',
+                                                     {
+                                                 value: 0,
+                                                 max:720,
+                                                 min:0,
+                                                 step:5,
+                                                 change : function(){
+                                                        sap.ui.getCore().byId("Close_InShiftTime").setValue(sap.ui.getCore().byId("Close_InShiftTimeControl").getValue());}
+                                                 
+                                                               
+                                                               
+                                            }), 
+                              
+                                            new sap.m.Input("Close_InShiftTime",{
+                                                value : sap.ui.getCore().byId("Close_InShiftTimeControl").getValue(),
+                                            type: sap.m.InputType.Input,
+                                            width:"20px",
+                                            change : function(){sap.ui.getCore().byId("Close_InShiftTimeControl").setValue(parseInt(sap.ui.getCore().byId("Close_InShiftTime").getValue(),10));}
+                                              })
+                                             ]
+                                      }),
+                                        
+                                         
+                                      new sap.ui.layout.form.FormElement({
+                                          label: "Out Of Shift Time",
+                                          fields: [new sap.m.Slider('Close_OutOfShiftTimeControl',
+                                                     {
+                                              value: 0,
+                                              max:720,
+                                              min:0,
+                                              step:5,
+                                              change : function(){
+                                                     sap.ui.getCore().byId("Close_OutOfShiftTime").setValue(sap.ui.getCore().byId("Close_OutOfShiftTimeControl").getValue());}
+                                              
+                                                            
+                                                            
+                                         }), 
+                           
+                                         new sap.m.Input("Close_OutOfShiftTime",{
+                                             value : sap.ui.getCore().byId("Close_OutOfShiftTimeControl").getValue(),
+                                         type: sap.m.InputType.Input,
+                                         width:"20px",
+                                         change : function(){sap.ui.getCore().byId("Close_OutOfShiftTimeControl").setValue(parseInt(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue(),10));}
+                                           })]
+                                      }),
                                          ],
                                   layoutData: new sap.ui.core.VariantLayoutData({
-                                                multipleLayoutData: [new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, minWidth: 150}),
+                                                multipleLayoutData: [new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, minWidth: 400}),
                                                                          new sap.ui.layout.form.GridContainerData({halfGrid: true}),
                                                                          new sap.ui.layout.GridData({linebreakL: true})]
                                                 })
                            }),
-                           new sap.ui.layout.form.FormContainer("DG51F1C3",{
-                                  title: new sap.ui.core.Title({text: "Has there been an escape of sewage", tooltip: ""}),
+                           new sap.ui.layout.form.FormContainer("DG51F1C2",{
+                               
+                               formElements: [
+                                              new sap.ui.layout.form.FormElement({
+                                                  label: "Problem Group",
+                                                  fields: [new sap.m.Select('Close_ProblemGroup',{
+                                                         
+                                                         items: [
+                                                                
+                                                         ],
+
+                                                         change: function(oControlEvent) {
+                                                                
+                                                                BuildCloseProblemCodes(oControlEvent.getParameter("selectedItem").getKey());
+                                                         }
+                                                  }),
+                                                  ]
+                                           }) ,                                    
+                                      new sap.ui.layout.form.FormElement({
+                                             label: "Problem Code",
+                                             fields: [new sap.m.Select('Close_ProblemCode',{
+                                                    
+                                                    items: [
+                                                           
+                                                    ],
+
+                                                    change: function(oControlEvent) {
+                                                           
+                                                           //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
+                                                    }
+                                             }),
+                                             ]
+                                      }),
+                                      new sap.ui.layout.form.FormElement({
+                                          label: "Action Group",
+                                          fields: [new sap.m.Select('Close_ActionGroup',{
+                                                 
+                                                 items: [
+                                                        
+                                                 ],
+
+                                                 change: function(oControlEvent) {
+                                                        
+                                                	 BuildCloseActionCodes(oControlEvent.getParameter("selectedItem").getKey());
+                                                 }
+                                          }),
+                                          ]
+                                   }),
+                                      new sap.ui.layout.form.FormElement({
+                                             label: "Action Code",
+                                             fields: [new sap.m.Select('Close_ActionCode',{
+                                                    
+                                                    items: [
+                                                           
+                                                    ],
+
+                                                    change: function(oControlEvent) {
+                                                           
+                                                           //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
+                                                    }
+                                             }),
+                                             ]
+                                      }),
+                                      new sap.ui.layout.form.FormElement({
+                                          label: "Impact Group",
+                                          fields: [new sap.m.Select('Close_ImpactGroup',{
+                                                 
+                                                 items: [
+                                                        
+                                                 ],
+
+                                                 change: function(oControlEvent) {
+                                                        
+                                                	 BuildCloseImpactCodes(oControlEvent.getParameter("selectedItem").getKey());
+                                                 }
+                                          }),
+                                          ]
+                                   }),
+                                      new sap.ui.layout.form.FormElement({
+                                             label: "Impact Code",
+                                             fields: [new sap.m.Select('Close_ImpactCode',{
+                                                    
+                                                    items: [
+                                                           
+                                                    ],
+
+                                                    change: function(oControlEvent) {
+                                                           
+                                                           
+                                                    }
+                                             }),
+                                             ]
+                                      })
+                                      ],
+                               layoutData: new sap.ui.core.VariantLayoutData({
+                                             multipleLayoutData: [new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, minWidth: 400}),
+                                                                      new sap.ui.layout.form.GridContainerData({halfGrid: true}),
+                                                                      new sap.ui.layout.GridData({linebreakL: true})]
+                                             })
+                        }),
+                        new sap.ui.layout.form.FormContainer("DG51F1C3",{
+                            
+                            formElements: [
+                                 
+                                  
+                                   new sap.ui.layout.form.FormElement({
+                                  	 label: "Long Text",
+                                          fields: [new sap.m.TextArea("Close_LongText",{ rows: 5})
+                                          ]
+                                   })
+                     
+                                   ],
+                            layoutData: new sap.ui.core.VariantLayoutData({
+                                          multipleLayoutData: [new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true, minWidth: 400}),
+                                                                   new sap.ui.layout.form.GridContainerData({halfGrid: true}),
+                                                                   new sap.ui.layout.GridData({linebreakL: true})]
+                                          })
+                     })
+                           ]
+
+              });
+
+                           var oForm2 = new sap.ui.layout.form.Form("DG52F1",{
+                               
+                               editable: true,
+                               layout: oLayout1,
+                               formContainers: [
+
+                           new sap.ui.layout.form.FormContainer("DG52F1C1",{
+                                  
                                   
                                   formElements: [
-                                         new sap.ui.layout.form.FormElement({
-                                                label:  "to 3rd Party property",
-                                                fields: [ new sap.m.Switch("Close_Sewage",{
-                                                state:false,
-                                                change:[function(evt){
-                                                       formChanged(evt)
-                                                       
-                                                }],
-                                                type: sap.m.SwitchType.AcceptReject
-                                         })
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Has there been a pollution",
-                                                fields: [ new sap.m.Switch("Close_Pollution",{
-                                                state:false,
-                                                change:[function(evt){
-                                                       formChanged(evt)
-                                                       
-                                                }],
-                                                type: sap.m.SwitchType.AcceptReject
-                                         })
-                                                ]
-                                         }),
+
                                          new sap.ui.layout.form.FormElement({
                                                 label: "Additional Work Required",
                                                 fields: [ new sap.m.Switch("Close_Work",{
@@ -150,46 +256,7 @@ var oLayout1 = new sap.ui.layout.form.GridLayout();
                                                 fields: [new sap.m.Input("Close_Reason",{type: sap.m.InputType.Input, enabled: true})
                                                 ]
                                          }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "In Shift Time",
-                                                fields: [new sap.m.Input("Close_InshiftTime",{type: sap.m.InputType.Input, enabled: true})
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Activity",
-                                                fields: [new sap.m.Select('Close_InshiftActivity',{
-                                                       
-                                                       items: [
-                                                              
-                                                       ],
 
-                                                       change: function(oControlEvent) {
-                                                              
-                                                              //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
-                                                       }
-                                                }),
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Out of Shift Time",
-                                                fields: [new sap.m.Input("Close_OutofshiftTime",{type: sap.m.InputType.Input, enabled: true})
-                                                ]
-                                         }),
-                                         new sap.ui.layout.form.FormElement({
-                                                label: "Activity",
-                                                fields: [new sap.m.Select('Close_OutofshiftActivity',{
-                                                       
-                                                       items: [
-                                                              
-                                                       ],
-
-                                                       change: function(oControlEvent) {
-                                                              
-                                                              //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
-                                                       }
-                                                }),
-                                                ]
-                                         }),
                                   ],
                                   layoutData: new sap.ui.core.VariantLayoutData({
                                          multipleLayoutData: [new sap.ui.layout.form.GridContainerData({halfGrid: true}),
@@ -214,9 +281,7 @@ function buildDG5Tabs(){
                                          
                                     if(oEvt.getParameters().key=="DG51"){}
                                     if(oEvt.getParameters().key=="DG52"){}
-                                    if(oEvt.getParameters().key=="DG53"){}
-                                    if(oEvt.getParameters().key=="DG54"){}
-                                    if(oEvt.getParameters().key=="DG55"){}
+
                                   
                                   }
                            ],
@@ -226,40 +291,17 @@ function buildDG5Tabs(){
                                              key:'DG51',
                                              tooltip: 'Close Job Details',
                                              text: "Close",
-                                             content:[oForm1]
+                                             content:[oForm1
+                                                      ]
                                          }),
                                          new sap.m.IconTabFilter( {
                                                     key:'DG52',
-                                                    tooltip: 'DG5 Flooding',
-                                                    text: "Flooding",
-                                                    content:[
+                                                    tooltip: 'Follow On Work',
+                                                    text: "Follow On Work",
+                                                    content:[oForm2
                                                                            
                                                              ]
-                                                }),
-                                         new sap.m.IconTabFilter( {
-                                             key:'DG53',
-                                             tooltip: 'DG5 Location',
-                                             text: "Location",
-                                             content:[
-                                                                     
-                                                      ]
-                                         }),
-                                         new sap.m.IconTabFilter( {
-                                                    key:'DG54',
-                                                    tooltip: 'Polution Impact',
-                                                    text: "Pollution",
-                                                    content:[
-                                                                           
-                                                             ]
-                                                }),
-                                         new sap.m.IconTabFilter( {
-                                             key:'DG55',
-                                             tooltip: 'Customer Feedback',
-                                             text: "Feedback",
-                                             content:[
-                                                                     
-                                                      ]
-                                         })
+                                                })
                                   ]
                      })
        return tabBar;
