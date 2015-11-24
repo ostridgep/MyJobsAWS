@@ -784,8 +784,11 @@ function SubMenuPressed(id){
 						selectedWebPage=rowsArray[0].command
 						window.open(selectedWebPage)
 					}else if(rowsArray[0].type=='C'){
-						
+						if (rowsArray[0].command=='RaiseNewJobViewModel'){
+							alert("Not Implemented")
+						}else{
 						alert("Not Implemented")
+						}
 						}
 					}
 					
@@ -805,11 +808,12 @@ function BuildSubMenu()
 	formSubMenu.setTitle(selectedMenuItem)
 	sap.ui.getCore().byId("SubMenu").destroyContent();
 	html5sql.process(
-			["SELECT * from MyMenuBar where level > '1' and item='"+selectedMenuItem+"'"],
+			['SELECT * from MyMenuBar where item="'+selectedMenuItem+'"'],
 			function(transaction, results, rowsArray){
 			
 				for (n=0; n < rowsArray.length; n++ ){
-				
+					if(parseInt(rowsArray[n].level)==2){
+						
 					sap.ui.getCore().byId("SubMenu").addContent(new sap.m.Label({text:""}))
 					sap.ui.getCore().byId("SubMenu").addContent(new sap.m.Button("SubMenu"+rowsArray[n].id, {
 						    text: rowsArray[n].subitem,
@@ -819,6 +823,7 @@ function BuildSubMenu()
 						    	SubMenuPressed(this.getId())
 								  } ]
 						}))
+					}
 				}
 				
 				
