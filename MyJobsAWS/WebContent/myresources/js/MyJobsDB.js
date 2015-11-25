@@ -1800,6 +1800,7 @@ function requestDEMOData(page){
 				
 			}
 			if(page=='MyJobsNotifications.json'){
+				alert("hello")
 				notificationCB(data);
 			
 			}
@@ -2196,7 +2197,7 @@ var sqlstatement;
 var notiftype=""
 opMessage("Callback Notifications triggured");
 
-
+alert(MyNotifications.notification.length)
 	if(MyNotifications.notification.length>0){
 			if(syncTransactionalDetsUpdated){
 				localStorage.setItem('LastSyncTransactionalDetails',localStorage.getItem('LastSyncTransactionalDetails')+', MyNotifications:'+String(MyNotifications.notification.length));
