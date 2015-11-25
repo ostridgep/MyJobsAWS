@@ -1800,7 +1800,7 @@ function requestDEMOData(page){
 				
 			}
 			if(page=='MyJobsNotifications.json'){
-			
+				alert("Loading Notifications")
 				notificationCB(data);
 			
 			}
@@ -2196,7 +2196,7 @@ function notificationCB(MyNotifications){
 var sqlstatement;
 var notiftype=""
 opMessage("Callback Notifications triggured");
-
+alert("Loading Notifications:"+MyNotifications.notification.length)
 
 	if(MyNotifications.notification.length>0){
 			if(syncTransactionalDetsUpdated){
@@ -2375,6 +2375,7 @@ opMessage("Callback Notifications triggured");
 								if(x[x.length-1]=="Home.html"){
 									setCounts()
 								}
+								alert("notifications Inserted")
 								html5sql.process("select * from MyNotifications",
 												 function(transaction, results, rowsArray){
 													 for (var n = 0; n < rowsArray.length; n++) {
@@ -2431,6 +2432,7 @@ opMessage("Callback Notifications triggured");
 								);									 
 							 },
 							 function(error, statement){
+								 alert("Error: " + error.message + " when processing " + statement);
 								 opMessage("Error: " + error.message + " when processing " + statement);
 							 }        
 			);	
