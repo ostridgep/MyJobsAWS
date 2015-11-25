@@ -2368,7 +2368,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 						
 
 				}
-			//("alert updateing Texts");
+			alert(sqlstatement)
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
 								var x = window.location.href.split("/")
@@ -2376,7 +2376,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 									setCounts()
 								}
 								
-								html5sql.process("select * from MyNotifications",
+/*								html5sql.process("select * from MyNotifications",
 												 function(transaction, results, rowsArray){
 													 for (var n = 0; n < rowsArray.length; n++) {
 														nitem = rowsArray[n];
@@ -2429,7 +2429,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 												 function(error, statement){
 													 opMessage("Error: " + error.message + " when processing " + statement);
 												 }        
-								);									 
+								);	*/								 
 							 },
 							 function(error, statement){
 								 
