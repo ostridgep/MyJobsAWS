@@ -1656,18 +1656,18 @@ function loadDemoData() {
 						
 						requestDEMOData('MyJobsRefDataCodes.json');
 						
-						requestDEMOData('funclocs.json');
+						//requestDEMOData('funclocs.json');
 						requestDEMOData('MyJobsVehicles.json');
 					
-						requestDEMOData('GASSurvey.json');
+						//requestDEMOData('GASSurvey.json');
 					
-						requestDEMOData('GASSurveyHdr.json');
-						requestDEMOData('MyMessagesData.json');
+						//requestDEMOData('GASSurveyHdr.json');
+						//requestDEMOData('MyMessagesData.json');
 						//
-						requestDEMOData('TimeSheetNPJobs.json');
+						//requestDEMOData('TimeSheetNPJobs.json');
 						
-						requestDEMOData('TimeSheetActivities.json');
-						requestDEMOData('MySurveys.json');
+						//requestDEMOData('TimeSheetActivities.json');
+						//requestDEMOData('MySurveys.json');
 					
 					
 						
