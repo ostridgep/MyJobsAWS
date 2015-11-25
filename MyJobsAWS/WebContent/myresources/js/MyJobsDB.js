@@ -2432,7 +2432,7 @@ opMessage("Callback Notifications triggured");
 								);	*/								 
 							 },
 							 function(error, statement){
-								 
+								 alert("Error: " + error.message + " when processing " + statement);
 								 opMessage("Error: " + error.message + " when processing " + statement);
 							 }        
 			);	
