@@ -396,10 +396,10 @@ function BuildPriorities(selectedId){
 
 		function showMessage(msg){
 			sap.m.MessageToast.show(msg, {
-				//type: Information,
+				
 				duration: Number(500),
-				width: "50em",
-				my: "center center",
+				
+				
 				at: "center center",		
 				autoClose: true,
 

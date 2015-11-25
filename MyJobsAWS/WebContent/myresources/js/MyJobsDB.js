@@ -1563,6 +1563,7 @@ function emptyTables(type) {
 }
 function loadDemoData() { 
 	
+	localStorage.setItem("LastSyncedDT",getDate()+getTime())
 	sqlstatement=	'DELETE FROM  MyOrders;'+
 					'DELETE FROM  MyOperations;'+
 					'DELETE FROM  MyOperationsSplit;'+
