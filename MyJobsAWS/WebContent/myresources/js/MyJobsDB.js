@@ -2368,13 +2368,13 @@ opMessage("Callback Notifications triggured");
 						
 
 				}
-			alert(sqlstatement)
+			
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
-				alert("Good")
+								setCounts()
 								/*var x = window.location.href.split("/")
 								if(x[x.length-1]=="Home.html"){
-									setCounts()
+									
 								}*/
 								
 /*								html5sql.process("select * from MyNotifications",
@@ -2430,7 +2430,8 @@ opMessage("Callback Notifications triggured");
 												 function(error, statement){
 													 opMessage("Error: " + error.message + " when processing " + statement);
 												 }        
-								);	*/								 
+								);	*/	
+							
 							 },
 							 function(error, statement){
 								 alert("Error: " + error.message + " when processing " + statement);
