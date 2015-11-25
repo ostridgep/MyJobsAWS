@@ -2240,8 +2240,8 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 					'"'+MyNotifications.notification[cntx].longtext +'",'+ 
 					'"'+MyNotifications.notification[cntx].startdate+'",'+ 
 					'"'+MyNotifications.notification[cntx].priority+'",'+
-					//'"'+MyNotifications.notification[cntx].type+'",'+
-					'"'+notiftype+'",'+
+					'"'+MyNotifications.notification[cntx].type+'",'+
+					//'"'+notiftype+'",'+
 					'"'+MyNotifications.notification[cntx].funcloc +'",'+ 
 					'"'+MyNotifications.notification[cntx].equipment +'",'+
 					'"'+MyNotifications.notification[cntx].orderno+'",'+
@@ -2375,7 +2375,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 								if(x[x.length-1]=="Home.html"){
 									setCounts()
 								}
-								alert("notifications Inserted")
+								
 								html5sql.process("select * from MyNotifications",
 												 function(transaction, results, rowsArray){
 													 for (var n = 0; n < rowsArray.length; n++) {
@@ -2432,7 +2432,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 								);									 
 							 },
 							 function(error, statement){
-								 alert("Error: " + error.message + " when processing " + statement);
+								 
 								 opMessage("Error: " + error.message + " when processing " + statement);
 							 }        
 			);	
