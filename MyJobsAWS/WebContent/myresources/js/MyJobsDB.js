@@ -2371,6 +2371,7 @@ opMessage("Callback Notifications triggured");
 			alert(sqlstatement)
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
+				alert("Good")
 								var x = window.location.href.split("/")
 								if(x[x.length-1]=="Home.html"){
 									setCounts()
