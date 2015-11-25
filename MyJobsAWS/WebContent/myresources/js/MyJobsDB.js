@@ -2368,7 +2368,7 @@ opMessage("Callback Notifications triggured");
 						
 
 				}
-			
+			alert(sqlstatement)
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
 								var x = window.location.href.split("/")
