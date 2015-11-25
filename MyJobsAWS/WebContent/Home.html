@@ -637,7 +637,7 @@ function loadSettings(){
 function setCounts()
 {
 	 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
-	html5sql.process("SELECT * FROM myjobdets;",
+	html5sql.process("SELECT * FROM MyJobDets;",
 	 function(transaction, results, rowsArray){
 		  
 			sap.ui.getCore().byId("JobsCnt").setNumber(rowsArray.length);
@@ -687,7 +687,7 @@ function setCounts()
 	);
 }
 function showSystemMessage(){
-	html5sql.process("SELECT * FROM MyMessages  where type = 'MYJOBSSYSMSG'  ;",
+	html5sql.process("SELECT * FROM mymessages  where type = 'MYJOBSSYSMSG'  ;",
 			 function(transaction, results, rowsArray){
 				
 				if (rowsArray.length>0) {			
