@@ -449,6 +449,7 @@ function buildNotificationDetailsTabs(){
 				
 				items: [
 						new sap.m.IconTabFilter( {
+							text:'Long Text',
 						    key:'nLongText',
 						    tooltip: 'Long Text',
 						    icon: "sap-icon://document-text",
@@ -458,6 +459,7 @@ function buildNotificationDetailsTabs(){
 						 }),
 						 new sap.m.IconTabFilter( {
 	    	                   key:'Tasks',
+	    	                   text:'Tasks',
 	    	                   tooltip: 'Tasks',
 	    	                   icon: "sap-icon://order-status",
 	       	                   content:[
@@ -488,6 +490,7 @@ function buildNotificationDetailsTabs(){
 									]
 					    }),     
      	               new sap.m.IconTabFilter( 'ACTIVITIES',{
+    	                   text:'Activities',
     	                   key:'Activities',
     	                   tooltip: 'Activities',
     	                   icon: "sap-icon://activities",
@@ -523,6 +526,7 @@ function buildNotificationDetailsTabs(){
 
            	                new sap.m.IconTabFilter( 'CAUSES',{
          	                   key:'Causes',
+         	                  text:'Causes',
          	                  tooltip: 'Causes',
          	                  icon: "sap-icon://cause",
             	                   content:[
@@ -554,7 +558,8 @@ function buildNotificationDetailsTabs(){
      									]          	                
          	                }),			
            	                new sap.m.IconTabFilter( 'EFFECTS',{
-          	                   key:'Effects',
+          	                   text:'Effects',
+          	                 key:'Effects',
           	                  tooltip: 'Effects',
           	                  icon: "sap-icon://list",
              	                   content:[
@@ -632,9 +637,9 @@ html5sql.process("SELECT * FROM MyActivities where notifno = '"+notifNo+"' ;",
 			while (n < rowsArray.length) {
 				if(rowsArray[n].item_id=="NEW"){
 					del=new sap.m.Button( {
-		       			 
+						type: 	sap.m.ButtonType.Reject,
 		       			 icon:"sap-icon://delete",
-		       			
+		       			type: 	sap.m.ButtonType.Reject,
 		       				 press: [ function(evt){
 		       					
 		       					deleteEntry(evt.getSource().getParent().getId());
@@ -674,7 +679,7 @@ html5sql.process("SELECT * FROM MyTasks where notifno = '"+notifNo+"' ;",
 			while (n < rowsArray.length) {
 				if(rowsArray[n].item_id=="NEW"){
 					del=new sap.m.Button( {
-		       			 
+						type: 	sap.m.ButtonType.Reject,
 		       			 icon:"sap-icon://delete",
 		       			
 		       				 press: [ function(evt){
@@ -718,7 +723,7 @@ html5sql.process("SELECT * FROM MyCauses where notifno = '"+notifNo+"' ;",
 			while (n < rowsArray.length) {
 				if(rowsArray[n].item_id=="NEW"){
 					del=new sap.m.Button( {
-		       			 
+						type: 	sap.m.ButtonType.Reject,
 		       			 icon:"sap-icon://delete",
 		       			
 		       				 press: [ function(evt){
@@ -757,7 +762,7 @@ html5sql.process("SELECT * FROM MyEffects where notifno = '"+notifNo+"' ;",
 			while (n < rowsArray.length) {
 				if(rowsArray[n].item_id=="NEW"){
 					del=new sap.m.Button( {
-		       			 
+						type: 	sap.m.ButtonType.Reject,
 		       			 icon:"sap-icon://delete",
 		       			
 		       				 press: [ function(evt){

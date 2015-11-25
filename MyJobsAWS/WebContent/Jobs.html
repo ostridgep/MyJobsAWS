@@ -13,6 +13,9 @@
 	
 </script>
 <style>
+.LargeFont {
+    font-size: 400%;
+}
 span.tool {
     position: relative;
     display: inline-block;
@@ -146,6 +149,7 @@ var CurrentJobFL=""
 var CurrentJobEQ=""
 var CurrentJobProfile=""
 var currentNotifNo="";
+var currentNotifId="";
 
 var currentOrderListItem="";
 var tabContents=[]
@@ -232,7 +236,7 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
               
          }
        
-       }).addStyleClass("sapUiSizeCompact");
+       })
 
 
 
@@ -266,6 +270,7 @@ function confirmAcceptStatus()
              contentWidth:"1em",
              buttons: [
                                          new sap.m.Button( {
+                                        	 type: 	sap.m.ButtonType.Accept,
                                              text: "Save",
                                              tap: [ function(oEvt) { 
                                                 
@@ -284,6 +289,7 @@ function confirmAcceptStatus()
                                          }),   
                                          new sap.m.Button( {
                                              text: "Cancel",
+                                             type: 	sap.m.ButtonType.Reject,
                                              tap: [ function(oEvt) {         
                                                         
                                                 formChangeStatusOnSite.close()} ]   
@@ -304,7 +310,7 @@ function confirmAcceptStatus()
                                                    new sap.m.Slider('StatusOnSiteTravelTimeControl',
                                                               {
                                                        value: 0,
-                                                       max:120,
+                                                       max:720,
                                                        min:0,
                                                        step:5,
                                                        change : function(){
@@ -335,7 +341,7 @@ function confirmAcceptStatus()
                            BuildChangeStatusOnSite()
                      },
                     contentWidth:"50%",
-                 	contentHeight: "30%",
+                 	contentHeight: "35%",
               })
        
        var formChangeStatusPark = new sap.m.Dialog("dlgStatusPark",{
@@ -345,6 +351,7 @@ function confirmAcceptStatus()
              buttons: [
                                          new sap.m.Button( {
                                              text: "Save",
+                                             type: 	sap.m.ButtonType.Accept,
                                              tap: [ function(oEvt) { 
                                                 
                                                 
@@ -366,6 +373,7 @@ function confirmAcceptStatus()
                                             
                                          }),   
                                          new sap.m.Button( {
+                                        	 type: 	sap.m.ButtonType.Reject,
                                              text: "Cancel",
                                              tap: [ function(oEvt) {         
                                             	
@@ -381,7 +389,7 @@ function confirmAcceptStatus()
                                                               new sap.m.Slider('StatusParkActualWorkControl',
                                                                            {
                                                                      value: 0,
-                                                                     max:120,
+                                                                     max:720,
                                                                      min:0,
                                                                      step:5,
                                                                      change : function(){
@@ -447,6 +455,7 @@ function confirmAcceptStatus()
              buttons: [
                                          new sap.m.Button( {
                                              text: "Save",
+                                             type: 	sap.m.ButtonType.Accept,
                                              tap: [ function(oEvt) { 
                                                 
                                             	 if((sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue()>0)&&
@@ -463,6 +472,7 @@ function confirmAcceptStatus()
                                          }),   
                                          new sap.m.Button( {
                                              text: "Cancel",
+                                             type: 	sap.m.ButtonType.Reject,
                                              tap: [ function(oEvt) {         
                                                         
                                                 formChangeStatusUpdate.close()} ]   
@@ -477,7 +487,7 @@ function confirmAcceptStatus()
                                                               new sap.m.Slider('StatusUpdateActualWorkControl',
                                                                            {
                                                                      value: 0,
-                                                                     max:120,
+                                                                     max:720,
                                                                      min:0,
                                                                      step:5,
                                                                      change : function(){
@@ -498,7 +508,7 @@ function confirmAcceptStatus()
                                                                      new sap.m.Slider('StatusUpdateRemainingWorkControl',
                                                                                   {
                                                                            value: 0,
-                                                                           max:120,
+                                                                           max:720,
                                                                            min:0,
                                                                            step:5,
                                                                            change : function(){
@@ -556,6 +566,7 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
              buttons: [
                                          new sap.m.Button( {
                                              text: "Save",
+                                             type: 	sap.m.ButtonType.Accept,
                                              tap: [ function(oEvt) { 
                                                 
                                                 
@@ -573,6 +584,7 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                                          }),   
                                          new sap.m.Button( {
                                              text: "Cancel",
+                                             type: 	sap.m.ButtonType.Reject,
                                              tap: [ function(oEvt) {         
                                                         
                                                 formChangeStatusReject.close()} ]   
@@ -1055,10 +1067,9 @@ var formOrdNotification = new sap.m.Dialog("dlgOrdNotification",{
             contentWidth:"95%",
             contentHeight: "85%",
       beforeOpen:function(){
-    	  //formOrdNotification.destroyContent();
-    	 
-    	  //formOrdNotification.addContent(buildNotificationDetails(),buildNotificationDetailsTabs())
-		  buildNotificationDetailsContent("Notif:"+currentNotifNo)
+
+    	  
+		  buildNotificationDetailsContent("Notif:"+currentNotifId)
 		  buildNotificationDetailsTabContent(currentNotifNo)
     	  selectedNotification=currentNotifNo
 
@@ -1507,6 +1518,7 @@ var detailFooter = new sap.m.Bar({
 										new sap.m.Button("saveData", {
 											 text: "Save",
 											 visible:false,
+											 type: 	sap.m.ButtonType.Accept,
 											 icon:"sap-icon://save",
 											 press: [ function(){
 												 saveTheData()
@@ -1647,6 +1659,7 @@ var historyList  = new sap.m.List("HistoryList",
       buttons: [
 					new sap.m.Button( {
 					    text: "Save",
+					    type: 	sap.m.ButtonType.Accept,
 					    tap: [ function(oEvt) {	
 					    	
 					    	
@@ -1661,6 +1674,7 @@ var historyList  = new sap.m.List("HistoryList",
 					}),   
 					new sap.m.Button( {
 					    text: "Cancel",
+					    type: 	sap.m.ButtonType.Reject,
 					    tap: [ function(oEvt) {		  
 							 
 					    	formTimeConf.close()} ]   
@@ -1708,7 +1722,7 @@ var historyList  = new sap.m.List("HistoryList",
 				                 new sap.m.Slider('DurationControl',
 				                		 {
 				                	value: 0,
-				                	max:120,
+				                	max:720,
 				                	min:0,
 				                	step:5,
 				                	change : function(){
@@ -1747,6 +1761,7 @@ var historyList  = new sap.m.List("HistoryList",
  
 						new sap.m.Button( {
 						    text: "Cancel",
+						    type: 	sap.m.ButtonType.Reject,
 						    tap: [ function(oEvt) {		  
 								 
 						    	formChangeStatus.close()} ]   
@@ -2150,7 +2165,16 @@ cnt = 0;
 
 
 }
+function buildDetails1(){
+	var detsHead=new sap.ui.core.HTML({  
+	      content: 
+	    	    [
+"<TABLE width='100%'><tr style='height:15px;'><TD colspan='3' align='left' ><h3 id='JobHead_Description'>This is the Job Description</h3></TD><TD colspan='2' align='Right' ><h2 id='JobHead_JobNo'>000111111-0010</h2></TD></TR><TR height='5em'><TD width='20%' align='left'>Start Date:</p></TD><TD width='20%' align='left'><p id='JobHead_StartDate'>11-11-2015 09:30:00</p></TD><TD width='20%' align='left'>End Date:</TD><TD width='20%' align='left'><p id='JobHead_EndDate'>11-11-2015 09:30:00</p></TD><TD width='20%'></TD></TR><tr style='height:15px;'><TD width='20%' align='left'>Site:</p></TD><TD width='20%' align='left'><p id='JobHead_Site'>Sitex</p></TD><TD width='20%'></TD><TD width='20%'></TD><TD width='20%'></TD></TR><tr style='height:15px;'><TD width='20%' align='left'>Address:</p></TD><TD colspan='4' align='left'><p id='JobHead_Address'>addr,addr,addr,addr</p></TD></TR><tr style='height:15px;'><TD width='20%' align='left'>FuncLoc:</p></TD><TD colspan='4' align='left'><p id='JobHead_FuncLoc'>JobHead_FuncLoc</p></TD></TR></TR><tr style='height:5px;'><TD width='20%' align='left'>Equipment:</p></TD><TD colspan='4' align='left'><p id='JobHead_Equipment'>JobHead_Equipment</p></TD></TR><tr style='height:5px;'><TD width='20%' align='left'>Notification:</p></TD><TD colspan='2' align='left'><p id='JobHead_NotifNo'>1234567</p></TD><TD colspan='2' align='right'><H2 id='JobHead_Status'>Status</H2></TD></TR>"
+  			]
 
+	});
+	return detsHead
+}
 
 function buildDetails(){
 
@@ -2275,7 +2299,7 @@ var surveyID;
 var jobicons=[]
 
 
-       SQLStatement="SELECT MyNotifications.pcode, MyNotifications.type as jobtype, refnotificationtypes.notifprofile,MyRefOrderTypes.description as JobDescription, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
+       SQLStatement="SELECT MyNotifications.pcode, MyNotifications.id as notifid, MyNotifications.type as jobtype, refnotificationtypes.notifprofile,MyRefOrderTypes.description as JobDescription, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
 	   SQLStatement+=" MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, "
 	   SQLStatement+=" MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext, "
 	   SQLStatement+=" MyOperations.shorttext as operationdesc , MyOrders.contact , MyJobDets.eworkcentre, MyJobDets.status_s,MyJobDets.site, MyJobDets.equipment_code, MyJobDets.equipment_desc,MyJobDets.equipment_gis, MyJobDets.funcloc_code, MyJobDets.funcloc_desc, MyJobDets.funcloc_gis, " 
@@ -2317,6 +2341,7 @@ html5sql.process(SQLStatement,
               if (rowsArray.length>0){
                      item=rowsArray[0];
                      currentNotifNo=rowsArray[0].notifno;
+                     currentNotifId=rowsArray[0].notifid
 					 if(rowsArray[0].notiftype==null){
 						JobType=' ';
 					 }else{
@@ -3923,6 +3948,7 @@ function rebuildTimeConfs()
 
 							contentLeft : [
 									new sap.m.Button("Add1", {
+										type: 	sap.m.ButtonType.Accept,
 					   					 text: "create",
 					  					 press: [ function(){
 					  						
@@ -4293,7 +4319,6 @@ function BuildChangeStatusUpdate(){
 	sap.ui.getCore().getElementById("StatusUpdateReasonText").setValue("")
 	sap.ui.getCore().getElementById("StatusUpdateReasonDetails").setValue("")
 
-alert("updf")
 
 		var SQLStatement="";
 		var FirstVal="";
@@ -4314,8 +4339,7 @@ alert("updf")
 					}
 					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
 							 function(transaction, results, rowsArray){
-								alert("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'"+rowsArray.length)
-								sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
+						 	sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
 								
 									for (var n = 0; n < rowsArray.length; n++) {
 										item = rowsArray[n];
@@ -4389,7 +4413,7 @@ function BuildCloseScreen(){
 		var HTMLToOutput="";
 			html5sql.process(SQLStatement,
 			 function(transaction, results, rowsArray){
-				alert(SQLStatement+":"+rowsArray.length)
+				
 				sap.ui.getCore().getElementById("Close_ProblemGroup").destroyItems();
 				sap.ui.getCore().getElementById("Close_ProblemCode").destroyItems();
 					for (var n = 0; n < rowsArray.length; n++) {
@@ -4403,7 +4427,7 @@ function BuildCloseScreen(){
 					SQLStatement="select * from refpaicodes where catalogue = 'R' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
 					html5sql.process(SQLStatement,
 							 function(transaction, results, rowsArray){
-						alert(SQLStatement+":"+rowsArray.length)
+						
 								sap.ui.getCore().getElementById("Close_ActionGroup").destroyItems();
 								sap.ui.getCore().getElementById("Close_ActionCode").destroyItems();
 									for (var n = 0; n < rowsArray.length; n++) {
@@ -4418,7 +4442,7 @@ function BuildCloseScreen(){
 									SQLStatement="select * from refpaicodes where catalogue = 'S' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
 									html5sql.process(SQLStatement,
 											 function(transaction, results, rowsArray){
-										alert(SQLStatement+":"+rowsArray.length)
+										
 												sap.ui.getCore().getElementById("Close_ImpactGroup").destroyItems();
 												sap.ui.getCore().getElementById("Close_ImpactCode").destroyItems();
 													for (var n = 0; n < rowsArray.length; n++) {
@@ -4554,12 +4578,7 @@ function showMessage(msg){
 		autoClose: true,
 
 	});
-/* 	  sap.m.MessageBox.show(msg, {
-		         icon: sap.m.MessageBox.Icon.ERROR ,
-		         title: "System Message",
-		         //actions: [sap.m.MessageBox.Action.RETRY]
-		       }
-		     ); */
+
 }
 
 

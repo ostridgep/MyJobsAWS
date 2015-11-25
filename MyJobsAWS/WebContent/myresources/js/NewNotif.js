@@ -21,6 +21,7 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
     buttons: [
 					new sap.m.Button( {
 					    text: "Save",
+					    type: 	sap.m.ButtonType.Accept,
 					    tap: [ function(oEvt) {	
 					    	var xntype=sap.ui.getCore().byId("NewType").getSelectedItem().getKey().split("|")
 					    	var xgroup=sap.ui.getCore().byId("NewGroup").getSelectedItem().getKey().split("|")
@@ -45,6 +46,7 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 					}),   
 					new sap.m.Button( {
 					    text: "Cancel",
+					    type: 	sap.m.ButtonType.Reject,
 					    tap: [ function(oEvt) {		  
 							 
 					    	formNewNotif.close()} ]   

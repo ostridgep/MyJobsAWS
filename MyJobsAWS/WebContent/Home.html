@@ -88,6 +88,7 @@ var formEndOfDay = new sap.m.Dialog("dlgEndOfDay",{
     buttons: [
                                 new sap.m.Button( {
                                     text: "Save",
+                                    type: 	sap.m.ButtonType.Accept,
                                     tap: [ function(oEvt) { 
                                        
 										
@@ -99,6 +100,7 @@ var formEndOfDay = new sap.m.Dialog("dlgEndOfDay",{
                                 }),   
                                 new sap.m.Button( {
                                     text: "Cancel",
+                                    type: 	sap.m.ButtonType.Reject,
                                     tap: [ function(oEvt) {         
                                                
                                     	formEndOfDay.close()} ]   
@@ -716,12 +718,7 @@ function showMessage(msg){
 		autoClose: true,
 
 	});
-/* 	  sap.m.MessageBox.show(msg, {
-		         icon: sap.m.MessageBox.Icon.ERROR ,
-		         title: "System Message",
-		         //actions: [sap.m.MessageBox.Action.RETRY]
-		       }
-		     ); */
+
 }
 
 var tileContainer = new sap.m.TileContainer({
