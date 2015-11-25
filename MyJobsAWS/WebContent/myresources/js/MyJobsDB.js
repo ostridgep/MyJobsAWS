@@ -1800,7 +1800,7 @@ function requestDEMOData(page){
 				
 			}
 			if(page=='MyJobsNotifications.json'){
-				alert("Loading Notifications")
+				
 				notificationCB(data);
 			
 			}
@@ -2196,7 +2196,7 @@ function notificationCB(MyNotifications){
 var sqlstatement;
 var notiftype=""
 opMessage("Callback Notifications triggured");
-alert("Loading Notifications:"+MyNotifications.notification.length)
+
 
 	if(MyNotifications.notification.length>0){
 			if(syncTransactionalDetsUpdated){
@@ -2232,7 +2232,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 					notiftype=MyNotifications.notification[cntx].sortfield;
 				}*/
 				sqlstatement1=''
-				sqlstatement1='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment, orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
+				sqlstatement1='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment,orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
 					'"'+MyNotifications.notification[cntx].notifno +'",'+
 					'"'+MyNotifications.notification[cntx].changed_by+'",'+ 
 					'"'+MyNotifications.notification[cntx].changed_date +MyNotifications.notification[cntx].changed_time +'",'+ 
@@ -2368,7 +2368,7 @@ alert("Loading Notifications:"+MyNotifications.notification.length)
 						
 
 				}
-			alert(sqlstatement)
+			
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
 								var x = window.location.href.split("/")
