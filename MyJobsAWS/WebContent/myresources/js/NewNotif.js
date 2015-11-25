@@ -386,7 +386,7 @@ function BuildPriorities(selectedId){
 		       }).addStyleClass("sapUiSizeCompact");
 		$.ajax({
 		    type: "GET",
-		    url: "TestData/T2_MPLT_ESVN.xml",
+		    url: "TestData/T2_MPLT_ESVN.XML",
 		    dataType: "xml",
 		    success: function (xml) {    
 		       xmlDoc=xml 
