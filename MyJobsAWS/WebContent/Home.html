@@ -16,7 +16,7 @@
 <script src="myresources/js/bgsync.js"></script>
 <script src="myresources/js/MyJobsDB.js"></script>
 <script src="myresources/js/MyJobsUtils.js"></script>
-
+<script src="myresources/js/NewNotif.js"></script>
 <script type="text/javascript">
 var MenuBar=["My AnglianWater","Vehicles","End of Day", "Jobs", "Reference Documents", "MC Web", "Office", "Assets", "Material"]
 var MenuBarType=["U","C","C", "M", "M", "U", "M", "M", "U"]
@@ -80,6 +80,64 @@ function addLogToDisplay(type, dt, message) {
 function loadPinCodeValues(){
 	sap.ui.getCore().getElementById('PinCode').setValue(localStorage.getItem('PinCode'))	
 }
+var formEndOfDay = new sap.m.Dialog("dlgEndOfDay",{
+    title:"Day End Travel",
+    modal: true,
+    contentWidth:"1em",
+    buttons: [
+                                new sap.m.Button( {
+                                    text: "Save",
+                                    tap: [ function(oEvt) { 
+                                       
+										
+                                       	
+                                    	formEndOfDay.close()
+                                              
+                                                } ]
+                                   
+                                }),   
+                                new sap.m.Button( {
+                                    text: "Cancel",
+                                    tap: [ function(oEvt) {         
+                                               
+                                    	formEndOfDay.close()} ]   
+                                })
+                                ],                                
+    content:[
+                   new sap.ui.layout.form.SimpleForm({
+                         minWidth : 1024,
+                         maxContainerCols : 2,
+                         content : [
+                                                     new sap.m.Label({text:"Work Completion Date/Time"}),
+                                                     new sap.m.DateTimeInput('EndOfDayWorkTime',{
+                     									width : "99%",
+                     									type : "DateTime",
+                     									displayFormat : "yyyy/MM/dd hh:mm",
+                     									dateValue : new Date()
+                     								}),
+                                                     new sap.m.Label({text:"Home Arrival Date/Time"}),
+                                                      new sap.m.DateTimeInput('EndOfDayHomeTime',{
+                      									width : "99%",
+                      									type : "DateTime",
+                      									displayFormat : "yyyy/MM/dd hh:mm",
+                      									dateValue : new Date()
+                      								}),
+                                       
+                                                     
+                                                     
+                                           
+                                              ]
+                                })
+
+            ],
+            beforeOpen:function(){
+
+                
+            },
+           contentWidth:"30%",
+        	contentHeight: "30%",
+     })
+
 var formPinCode = new sap.m.Dialog("dlgPinCode",{
     title:"Set Login Pincode & Vehicle Reg",
     modal: true,
@@ -578,7 +636,7 @@ function loadSettings(){
 function setCounts()
 {
 	 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
-	html5sql.process("SELECT * FROM MyOperations left join myoperationssplit on myoperations.orderno = myoperationssplit.orderno and myoperations.opno = myoperationssplit.opno where myoperationssplit.assignedto ='"+EmployeeID+"'",
+	html5sql.process("SELECT * FROM myjobdets",
 	 function(transaction, results, rowsArray){
 			sap.ui.getCore().byId("JobsCnt").setNumber(rowsArray.length);
 			
@@ -587,7 +645,7 @@ function setCounts()
 			 function(transaction, results, rowsArray){
 				
 				sap.ui.getCore().byId("NotifsCnt").setNumber(rowsArray.length);
-				html5sql.process("SELECT * FROM MyMessages  where msgfromid <> 'SENTMSG' and type <> 'MYJOBSSYSMSG' and state !='1'",
+/* 				html5sql.process("SELECT * FROM MyMessages  where msgfromid <> 'SENTMSG' and type <> 'MYJOBSSYSMSG' and state !='1'",
 						 
 						 function(transaction, results, rowsArray){
 							
@@ -610,7 +668,7 @@ function setCounts()
 						 },
 						 function(error, statement){
 								alert("err"+error)
-						 });      
+						 });  */     
 
 				
 			 },
@@ -678,7 +736,7 @@ var tileContainer = new sap.m.TileContainer({
 			press:[ function(){window.location.href="Notifications.html"}]
 		
 		}),
-		new sap.m.StandardTile('Team',
+/* 		new sap.m.StandardTile('Team',
 				{
 			
 			title:"My Team",
@@ -694,7 +752,7 @@ var tileContainer = new sap.m.TileContainer({
 			number:'0',
 			press:[ function(){window.location.href="Timesheets.html"}]
 		
-		})
+		}) */
 		]
 		
 });
@@ -746,6 +804,8 @@ function MenuPressed(id){
 					}else if(rowsArray[0].type=='C'){
 						if (rowsArray[0].command=="VehicleCheckViewModel"){
 							window.location.href="VehicleCheck.html"
+						}else if (rowsArray[0].command=='DayEndTravelViewModel'){
+							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
 						}
@@ -784,8 +844,11 @@ function SubMenuPressed(id){
 						selectedWebPage=rowsArray[0].command
 						window.open(selectedWebPage)
 					}else if(rowsArray[0].type=='C'){
+						
 						if (rowsArray[0].command=='RaiseNewJobViewModel'){
-							alert("Not Implemented")
+							formNewNotif.open()
+						}else if (rowsArray[0].command=='DayEndTravelViewModel'){
+							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
 						}
@@ -871,7 +934,7 @@ var page  = new sap.m.Page('homePage',{
       			 })]
 			}),
     content: [tileContainer,new sap.m.Label({text:"xxxxx"})],enableScrolling:false,showNavButton: "{device>/isPhone}" });
-
+BuildNotificationTypes()
 var app = new sap.m.App();
 
 app.setInitialPage(page.getId());	
@@ -936,6 +999,16 @@ $(function() {
 	showSystemMessage()
 	
 })
+jQuery.sap.require("sap.m.MessageBox");
+function DisplayErrorMessage(msgtitle,msgbody){
+sap.m.MessageBox.show(
+    msgbody, {
+        icon: sap.m.MessageBox.Icon.ERROR,
+        title: msgtitle,
+        actions: [sap.m.MessageBox.Action.OK]
+    }
+  );   
+}
 </Script>
 </body>
 </html>

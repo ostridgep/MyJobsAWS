@@ -359,16 +359,18 @@ function buildNotificationDetailsContent(aid){
 var res = aid.split(":")
 var notifno=res[1];
 selectedNotification=notifno;
+
 var StatusState="";
 var StatusIcon="";
-SQLStatement="SELECT * from MyNotifications where notifno = '"+notifno+"'"
+SQLStatement="SELECT * from MyNotifications where id = '"+notifno+"'"
 
 html5sql.process(SQLStatement,
 	 function(transaction, results, rowsArray){
 
 		 if (rowsArray.length>0){
 			 
-			 
+			 selectedNotification=rowsArray[0].notifno;
+
 			 sap.ui.getCore().getElementById('notificationHEADER').setTitle(rowsArray[0].shorttext)
 			 sap.ui.getCore().getElementById('notificationHEADER').setNumber(rowsArray[0].notifno)
 			 sap.ui.getCore().getElementById('notificationHEADER').setNumberUnit(rowsArray[0].type)

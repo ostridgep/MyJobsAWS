@@ -2221,17 +2221,17 @@ opMessage("Callback Notifications triggured");
 				);		
 			opMessage("Loading "+MyNotifications.notification.length+" Notifications");
 			sqlstatement='';	
-
+			
 			for(var cntx=0; cntx < MyNotifications.notification.length ; cntx++)
 				{
 		
-				if(MyNotifications.notification[cntx].sortfield.length==0){
+				/*if(MyNotifications.notification[cntx].sortfield.length==0){
 					notiftype=MyNotifications.notification[cntx].type;
 				}else{
 					notiftype=MyNotifications.notification[cntx].sortfield;
-				}
-				
-				sqlstatement+='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment, orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
+				}*/
+				sqlstatement1=''
+				sqlstatement1='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment, orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
 					'"'+MyNotifications.notification[cntx].notifno +'",'+
 					'"'+MyNotifications.notification[cntx].changed_by+'",'+ 
 					'"'+MyNotifications.notification[cntx].changed_date +MyNotifications.notification[cntx].changed_time +'",'+ 
@@ -2261,7 +2261,7 @@ opMessage("Callback Notifications triggured");
 					for(var tcnt=0; tcnt < MyNotifications.notification[cntx].task.length ; tcnt++)
 						{	
 
-						sqlstatement+='INSERT INTO MyTasks (notifno , item_id , task_text , task_cat_typ , task_codegrp , task_code , txt_taskgrp ,txt_taskcd , plnd_start_date , plnd_start_time, plnd_end_date, plnd_end_time, sla_end_date, sla_end_time, longtext, complete, status) VALUES ( '+  
+						sqlstatement1+='INSERT INTO MyTasks (notifno , item_id , task_text , task_cat_typ , task_codegrp , task_code , txt_taskgrp ,txt_taskcd , plnd_start_date , plnd_start_time, plnd_end_date, plnd_end_time, sla_end_date, sla_end_time, longtext, complete, status) VALUES ( '+  
 							'"'+MyNotifications.notification[cntx].notifno +'",'+
 							 '"'+MyNotifications.notification[cntx].task[tcnt].id +'",'+
 							 '"'+MyNotifications.notification[cntx].task[tcnt].task_text +'",'+
@@ -2286,7 +2286,7 @@ opMessage("Callback Notifications triggured");
 					for(var ecnt=0; ecnt < MyNotifications.notification[cntx].effect.length ; ecnt++)
 						{	
 
-						sqlstatement+='INSERT INTO MyEffects (notifno , item_id , task_id, effect_cat_typ , effect_codegrp , effect_code , txt_effectgrp ,txt_effectcd , value) VALUES (  '+
+						sqlstatement1+='INSERT INTO MyEffects (notifno , item_id , task_id, effect_cat_typ , effect_codegrp , effect_code , txt_effectgrp ,txt_effectcd , value) VALUES (  '+
 							 '"'+MyNotifications.notification[cntx].notifno+'",'+
 							 '"'+MyNotifications.notification[cntx].effect[ecnt].id+'",'+
 							 '"'+MyNotifications.notification[cntx].effect[ecnt].task+'",'+
@@ -2302,7 +2302,7 @@ opMessage("Callback Notifications triggured");
 					for(var icnt=0; icnt < MyNotifications.notification[cntx].item.length ; icnt++)
 						{	
 				
-						sqlstatement+='INSERT INTO MyItems (notifno , item_id , descript , d_cat_typ , d_codegrp , d_code , dl_cat_typ , dl_codegrp , dl_code , stxt_grpcd , txt_probcd , txt_grpcd, txt_objptcd,  status, long_text) VALUES  (  '+
+						sqlstatement1+='INSERT INTO MyItems (notifno , item_id , descript , d_cat_typ , d_codegrp , d_code , dl_cat_typ , dl_codegrp , dl_code , stxt_grpcd , txt_probcd , txt_grpcd, txt_objptcd,  status, long_text) VALUES  (  '+
 							 '"'+MyNotifications.notification[cntx].notifno +'",'+
 							 '"'+MyNotifications.notification[cntx].item[icnt].id+'",'+ 
 							 '"'+MyNotifications.notification[cntx].item[icnt].description+'",'+
@@ -2325,7 +2325,7 @@ opMessage("Callback Notifications triggured");
 					for(var ccnt=0; ccnt < MyNotifications.notification[cntx].cause.length ; ccnt++)
 						{	
 
-						sqlstatement+='INSERT INTO MyCauses (notifno , item_id , cause_id, cause_text , cause_cat_typ , cause_codegrp , cause_code , txt_causegrp , txt_causecd ,  status, long_text) VALUES ( '+ 
+						sqlstatement1+='INSERT INTO MyCauses (notifno , item_id , cause_id, cause_text , cause_cat_typ , cause_codegrp , cause_code , txt_causegrp , txt_causecd ,  status, long_text) VALUES ( '+ 
 							  '"'+MyNotifications.notification[cntx].notifno+'",'+
 							  '"'+MyNotifications.notification[cntx].cause[ccnt].id+'",'+
 							  '"'+MyNotifications.notification[cntx].cause[ccnt].cause_key+'",'+
@@ -2342,7 +2342,7 @@ opMessage("Callback Notifications triggured");
 					for(var acnt=0; acnt < MyNotifications.notification[cntx].activity.length ; acnt++)
 						{	
 
-						sqlstatement+='INSERT INTO MyActivities (notifno , item_id , task_id, act_text , act_cat_typ , act_codegrp , act_code ,txt_actgrp, txt_actcd ,start_date , start_time , end_date , end_time,   status, act_id, long_text) VALUES ( '+ 
+						sqlstatement1+='INSERT INTO MyActivities (notifno , item_id , task_id, act_text , act_cat_typ , act_codegrp , act_code ,txt_actgrp, txt_actcd ,start_date , start_time , end_date , end_time,   status, act_id, long_text) VALUES ( '+ 
 							  '"'+MyNotifications.notification[cntx].notifno+'",'+
 							  '"'+MyNotifications.notification[cntx].activity[acnt].id+'",'+ 
 							  '"'+MyNotifications.notification[cntx].activity[acnt].act_key+'",'+ 
@@ -2358,6 +2358,12 @@ opMessage("Callback Notifications triggured");
 							  '"'+MyNotifications.notification[cntx].activity[acnt].end_time+  '","S","","");';
 						}
 						
+					if((MyNotifications.notification[cntx].notifno=="null")	||
+							(MyNotifications.notification[cntx].notifno.length<4)){
+						sqlstatement1=""
+					}else{
+						sqlstatement+=sqlstatement1;
+					}
 						
 
 				}
