@@ -2372,10 +2372,10 @@ opMessage("Callback Notifications triggured");
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
 				alert("Good")
-								var x = window.location.href.split("/")
+								/*var x = window.location.href.split("/")
 								if(x[x.length-1]=="Home.html"){
 									setCounts()
-								}
+								}*/
 								
 /*								html5sql.process("select * from MyNotifications",
 												 function(transaction, results, rowsArray){
