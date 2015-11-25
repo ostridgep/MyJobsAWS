@@ -2057,7 +2057,7 @@ html5sql.process(SQLStatement,
 						   var iconsToDisplay=''
 						   for (var n=0;n <jobicons.length;n++)
 						   {
-								iconsToDisplay+='<img src="images/'+jobicons[n]+'" title="'+jobtooltip[n]+'" >'
+								iconsToDisplay+='<img src="images/'+jobicons[n]+'" title="'+jobtooltip[n]+'" onclick="showMessage(\''+jobtooltip[n]+'\')">'
 						   }
 						   if(priorityIcon.length>2){
 						   		priorityiconsToDisplay='<img src="images/'+item.priorityicon_filename+'" alt="'+item.priorityicon_description+'" >'
