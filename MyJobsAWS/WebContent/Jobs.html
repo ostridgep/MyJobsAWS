@@ -12,7 +12,39 @@
 	data-sap-ui-theme="sap_bluecrystal">
 	
 </script>
-
+<style>
+span.tool {
+    position: relative;
+    display: inline-block;
+    
+    
+}
+span.tool:hover {
+    cursor: help;
+}
+span.tip {
+    position: absolute;
+    bottom: 20px;
+    left: 0px;
+    display: block;
+    width: auto;
+    white-space: nowrap;
+    font-size: .9em;
+    border: 0px solid black; /* change as desired */
+    border-radius: 6px;
+    padding: 1px 5px;
+    background: #eee;
+    background: linear-gradient(top, #eee, #ccc);
+    background: -moz-linear-gradient(top, #eee, #ccc);
+    background: -o-linear-gradient(top, #eee, #ccc);
+    background: -webkit-linear-gradient(top, #eee, #ccc);
+    background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ccc));
+    background: -ms-linear-gradient(top, #eee, #ccc);
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#eeeeee,EndColorStr=#cccccc);
+    zoom: 1;
+    visibility: hidden;
+}
+</style>
 <script src="myresources/js/jscoord-1.1.1.js"></script> 
 <script src="myresources/js/html5sql.js"></script>  
 <script src="myresources/js/bgsync.js"></script>
@@ -205,6 +237,29 @@ var formDG5 = new sap.m.Dialog("dlgDG5",{
 
 
 
+function confirmAcceptStatus()
+{
+                   sap.m.MessageBox.show(
+                		      "Are you sure?.", {
+                		          icon: sap.m.MessageBox.Icon.INFORMATION,
+                		          title: "Accept the job",
+                		          actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                		          onClose: function(oAction) { 
+                		        	  if (oAction ==sap.m.MessageBox.Action.YES){
+                		        		  d=getDate()
+				                    		t=getTime()
+				                    		statusUpdateDate=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8)
+				                    		statusUpdateTime=	t.substring(0,2)+":"+t.substring(2,4)+":"+t.substring(4,6)
+							   				changeStatus("ACPT")
+                                     		
+                                          prepareChangeStatus()
+                		        	  }
+                		        		  
+                		        		 
+								}
+                		      }
+                		    );   
+                   }
        var formChangeStatusOnSite = new sap.m.Dialog("dlgStatusOnSite",{
              title:"Set On Site",
              modal: true,
@@ -1343,12 +1398,8 @@ var detailFooterAWS = new sap.m.Bar({
 							    		icon: 	sap.ui.core.IconPool.getIconURI("accept"),
 							    		type: 	sap.m.ButtonType.Accept,
 							   			tap: 	[ function(oEvt) {	
-				                    	 	d=getDate()
-				                    		t=getTime()
-				                    		statusUpdateDate=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8)
-				                    		statusUpdateTime=	t.substring(0,2)+":"+t.substring(2,4)+":"+t.substring(4,6)
-							   				changeStatus("ACPT")
-							   						
+							   				confirmAcceptStatus()
+							   					
 							    					} 
 							   			 		]   
 										}
@@ -2057,10 +2108,10 @@ html5sql.process(SQLStatement,
 						   var iconsToDisplay=''
 						   for (var n=0;n <jobicons.length;n++)
 						   {
-								iconsToDisplay+='<img src="images/'+jobicons[n]+'" title="'+jobtooltip[n]+'" onclick="showMessage(\''+jobtooltip[n]+'\')">'
+								iconsToDisplay+='<img src="images/'+jobicons[n]+'" onclick="showMessage(\''+jobtooltip[n]+'\')">'
 						   }
 						   if(priorityIcon.length>2){
-						   		priorityiconsToDisplay='<img src="images/'+item.priorityicon_filename+'" alt="'+item.priorityicon_description+'" >'
+						   		priorityiconsToDisplay='<img src="images/'+item.priorityicon_filename+'" onclick="showMessage(\''+item.priorityicon_description+'\')">'
 						   }else{
 							   priorityiconsToDisplay=""
 						   }
@@ -3233,6 +3284,7 @@ formtab=null;
 
 
        	                new sap.m.IconTabFilter( 'LONGTEXT',{
+       	                	text:'LongText',
     	                   key:'LongText',
     	                   tooltip: 'Long Text',
     	                   icon: "sap-icon://document-text",
@@ -3242,6 +3294,7 @@ formtab=null;
     	                }),
     	                formtab,      	                
     	                new sap.m.IconTabFilter( 'OBJECTS',{
+    	                	text:'Assets',
     	                    key:'Assets',
     	                    tooltip: 'Assets',
     	                    icon: "sap-icon://machine",
@@ -3270,6 +3323,7 @@ formtab=null;
     	                					           	  
     	                				    }),					    
        	                new sap.m.IconTabFilter( 'PARTNERS',{
+       	                	text:'Partners',
         	                   key:'Partners',
         	                   tooltip: 'Partners',
         	                   icon: "sap-icon://customer-and-contacts",
@@ -3292,6 +3346,7 @@ formtab=null;
     									]          	                
         	                }),
            	                new sap.m.IconTabFilter( 'MATERIALS',{
+           	                	text:'Materials',
          	                   key:'Materials',
          	                   tooltip: 'Materials',
          	                   icon: "sap-icon://energy-saving-lightbulb",
@@ -3321,6 +3376,7 @@ formtab=null;
      									]          	                
          	                }),
            	                new sap.m.IconTabFilter( 'TCONF',{
+           	                	text:'Time',
          	                   key:'TConf',
          	                  tooltip: 'Time Confirmations',
          	                  icon: "sap-icon://time-entry-request",
@@ -3901,17 +3957,21 @@ function rebuildTimeConfs()
 	}
 
 	oSplitApp.placeAt("body");
-	//selectListDefault();
+	oSplitApp.onAfterRendering = function() {  
+		
+		selectListDefault() 
+		
+
+        }  
+	
 </script>
 </head>
 <body id="body" class="sapUiBody">
 <script>
 $(function() {
 	
-	oSplitApp.onAfterRendering = function() {  
-		selectListDefault() 
-        }  
-		
+	
+	
 	BuildNotificationTypes()
 	BuildTCEmployees()
 	
@@ -4227,13 +4287,13 @@ function BuildChangeStatusPark(){
 
 function BuildChangeStatusUpdate(){
 	sap.ui.getCore().getElementById("StatusUpdateActualWork").setValue("0")
-		sap.ui.getCore().getElementById("StatusUpdateActualWorkControl").setValue(0)
+	sap.ui.getCore().getElementById("StatusUpdateActualWorkControl").setValue(0)
 	sap.ui.getCore().getElementById("StatusUpdateRemainingWork").setValue("0")
 	sap.ui.getCore().getElementById("StatusUpdateRemainingWorkControl").setValue(0)
 	sap.ui.getCore().getElementById("StatusUpdateReasonText").setValue("")
 	sap.ui.getCore().getElementById("StatusUpdateReasonDetails").setValue("")
 
-
+alert("updf")
 
 		var SQLStatement="";
 		var FirstVal="";
@@ -4254,12 +4314,12 @@ function BuildChangeStatusUpdate(){
 					}
 					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
 							 function(transaction, results, rowsArray){
-								
+								alert("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'"+rowsArray.length)
 								sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
 								
 									for (var n = 0; n < rowsArray.length; n++) {
 										item = rowsArray[n];
-										sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
+										sap.ui.getCore().getElementById("StatusUpdateVarianceCode").addItem(
 												new sap.ui.core.Item({
 													key: item.dev_reason,
 													text: item.dev_reas_txt
@@ -4313,82 +4373,13 @@ function BuildChangeStatusReject(){
 			 
 
 		}
-function BuildChangeStatusUpdate(){
-	sap.ui.getCore().getElementById("StatusUpdateActualWork").setValue("0")
-		sap.ui.getCore().getElementById("StatusUpdateActualWorkControl").setValue(0)
-	sap.ui.getCore().getElementById("StatusUpdateRemainingWork").setValue("0")
-	sap.ui.getCore().getElementById("StatusUpdateRemainingWorkControl").setValue(0)
-	sap.ui.getCore().getElementById("StatusUpdateReasonText").setValue("")
-	sap.ui.getCore().getElementById("StatusUpdateReasonDetails").setValue("")
 
-
-
-		var SQLStatement="";
-		var FirstVal="";
-		SQLStatement="select * from refactivity where action = 'P'  and  work_center = '"+CurrentJobWorkCentre+"'"
-		var HTMLToOutput="";
-			html5sql.process(SQLStatement,
-			 function(transaction, results, rowsArray){
-				
-				sap.ui.getCore().getElementById("StatusUpdateActivityCode").destroyItems();
-				
-					for (var n = 0; n < rowsArray.length; n++) {
-						item = rowsArray[n];
-						sap.ui.getCore().getElementById("StatusUpdateActivityCode").addItem(
-								new sap.ui.core.Item({
-									key: item.activity,
-									text: item.activity_desc
-								}))
-					}
-					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
-							 function(transaction, results, rowsArray){
-								
-								sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
-								
-									for (var n = 0; n < rowsArray.length; n++) {
-										item = rowsArray[n];
-										sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
-												new sap.ui.core.Item({
-													key: item.dev_reason,
-													text: item.dev_reas_txt
-												}))
-									}
-								
-									
-							 },
-							 function(error, statement){
-								
-							 }        
-							)
-					
-			 },
-			 function(error, statement){
-				
-			 }        
-			);
-
-		}
 function BuildCloseScreen(){
 	sap.ui.getCore().getElementById("Close_FunctionalLocation").setValue(CurrentJobFL)
 	sap.ui.getCore().getElementById("Close_Equipment").setValue(CurrentJobEQ)
 	sap.ui.getCore().getElementById("Close_LongText").setValue("")
 
-if (CurrentJobProfile==null){
-	/* sap.ui.getCore().getElementById("Close_ProblemGroup").disabled=true
-	sap.ui.getCore().getElementById("Close_ProblemCode").disabled=true
-	sap.ui.getCore().getElementById("Close_ActionGroup").disabled=true
-	sap.ui.getCore().getElementById("Close_ActionCode").disabled=true
-	sap.ui.getCore().getElementById("Close_ImpactGroup").disabled=true
-	sap.ui.getCore().getElementById("Close_ImpactCode").disabled=true */
-	return
-}else{
-/* 	sap.ui.getCore().getElementById("Close_ProblemGroup").disabled=false
-	sap.ui.getCore().getElementById("Close_ProblemCode").disabled=false
-	sap.ui.getCore().getElementById("Close_ActionGroup").disabled=false
-	sap.ui.getCore().getElementById("Close_ActionCode").disabled=false
-	sap.ui.getCore().getElementById("Close_ImpactGroup").disabled=false
-	sap.ui.getCore().getElementById("Close_ImpactCode").disabled=false */
-}
+
 
 
 		var SQLStatement="";
@@ -4398,7 +4389,7 @@ if (CurrentJobProfile==null){
 		var HTMLToOutput="";
 			html5sql.process(SQLStatement,
 			 function(transaction, results, rowsArray){
-				
+				alert(SQLStatement+":"+rowsArray.length)
 				sap.ui.getCore().getElementById("Close_ProblemGroup").destroyItems();
 				sap.ui.getCore().getElementById("Close_ProblemCode").destroyItems();
 					for (var n = 0; n < rowsArray.length; n++) {
@@ -4412,7 +4403,7 @@ if (CurrentJobProfile==null){
 					SQLStatement="select * from refpaicodes where catalogue = 'R' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
 					html5sql.process(SQLStatement,
 							 function(transaction, results, rowsArray){
-								
+						alert(SQLStatement+":"+rowsArray.length)
 								sap.ui.getCore().getElementById("Close_ActionGroup").destroyItems();
 								sap.ui.getCore().getElementById("Close_ActionCode").destroyItems();
 									for (var n = 0; n < rowsArray.length; n++) {
@@ -4427,7 +4418,7 @@ if (CurrentJobProfile==null){
 									SQLStatement="select * from refpaicodes where catalogue = 'S' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
 									html5sql.process(SQLStatement,
 											 function(transaction, results, rowsArray){
-												
+										alert(SQLStatement+":"+rowsArray.length)
 												sap.ui.getCore().getElementById("Close_ImpactGroup").destroyItems();
 												sap.ui.getCore().getElementById("Close_ImpactCode").destroyItems();
 													for (var n = 0; n < rowsArray.length; n++) {
@@ -4554,11 +4545,29 @@ sap.m.MessageBox.show(
     }
   );   
 }
+function showMessage(msg){
+	sap.m.MessageToast.show(msg, {
+		duration: Number(500),
+		
+		my: "center center",
+		at: "center center",		
+		autoClose: true,
 
-
+	});
+/* 	  sap.m.MessageBox.show(msg, {
+		         icon: sap.m.MessageBox.Icon.ERROR ,
+		         title: "System Message",
+		         //actions: [sap.m.MessageBox.Action.RETRY]
+		       }
+		     ); */
+}
 
 
 
 </script>
 </body>
+<script>
+
+
+</script>
 </html>
