@@ -2231,7 +2231,7 @@ opMessage("Callback Notifications triggured");
 				}else{
 					notiftype=MyNotifications.notification[cntx].sortfield;
 				}*/
-				sqlstatement1=''
+				
 				sqlstatement1='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment,orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
 					'"'+MyNotifications.notification[cntx].notifno +'",'+
 					'"'+MyNotifications.notification[cntx].changed_by+'",'+ 
@@ -2371,7 +2371,7 @@ opMessage("Callback Notifications triggured");
 			
 			html5sql.process(sqlstatement,
 							 function(transaction, results, rowsArray){
-								setCounts()
+								//setCounts()
 								/*var x = window.location.href.split("/")
 								if(x[x.length-1]=="Home.html"){
 									
