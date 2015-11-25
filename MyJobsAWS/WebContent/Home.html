@@ -636,12 +636,12 @@ function loadSettings(){
 function setCounts()
 {
 	 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
-	html5sql.process("SELECT * FROM myjobdets",
+	html5sql.process("SELECT * FROM myjobdets;",
 	 function(transaction, results, rowsArray){
-		alert(rowsArray.length)
+		  
 			sap.ui.getCore().byId("JobsCnt").setNumber(rowsArray.length);
 			
-			html5sql.process("SELECT * FROM MyNotifications",
+			html5sql.process("SELECT * FROM MyNotifications;",
 			 
 			 function(transaction, results, rowsArray){
 				
@@ -949,7 +949,7 @@ page.placeAt("body");
 <body id="body" class="sapUiBody">
 
 <Script>
-
+setCounts();
 
 function startBGSync()
 {
@@ -993,7 +993,7 @@ $(function() {
 
 
     		
-    		setCounts();
+    		
 	
 	
 	startBGSync()
@@ -1010,6 +1010,7 @@ sap.m.MessageBox.show(
     }
   );   
 }
+
 </Script>
 </body>
 </html>
