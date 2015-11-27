@@ -1349,7 +1349,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS FuncLocs			  	( id integer primary key autoincrement, flid TEXT, description TEXT, swerk TEXT, level TEXT, parentid TEXT, children TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS Equipments			  	( id integer primary key autoincrement, eqid TEXT, description TEXT, flid TEXT);'+
 					'CREATE TABLE IF NOT EXISTS MyMenuBar 		        ( id integer primary key autoincrement, scenario TEXT, level TEXT, item TEXT, position TEXT, type TEXT,  subitem TEXT, command TEXT, item2 TEXT);'+	
-					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT, acpt_date TEXT, acpt_time TEXT, onsite_date TEXT, onsite_time TEXT,park_date TEXT, park_time TEXT, status TEXT, status_l TEXT, status_s TEXT);'+	
+					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT, acpt_date TEXT, acpt_time TEXT, onsite_date TEXT, onsite_time TEXT,park_date TEXT, park_time TEXT, status TEXT, status_l TEXT, status_s TEXT, notif_cat_profile TEXT);'+	
 						
 					 'CREATE TABLE IF NOT EXISTS TSActivities		    ( id integer primary key autoincrement, code TEXT, skill TEXT,  subskill TEXT, description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS TSNPJobs			    ( id integer primary key autoincrement, jobno TEXT, subtype TEXT,  description TEXT);'+
@@ -1998,7 +1998,7 @@ var changeddatetime=[];
 				for(var pcnt=0; pcnt < MyOrders.order[cntx].jobdets.length ; pcnt++)
 					{
 						if(MyOrders.order[cntx].jobdets[pcnt].orderno.length>1){				
-						   sqlstatement+='INSERT INTO MyJobDets (orderno, opno, eworkcentre, oworkcentre, priority_code, priority_desc, pmactivity_code, pmactivity_desc,oppmactivity_code, oppmactivity_desc, start_date, start_time, duration, equipment_code, equipment_desc, equipment_gis, funcloc_code, funcloc_desc, funcloc_gis, acpt_date, acpt_time, onsite_date, onsite_time, park_date, park_time, status, status_l, status_s, site) VALUES ('+
+							sqlstatement+='INSERT INTO MyJobDets (orderno, opno, eworkcentre, oworkcentre, priority_code, priority_desc, pmactivity_code, pmactivity_desc,oppmactivity_code, oppmactivity_desc, start_date, start_time, duration, equipment_code, equipment_desc, equipment_gis, funcloc_code, funcloc_desc, funcloc_gis, acpt_date, acpt_time, onsite_date, onsite_time, park_date, park_time, status, status_l, status_s, notif_cat_profile, site) VALUES ('+
 							'"'+MyOrders.order[cntx].jobdets[pcnt].orderno+'","'+ 
 							MyOrders.order[cntx].jobdets[pcnt].opno+'","'+ 
 							MyOrders.order[cntx].jobdets[pcnt].eworkcentre+'","'+ 
@@ -2027,7 +2027,10 @@ var changeddatetime=[];
 							MyOrders.order[cntx].jobdets[pcnt].status+'","'+
 							MyOrders.order[cntx].jobdets[pcnt].status_l+'","'+
 							MyOrders.order[cntx].jobdets[pcnt].status_s+'","'+
+							MyOrders.order[cntx].jobdets[pcnt].notif_cat_prof+'","'+
 							MyOrders.order[cntx].jobdets[pcnt].site+'");';
+						  
+						   
 						}
 					
 				}				
@@ -2072,9 +2075,9 @@ var changeddatetime=[];
 	
 
 					}
-				if(MyOrders.order[cntx].jobdets.length>1){
+				
 					sqlstatements.push(sqlstatement);
-				}
+				
 				
 				sqlstatement=""
 
@@ -2086,6 +2089,7 @@ var changeddatetime=[];
 			}
 			for(var cntx=0; cntx < ordernos.length ; cntx++)
 			{
+				
 				InsertOrder(sqlstatements[cntx],ordernos[cntx],changeddatetime[cntx])
 			}
 
@@ -2129,8 +2133,7 @@ function InsertOrder(sqlstatement,orderno,changeddatetime){
 						html5sql.process(sqlstatement1+sqlstatement,
 								 function(transaction, results, rowsArray){
 
-										
-									
+								
 			
 										
 								 },

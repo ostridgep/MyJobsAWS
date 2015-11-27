@@ -380,21 +380,22 @@ function BuildPriorities(selectedId){
 		                     })
 		                    ],
 		             beforeOpen:function(){
+		            	 $.ajax({
+		         		    type: "GET",
+		         		    url: "TestData/T2_MPLT_ESVN.XML",
+		         		    dataType: "xml",
+		         		    success: function (xml) {    
+		         		       xmlDoc=xml 
+		         		      BuildAssetSites();
+		         		    }    
+		         		       
+		         		});
 		                    
-		                     BuildAssetSites();
 		             },
 		        contentWidth:"85%",
 		        contentHeight: "85%",
 		       }).addStyleClass("sapUiSizeCompact");
-		$.ajax({
-		    type: "GET",
-		    url: "TestData/T2_MPLT_ESVN.XML",
-		    dataType: "xml",
-		    success: function (xml) {    
-		       xmlDoc=xml 
-		    }    
-		       
-		});
+
 
 		function showMessage(msg){
 			sap.m.MessageToast.show(msg, {
@@ -576,3 +577,4 @@ function BuildPriorities(selectedId){
 		                                                                                  
 		                                                                                  }
 		}
+		

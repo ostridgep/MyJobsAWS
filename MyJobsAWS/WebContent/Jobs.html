@@ -1940,8 +1940,7 @@ function prepareChangeStatus(){
 function changeStatus(Status){
 	var StatusState;
 	var StatusIcon;
-
-
+	var StatusColour=""
 	 
 	 if(Status=="ACPT"){
 	 
@@ -1951,24 +1950,29 @@ function changeStatus(Status){
 	 if(Status=="DEPL"){
 		 StatusState=sap.ui.core.ValueState.None
 		 StatusText="Deployed"
+			 StatusColour="Yellow"
 		 StatusIcon="create"
 	 }else if(Status=="ACPT"){
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "ACPT", "Job Accepted")
 		 StatusText="Accepted"
+		 StatusColour="Green"
 		 StatusState=sap.ui.core.ValueState.Success
 		 StatusIcon="accept"
 	 }else if(Status=="REJ1"){
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ1" ,"Job Rejected")
 		 StatusText="Rejected"
+			 StatusColour="Red"
 		 StatusState=sap.ui.core.ValueState.Error
 		 StatusIcon="decline"
 	 }else if(Status=="REJ2"){
 			 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ2" ,"Job Rejected")
 			 StatusText="Rejected"
+			StatusColour="Red"
 			 StatusState=sap.ui.core.ValueState.Error
 			 StatusIcon="decline"
 		} else if(Status=="PARK"){
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "PARK", "Job Suspended")
+		 StatusColour="orange"
 		     StatusText="Parked"
 		 StatusState=sap.ui.core.ValueState.Warning
 		 StatusIcon="pause"
@@ -1981,13 +1985,16 @@ function changeStatus(Status){
 	 }else if(Status=="SITE"){
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "SITE", "Job Started")
 		     StatusText="On Site"
+		    StatusColour="Blue"
 		 StatusState=sap.ui.core.ValueState.Success
 		 StatusIcon="building"
 	 }
 	currentStatus=Status;
 	prepareChangeStatus()
+	document.getElementById("JobHead_Status").innerHTML = "<Font color='"+StatusColour+"'>"+StatusText+"</font>";
+	
 	 document.getElementById('L'+CurrentOrderNo+'-'+CurrentOpNo).innerHTML = StatusText;
-	 sap.ui.getCore().getElementById('HEADER').destroyStatuses()
+	 /* sap.ui.getCore().getElementById('HEADER').destroyStatuses()
 	 sap.ui.getCore().getElementById('HEADER').addStatus( new sap.m.ObjectStatus({
 			text :     StatusText,
 			icon : sap.ui.core.IconPool.getIconURI(StatusIcon),
@@ -1998,7 +2005,7 @@ function changeStatus(Status){
 	 sap.ui.getCore().getElementById(currentOrderListItem).setFirstStatus( new sap.m.ObjectStatus({
 			text : StatusText,
 			state : StatusState
-	 }))
+	 })) */
 
 }
 
@@ -2165,18 +2172,25 @@ cnt = 0;
 
 
 }
-function buildDetails1(){
-	var detsHead=new sap.ui.core.HTML({  
+function buildDetails(){
+	var detsHead=new sap.ui.core.HTML('JobHeader',{  
 	      content: 
 	    	    [
-"<TABLE width='100%'><tr style='height:15px;'><TD colspan='3' align='left' ><h3 id='JobHead_Description'>This is the Job Description</h3></TD><TD colspan='2' align='Right' ><h2 id='JobHead_JobNo'>000111111-0010</h2></TD></TR><TR height='5em'><TD width='20%' align='left'>Start Date:</p></TD><TD width='20%' align='left'><p id='JobHead_StartDate'>11-11-2015 09:30:00</p></TD><TD width='20%' align='left'>End Date:</TD><TD width='20%' align='left'><p id='JobHead_EndDate'>11-11-2015 09:30:00</p></TD><TD width='20%'></TD></TR><tr style='height:15px;'><TD width='20%' align='left'>Site:</p></TD><TD width='20%' align='left'><p id='JobHead_Site'>Sitex</p></TD><TD width='20%'></TD><TD width='20%'></TD><TD width='20%'></TD></TR><tr style='height:15px;'><TD width='20%' align='left'>Address:</p></TD><TD colspan='4' align='left'><p id='JobHead_Address'>addr,addr,addr,addr</p></TD></TR><tr style='height:15px;'><TD width='20%' align='left'>FuncLoc:</p></TD><TD colspan='4' align='left'><p id='JobHead_FuncLoc'>JobHead_FuncLoc</p></TD></TR></TR><tr style='height:5px;'><TD width='20%' align='left'>Equipment:</p></TD><TD colspan='4' align='left'><p id='JobHead_Equipment'>JobHead_Equipment</p></TD></TR><tr style='height:5px;'><TD width='20%' align='left'>Notification:</p></TD><TD colspan='2' align='left'><p id='JobHead_NotifNo'>1234567</p></TD><TD colspan='2' align='right'><H2 id='JobHead_Status'>Status</H2></TD></TR>"
-  			]
+"<TABLE width='100%' height='200' ><tr height='100'><TD valign='top' colspan='3' align='left' ><h3 id='JobHead_Description'>This is the Job Description</h3></TD><TD valign='top'  colspan='2' align='Right' ><h2 id='JobHead_JobNo'>000111111-0010</h2></TD></TR>"
++"<TR ><TD valign='top' width='20%' align='left'>Start Date:</TD><TD valign='top'  width='20%' align='left'>11-11-2015 09:30:00</TD ><TD valign='top'  width='20%' align='left'>End Date:</TD ><TD valign='top'  width='20%' align='left'>11-11-2015 09:30:00</TD ><TD valign='top'  width='20%'></TD></TR>"
++"<tr ><TD valign='top'  width='20%' align='left'>Site:</TD><TD valign='top'  width='20%' align='left'>Sitex</TD><TD valign='top'  width='20%'></TD><TD valign='top'  width='20%'></TD><TD valign='top'  width='20%'></TD></TR>"
++"<tr><TD valign='top'  width='20%' align='left'>Address:</TD><TD valign='top'  colspan='4' align='left'>addr,addr,addr,addr</TD></TR>"
++"<tr ><TD valign='top'  width='20%' align='left'>FuncLoc:</TD><TD valign='top'  colspan='4' align='left'>JobHead_FuncLoc</TD></TR>"
++"<tr height='20'><TD valign='top'  width='20%' align='left'>Equipment:</TD><TD valign='top'  colspan='4' align='left'>JobHead_Equipment</TD></TR>"
++"<tr height='20'><TD valign='top'  width='20%' align='left'>Notification:</TD><TD valign='top'  colspan='2' align='left'>1234567</TD><TD valign='top'  colspan='2' align='right'><H2 id='JobHead_Status'>Status</H2></TD></TR>"
++"</table>"  	 
+]
 
 	});
 	return detsHead
 }
 
-function buildDetails(){
+function buildDetails1(){
 
 		var objectHeader  = new sap.m.ObjectHeader('HEADER',
 {
@@ -2297,7 +2311,7 @@ var res;
 var jobType;
 var surveyID;
 var jobicons=[]
-
+var StatusColour=""
 
        SQLStatement="SELECT MyNotifications.pcode, MyNotifications.id as notifid, MyNotifications.type as jobtype, refnotificationtypes.notifprofile,MyRefOrderTypes.description as JobDescription, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
 	   SQLStatement+=" MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, "
@@ -2347,62 +2361,107 @@ html5sql.process(SQLStatement,
 					 }else{
 						JobType=rowsArray[0].notiftype;
 					 }
-					 
-                     
-                     oDetailPage.destroyContent()
-                     oDetailPage.addContent(buildDetails())
-			
                      if(item.status_s=="JFIN"){
-                           currentStatus="JFIN"
-                           StatusText="Complete"
-                           StatusState=sap.ui.core.ValueState.Success
-                           StatusIcon="complete"
-                     }else if(item.status_s=="SITE"){
-                           currentStatus="SITE"
-                           StatusText="On Site"
-                           StatusState=sap.ui.core.ValueState.Success
-                           StatusIcon=="building"
-                     }else if(item.status_s=="JONR"){
-                           currentStatus="JONR"
-                           StatusText="On Route"
-                           StatusState=sap.ui.core.ValueState.Success
-                           StatusIcon="car-rental"
-                     }else if(item.status_s=="ACPT"){
-                           currentStatus="ACPT"
-                           StatusText="Accepted"
-                           StatusState=sap.ui.core.ValueState.Success
-                           StatusIcon="accept"
-                     }else if(item.status_s=="REJ1"){
-                           currentStatus="REJ1"
+                         currentStatus="JFIN"
+                         StatusText="Complete"
+                         StatusColour="Green"
+                         StatusState=sap.ui.core.ValueState.Success
+                         StatusIcon="complete"
+                   }else if(item.status_s=="SITE"){
+                         currentStatus="SITE"
+                         StatusColour="Blue"
+                         StatusText="On Site"
+                         StatusState=sap.ui.core.ValueState.Success
+                         StatusIcon=="building"
+                   }else if(item.status_s=="JONR"){
+                         currentStatus="JONR"
+                         StatusColour="Amber"
+                         StatusText="On Route"
+                         StatusState=sap.ui.core.ValueState.Success
+                         StatusIcon="car-rental"
+                   }else if(item.status_s=="ACPT"){
+                         currentStatus="ACPT"
+                         StatusColour="Green"
+                         StatusText="Accepted"
+                         StatusState=sap.ui.core.ValueState.Success
+                         StatusIcon="accept"
+                   }else if(item.status_s=="REJ1"){
+                         currentStatus="REJ1"
+                         StatusColour="Red"
+                         StatusText="Rejected"
+                         StatusState=sap.ui.core.ValueState.Error
+                         StatusIcon="decline"
+                   }else if(item.status_s=="REJ2"){
+                       currentStatus="REJ2"
+                    	   StatusColour="Red"
                            StatusText="Rejected"
                            StatusState=sap.ui.core.ValueState.Error
                            StatusIcon="decline"
-                     }else if(item.status_s=="REJ2"){
-                         currentStatus="REJ2"
-                             StatusText="Rejected"
-                             StatusState=sap.ui.core.ValueState.Error
-                             StatusIcon="decline"
-                       }else if(item.status_s=="PARK"){
-                           currentStatus="PARK"
-                           StatusText="Parked"
-                           StatusState=sap.ui.core.ValueState.Warning
-                           StatusIcon="pause"
-                     }else if(item.status_s=="NEW"){
-                           currentStatus="INIT"
-                           StatusText="New"
-                           StatusState=sap.ui.core.ValueState.None
-                           StatusIcon="create"
-                     }else if(item.status_s=="DEPL"){
-                           currentStatus="DEPL"
-                           StatusText="Deployed"
-                                  StatusState=sap.ui.core.ValueState.None
-                                  StatusIcon="create"
-                           }else {
-                           currentStatus="INIT"
-                           StatusText=""
-                           StatusState=sap.ui.core.ValueState.None
-                           StatusIcon="create"
-                     }
+                     }else if(item.status_s=="PARK"){
+                         currentStatus="PARK"
+                        	 StatusColour="orange"
+                         StatusText="Parked"
+                         StatusState=sap.ui.core.ValueState.Warning
+                         StatusIcon="pause"
+                   }else if(item.status_s=="NEW"){
+                         currentStatus="INIT"
+                         StatusText="New"
+                        	 StatusColour="Yellow"
+                         StatusState=sap.ui.core.ValueState.None
+                         StatusIcon="create"
+                   }else if(item.status_s=="DEPL"){
+                         currentStatus="DEPL"
+                         StatusColour="Yellow"
+                         StatusText="Deployed"
+                                StatusState=sap.ui.core.ValueState.None
+                                StatusIcon="create"
+                         }else {
+                         currentStatus="INIT"
+                        StatusColour="Yellow"
+                         StatusText=""
+                         StatusState=sap.ui.core.ValueState.None
+                         StatusIcon="create"
+                   }
+                     if(item.jobicon_filename==null){
+							jobicons=[]
+					   }else{
+							jobicons = item.jobicon_filename.split(",")
+							}
+						if(item.jobicon_description==null){
+							jobtooltip=[]
+					   }else{
+							jobtooltip = item.jobicon_description.split(",")
+							}
+					  
+						priorityIcon="XX"+item.priorityicon_filename;		   
+					   var iconsToDisplay=''
+					   for (var n=0;n <jobicons.length;n++)
+					   {
+							iconsToDisplay+='<img src="images/'+jobicons[n]+'" onclick="showMessage(\''+jobtooltip[n]+'\')">'
+					   }
+					   if(priorityIcon.length>2){
+					   		priorityiconsToDisplay='<img src="images/'+item.priorityicon_filename+'" onclick="showMessage(\''+item.priorityicon_description+'\')">'
+					   }else{
+						   priorityiconsToDisplay=""
+					   }
+                     oDetailPage.destroyContent()
+                     //oDetailPage.addContent(buildDetails())
+		oDetailPage.addContent(	new sap.ui.core.HTML('JobHeader',{  
+	      content: 
+	    	    [
+"<TABLE width='100%' height='200' ><tr height='100'><TD valign='top' colspan='3' align='left' ><h3>"+rowsArray[0].orderdesc+"</h3></TD><TD valign='top'  colspan='2' align='Right' ><h2 id='JobHead_JobNo'>"+rowsArray[0].orderno+"-"+rowsArray[0].opno+"</h2></TD></TR>"
++"<TR ><TD valign='top' width='20%' align='left'>Start Date:</TD><TD valign='top'  width='20%' align='left'>"+formatDate(rowsArray[0].startdate)+"</TD ><TD valign='top'  width='20%' align='left'>End Date:</TD ><TD valign='top'  width='20%' align='left'>"+formatDate(rowsArray[0].enddate)+"</TD ><TD valign='top'  width='20%'></TD></TR>"
++"<tr ><TD valign='top'  width='20%' align='left'>Site:</TD><TD valign='top'  width='20%' align='left'>"+rowsArray[0].site+"</TD><TD valign='top'  width='20%'></TD><TD valign='top'  width='20%'></TD><TD valign='top'  width='20%'></TD></TR>"
++"<tr><TD valign='top'  width='20%' align='left'>Address:</TD><TD valign='top'  colspan='4' align='left'>"+rowsArray[0].address+"</TD></TR>"
++"<tr ><TD valign='top'  width='20%' align='left'>FuncLoc:</TD><TD valign='top'  colspan='4' align='left'>"+rowsArray[0].funcloc_code+" - "+rowsArray[0].funcloc_desc+"</TD></TR>"
++"<tr height='20'><TD valign='top'  width='20%' align='left'>Equipment:</TD><TD valign='top'  colspan='4' align='left'>"+rowsArray[0].equipment_code+" - "+rowsArray[0].equipment_desc+"</TD></TR>"
++"<tr height='20'><TD valign='top'  width='20%' align='left'>Notification:</TD><TD valign='top'  colspan='2' align='left'>"+rowsArray[0].notifno+"</TD><TD valign='top'  colspan='2' align='right'><H2 id='JobHead_Status'><Font color='"+StatusColour+"'>"+StatusText+"</font></H2></TD></TR>"
++"<TR><TD align='right' colspan='5'>"+priorityiconsToDisplay+iconsToDisplay+"</TD></TR>"
++"</table>"  	 
+]
+
+	}))
+                     
                     
                     
                      //res=rowsArray[0].notiftype.split(":");
@@ -2422,7 +2481,7 @@ html5sql.process(SQLStatement,
 					currentEquipment_GIS=rowsArray[0].equipment_gis;
 					currentFuncLoc_GIS=rowsArray[0].funcloc_gis; 
 					
-                     sap.ui.getCore().getElementById('HEADER').setTitle(rowsArray[0].orderdesc)
+/*                      sap.ui.getCore().getElementById('HEADER').setTitle(rowsArray[0].orderdesc)
                      sap.ui.getCore().getElementById('HEADER').setNumber(rowsArray[0].orderno+"-"+rowsArray[0].opno)
                      sap.ui.getCore().getElementById('HEADER').setNumberUnit(jobType)
                      sap.ui.getCore().getElementById('HEADER').destroyStatuses()
@@ -2431,7 +2490,7 @@ html5sql.process(SQLStatement,
                                   icon : sap.ui.core.IconPool.getIconURI(StatusIcon),
 
                                   state : StatusState
-                     }))
+                     })) */
                                                 currentPostcode=rowsArray[0].postcode;
                      
                      currentJob="job:"+rowsArray[0].orderno+':'+rowsArray[0].opno;
@@ -2451,7 +2510,7 @@ html5sql.process(SQLStatement,
                            sap.ui.getCore().getElementById('changeStatus').setEnabled(true)
                      } */
 
-                       sap.ui.getCore().getElementById('NotifNo').setTitle("Notification No")
+/*                        sap.ui.getCore().getElementById('NotifNo').setTitle("Notification No")
                        sap.ui.getCore().getElementById('NotifNo').setText(rowsArray[0].notifno)
                        sap.ui.getCore().getElementById('JobTypeDesc').setTitle("Job Type")
                        sap.ui.getCore().getElementById('JobTypeDesc').setText(rowsArray[0].JobDescription)
@@ -2466,7 +2525,7 @@ html5sql.process(SQLStatement,
                        sap.ui.getCore().getElementById('FuncLoc').setTitle("Funcloc ")    
                        sap.ui.getCore().getElementById('FuncLoc').setText(rowsArray[0].funcloc_code+" "+rowsArray[0].funcloc_desc) 
                        sap.ui.getCore().getElementById('Equipment').setTitle("Equipment ")      
-                       sap.ui.getCore().getElementById('Equipment').setText(rowsArray[0].equipment_code+" "+rowsArray[0].equipment_desc)  
+                       sap.ui.getCore().getElementById('Equipment').setText(rowsArray[0].equipment_code+" "+rowsArray[0].equipment_desc)   */
 					  
 					   //sap.ui.getCore().getElementById('Equipment').setCustomContent(sap.m.icon("images/"+jobicons[0]))				   
                        Longtext=rowsArray[0].orderlongtext    
@@ -4137,7 +4196,6 @@ function BuildTCEmployees(){
 	}
     function initialize(lat, lon)
     {
-        
 
         currentPosition = new google.maps.LatLng(lat, lon);
 

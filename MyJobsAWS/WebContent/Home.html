@@ -636,8 +636,11 @@ function loadSettings(){
 
 
 }
-
-function setCounts()
+function setCounts(){
+	setOrderCounts()
+	setNotificationCounts()
+}
+function setOrderCounts()
 {
 	
 	sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
@@ -646,6 +649,22 @@ function setCounts()
 	 function(transaction, results, rowsArray){
 		
 			sap.ui.getCore().byId("JobsCnt").setNumber(rowsArray.length);
+		
+
+
+
+	 },
+	 function(error, statement){
+		 alert("jobs"+error+":"+statement)
+	 }        
+	);
+	
+}
+function setNotificationCounts()
+{
+	
+	sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
+
 		
 			html5sql.process("SELECT * FROM MyNotifications;",
 			 
@@ -686,11 +705,7 @@ function setCounts()
 			);
 
 
-	 },
-	 function(error, statement){
-		 alert("jobs"+error+":"+statement)
-	 }        
-	);
+	
 	
 }
 function showSystemMessage(){
@@ -971,7 +986,7 @@ function startBGSync()
 		 syncUpload()
 		 syncDT=localStorage.getItem('LastSyncedDT')		 
 		 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
-		 
+		 setCounts()
 
 		 };
    } else {
