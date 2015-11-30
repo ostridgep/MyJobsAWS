@@ -250,6 +250,14 @@ function confirmAcceptStatus()
                 		          actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
                 		          onClose: function(oAction) { 
                 		        	  if (oAction ==sap.m.MessageBox.Action.YES){
+                		        		  /* createAWSTConf(CurrentOrderNo,CurrentOpNo,localStorage.getItem("MobileUser"),
+                                          		sap.ui.getCore().byId("StatusParkActivityCode").getSelectedItem().getKey(),
+                                          		sap.ui.getCore().byId("StatusParkReasonCode").getSelectedItem().getKey(),
+                                          		statusUpdateDate,statusUpdateTime,'','',
+                                          		sap.ui.getCore().byId("StatusParkActualWorkControl").getValue(),'0',
+                                          		sap.ui.getCore().byId("StatusParkReasonText").getValue(),
+                                          		sap.ui.getCore().byId("StatusParkReasonDetails").getValue(),''
+                                                      ) */
                 		        		  d=getDate()
 				                    		t=getTime()
 				                    		statusUpdateDate=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8)
@@ -275,6 +283,14 @@ function confirmAcceptStatus()
                                              tap: [ function(oEvt) { 
                                                 
  												if(sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").getValue()>1){
+/*  													createAWSTConf(CurrentOrderNo,CurrentOpNo,localStorage.getItem("MobileUser"),
+ 	                                                		sap.ui.getCore().byId("StatusParkActivityCode").getSelectedItem().getKey(),
+ 	                                                		sap.ui.getCore().byId("StatusParkReasonCode").getSelectedItem().getKey(),
+ 	                                                		statusUpdateDate,statusUpdateTime,'','',
+ 	                                                		sap.ui.getCore().byId("StatusParkActualWorkControl").getValue(),'0',
+ 	                                                		sap.ui.getCore().byId("StatusParkReasonText").getValue(),
+ 	                                                		sap.ui.getCore().byId("StatusParkReasonDetails").getValue(),''
+ 	                                                            ) */
  													formChangeStatusOnSite.close()       
                                                 	changeStatus("SITE")
                                                        prepareChangeStatus()
@@ -355,12 +371,18 @@ function confirmAcceptStatus()
                                              tap: [ function(oEvt) { 
                                                 
                                                 
-                                                    //createTConf(CurrentOrderNo,CurrentOpNo,sap.ui.getCore().byId("Employee").getSelectedItem().getKey(),sap.ui.getCore().byId("tconfType").getSelectedButton(),
-                                                //            sap.ui.getCore().byId("tconfStart").getValue(),sap.ui.getCore().byId("tconfEnd").getValue(),sap.ui.getCore().byId("Duration").getValue(),
-                                                //            sap.ui.getCore().byId("tconfType").getSelectedButton(),sap.ui.getCore().byId("Description").getValue())
+                                               
 												if((sap.ui.getCore().byId("StatusParkActualWorkControl").getValue()>1)&&
 												(sap.ui.getCore().byId("StatusParkReasonText").getValue().length>0)){
-	                                                formChangeStatusPark.close()    
+	                                                formChangeStatusPark.close()   
+	                                                 createAWSTConf(CurrentOrderNo,CurrentOpNo,localStorage.getItem("MobileUser"),
+                                                		sap.ui.getCore().byId("StatusParkActivityCode").getSelectedItem().getKey(),
+                                                		sap.ui.getCore().byId("StatusParkReasonCode").getSelectedItem().getKey(),
+                                                		statusUpdateDate,statusUpdateTime,'','',
+                                                		sap.ui.getCore().byId("StatusParkActualWorkControl").getValue(),'0',
+                                                		sap.ui.getCore().byId("StatusParkReasonText").getValue(),
+                                                		sap.ui.getCore().byId("StatusParkReasonDetails").getValue(),''
+                                                            )
 	                                                 changeStatus("PARK")   
 	                                                 prepareChangeStatus()  
 												}else{
@@ -461,6 +483,15 @@ function confirmAcceptStatus()
                                             	 if((sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue()>0)&&
                                             			 (sap.ui.getCore().byId("StatusUpdateRemainingWorkControl").getValue()>0)&&
          												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
+                                            		 createAWSTConf(CurrentOrderNo,CurrentOpNo,localStorage.getItem("MobileUser"),
+                                                     		sap.ui.getCore().byId("StatusUpdateActivityCode").getSelectedItem().getKey(),
+                                                     		sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey(),
+                                                     		statusUpdateDate,statusUpdateTime,'','',
+                                                     		sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue(),
+                                                     		sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue(),
+                                                     		sap.ui.getCore().byId("StatusUpdateReasonText").getValue(),
+                                                     		sap.ui.getCore().byId("StatusUpdateReasonDetails").getValue(),''
+                                                                 )
                                             		 formChangeStatusUpdate.close()  
          												}else{
          													DisplayErrorMessage("Update Job Error", "Actual Work must be > 0\n Remaining Work must be > 0\n and Reason must be completed")
@@ -571,6 +602,14 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                                                 
                                                 
                                             	 if(sap.ui.getCore().byId("StatusRejectReasonText").getValue().length>0){
+                                            			/*createAWSTConf(CurrentOrderNo,CurrentOpNo,localStorage.getItem("MobileUser"),
+     	                                                		sap.ui.getCore().byId("StatusParkActivityCode").getSelectedItem().getKey(),
+     	                                                		sap.ui.getCore().byId("StatusParkReasonCode").getSelectedItem().getKey(),
+     	                                                		statusUpdateDate,statusUpdateTime,'','',
+     	                                                		sap.ui.getCore().byId("StatusParkActualWorkControl").getValue(),'0',
+     	                                                		sap.ui.getCore().byId("StatusParkReasonText").getValue(),
+     	                                                		sap.ui.getCore().byId("StatusParkReasonDetails").getValue(),''
+     	                                                            ) */
                                             		 formChangeStatusReject.close()
                                                      
                                                      changeStatus("REJ1")   
@@ -1941,7 +1980,10 @@ function changeStatus(Status){
 	var StatusState;
 	var StatusIcon;
 	var StatusColour=""
-	 
+		 d=getDate()
+ 		t=getTime()
+ 		statusUpdateDate=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8)
+ 		statusUpdateTime=	t.substring(0,2)+":"+t.substring(2,4)+":"+t.substring(4,6) 
 	 if(Status=="ACPT"){
 	 
 		 sap.ui.getCore().getElementById('btnStatusSuspend').setText("Park");
@@ -1959,7 +2001,12 @@ function changeStatus(Status){
 		 StatusState=sap.ui.core.ValueState.Success
 		 StatusIcon="accept"
 	 }else if(Status=="REJ1"){
-		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ1" ,"Job Rejected")
+		 if(currentStatus=="DEPL"){
+			 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ1" ,"Job Rejected")
+		 }else{
+			 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ2" ,"Job Rejected")
+		 }
+		
 		 StatusText="Rejected"
 			 StatusColour="Red"
 		 StatusState=sap.ui.core.ValueState.Error
@@ -4296,13 +4343,19 @@ formSignature.close()
 }
 
 function BuildChangeStatusOnSite(){
-	sap.ui.getCore().getElementById("StatusOnSiteAcceptedTime").setValue("")
+	
+	
 	html5sql.process("select * from myjobdets where orderno =  '"+CurrentOrderNo+"' and opno =  '"+CurrentOpNo+"'",
 			 function(transaction, results, rowsArray){
 				
 				
 					if( rowsArray.length>0) {
+						
 						sap.ui.getCore().getElementById("StatusOnSiteAcceptedTime").setValue(rowsArray[0].acpt_date+" "+rowsArray[0].acpt_time)
+						travelTime = diffInMinutes(rowsArray[0].acpt_date,rowsArray[0].acpt_time,getFormattedDate(),getFormattedTime())
+							sap.ui.getCore().getElementById("StatusOnSiteTravelTime").setValue(travelTime)
+						sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").setValue(parseInt(travelTime,10))
+						
 					}
 				
 					
@@ -4316,8 +4369,7 @@ function BuildChangeStatusOnSite(){
 	sap.ui.getCore().getElementById("StatusOnSiteTime").setValue(statusUpdateDate+" "+statusUpdateTime)
 }
 function BuildChangeStatusPark(){
-	sap.ui.getCore().getElementById("StatusParkActualWork").setValue("0")
-	sap.ui.getCore().getElementById("StatusParkActualWorkControl").setValue(0)
+
 	sap.ui.getCore().getElementById("StatusParkReasonText").setValue("")
 	sap.ui.getCore().getElementById("StatusParkReasonDetails").setValue("")
 
@@ -4353,7 +4405,25 @@ function BuildChangeStatusPark(){
 													text: item.dev_reas_txt
 												}))
 									}
-								
+									html5sql.process("select * from myjobdets where orderno =  '"+CurrentOrderNo+"' and opno =  '"+CurrentOpNo+"'",
+											 function(transaction, results, rowsArray){
+												
+												
+													if( rowsArray.length>0) {
+														
+														
+														workTime = diffInMinutes(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
+														sap.ui.getCore().getElementById("StatusParkActualWork").setValue(workTime)
+														sap.ui.getCore().byId("StatusParkActualWorkControl").setValue(parseInt(workTime,10))
+														
+													}
+												
+													
+											 },
+											 function(error, statement){
+												
+											 }        
+											)
 									
 							 },
 							 function(error, statement){
@@ -4370,8 +4440,7 @@ function BuildChangeStatusPark(){
 		}
 
 function BuildChangeStatusUpdate(){
-	sap.ui.getCore().getElementById("StatusUpdateActualWork").setValue("0")
-	sap.ui.getCore().getElementById("StatusUpdateActualWorkControl").setValue(0)
+
 	sap.ui.getCore().getElementById("StatusUpdateRemainingWork").setValue("0")
 	sap.ui.getCore().getElementById("StatusUpdateRemainingWorkControl").setValue(0)
 	sap.ui.getCore().getElementById("StatusUpdateReasonText").setValue("")
@@ -4408,7 +4477,25 @@ function BuildChangeStatusUpdate(){
 												}))
 									}
 								
-									
+									html5sql.process("select * from myjobdets where orderno =  '"+CurrentOrderNo+"' and opno =  '"+CurrentOpNo+"'",
+											 function(transaction, results, rowsArray){
+												
+												
+													if( rowsArray.length>0) {
+														
+														
+														workTime = diffInMinutes(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
+														sap.ui.getCore().getElementById("StatusUpdateActualWork").setValue(workTime)
+														sap.ui.getCore().byId("StatusUpdateActualWorkControl").setValue(parseInt(workTime,10))
+														
+													}
+												
+													
+											 },
+											 function(error, statement){
+												
+											 }        
+											)	
 							 },
 							 function(error, statement){
 								
@@ -4460,10 +4547,12 @@ function BuildCloseScreen(){
 	sap.ui.getCore().getElementById("Close_FunctionalLocation").setValue(CurrentJobFL)
 	sap.ui.getCore().getElementById("Close_Equipment").setValue(CurrentJobEQ)
 	sap.ui.getCore().getElementById("Close_LongText").setValue("")
-
-
-
-
+var PAIVisible = true;
+if((CurrentJobProfile==null)||
+		(CurrentJobProfile==null)){
+	PAIVisible=false;
+}
+sap.ui.getCore().getElementById("DG51F1C2").setVisible(PAIVisible)
 		var SQLStatement="";
 		var FirstVal="";
 		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"

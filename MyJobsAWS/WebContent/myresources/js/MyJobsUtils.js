@@ -26,9 +26,20 @@ function showErrorMessage(title,msg){
 		       }
 		     );
 }
+function diffInMinutes(StartDate, StartTime, EndDate, EndTime){
+	
+	var diff = Math.abs(new Date(StartDate+" "+StartTime) - new Date(EndDate+" "+EndTime));
+	var minutes = Math.floor((diff/1000)/60);
+	return minutes
+}
 function getDate()	{			
 				var currentdate = new Date(); 
 	return zeroFill1(currentdate.getFullYear().toString()) + zeroFill1((currentdate.getMonth()+1).toString() ) + zeroFill1(currentdate.getDate().toString());
+
+}
+function getFormattedDate()	{			
+	var currentdate = new Date(); 
+return zeroFill1(currentdate.getFullYear().toString()) +"/"+ zeroFill1((currentdate.getMonth()+1).toString() ) + "/"+zeroFill1(currentdate.getDate().toString());
 
 }
 function getTime()	{			
@@ -37,6 +48,14 @@ function getTime()	{
           x2=zeroFill1(currentdate.getMinutes()).toString();
     x3=zeroFill1( currentdate.getSeconds()).toString();
 	return x1+x2+x3;
+
+}
+function getFormattedTime()	{			
+	var currentdate = new Date(); 
+x1=zeroFill1( currentdate.getHours()).toString();
+x2=zeroFill1(currentdate.getMinutes()).toString();
+x3=zeroFill1( currentdate.getSeconds()).toString();
+return x1+":"+x2+":"+x3;
 
 }
 function getSAPDate()	{			
