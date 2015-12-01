@@ -68,9 +68,9 @@ function requestSAPData(page,params){
 	//    success: function( ) { },
 	    timeout: 2000
 	}).fail( function( xhr, status ) {
-		 alert(status+":"+xhr)
+		console.log(status+":"+xhr)
 	    if( status == "timeout" ) {
-	      alert(status+"it timed out")
+	    	console.log(status+"it timed out")
 	    }
 	}); 
 }
