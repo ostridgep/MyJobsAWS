@@ -455,20 +455,14 @@ function CheckSyncInterval(SyncType){
 
 
 }
-function createNotification(type,priority,group,code,grouptext,codetext,description,details,startdate,funcloc,equipment)
+function createNotification(type,priority,group,code,grouptext,codetext,description,details,startdate,starttime,funcloc,equipment)
 {
-	var sd =startdate.split(",")
-	var x=sd[0].split("/")
-	var st=sd[1].split(":")
-	var ndate= new Date(Number(x[2])+2000,x[0],x[1])
 	
-
-	var notifDate = zeroFill1(ndate.getFullYear().toString()) + zeroFill1((ndate.getMonth()).toString() ) +  zeroFill1(ndate.getDate().toString())+" "+zeroFill1(st[0].substring(1,st[0].length))+st[1].substring(0,2)+"00";
 var ReportedOn=getDate()+" "+getTime();
 var ReportedBy=localStorage.getItem("MobileUser");
 
-	html5sql.process("INSERT INTO  MyNotifications (notifno , type, startdate, shorttext, longtext , priority , pgroup , pcode , grouptext, codetext, funcloc, equipment, reportedby, reportedon, plant , orderno, funclocgis, equipmentgis) VALUES ("+
-					 "'NEW','"+type+"','"+notifDate+"','"+description+"','"+details+"','"+priority+"','"+group+"','"+code+"','"+grouptext+"','"+codetext+"','"+funcloc+"','"+equipment+"','"+ReportedBy+"','"+ReportedOn+"','','','','');",
+	html5sql.process("INSERT INTO  MyNotifications (notifno , type, startdate, starttime, shorttext, longtext , priority , pgroup , pcode , grouptext, codetext, funcloc, equipment, reportedby, reportedon, plant , orderno, funclocgis, equipmentgis) VALUES ("+
+					 "'NEW','"+type+"','"+startdate+"','"+starttime+"','"+description+"','"+details+"','"+priority+"','"+group+"','"+code+"','"+grouptext+"','"+codetext+"','"+funcloc+"','"+equipment+"','"+ReportedBy+"','"+ReportedOn+"','','','','');",
 	 function(transaction, results, rowsArray){
 
 		
@@ -1167,10 +1161,43 @@ function saveTheAnswer(order,opno,user,dt,item,task,value,type)
 
 
 }
-function createAWSTConf(order,opno,empid,acttype,reasontype,startdate,starttime,enddate, endtime, actwork,remwork,text,details,finalconf)
+function createAWSEODNotif(workdate,homedate,empno)
 {
-html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,type,act_type, confno , description , longtext, date , time , enddate, endtime, duration, rem_work empid, final , datestamp, user, state) VALUES ("+
-			 "'"+order+"','"+opno+"','"+reasontype+"','"+acttype+"','NEW','"+text+"','"+details+"','"+startdate+"','"+starttime+"','"+enddate+"','"+endtime+"','"+actwork+"','"+remwork+"','"+empid+"','"+finalconf+"','"+getDate()+" "+getTime()+"','"+localStorage.getItem("MobileUser")+"','');",
+	wdate=convertEODDate(workdate).split(" ")
+	hdate=convertEODDate(homedate).split(" ")
+	html5sql.process("INSERT INTO  MyNotifications (notifno , type, startdate, starttime, enddate, endtime, shorttext) VALUES ("+
+					 "'NEW','Z7','"+wdate[0]+"','"+wdate[1]+"','"+hdate[0]+"','"+hdate[1]+"','Day End Travel/"+getDate()+"/"+empno+"');",
+	 function(transaction, results, rowsArray){
+
+		
+	 },
+	 function(error, statement){
+
+		
+	 } )   
+
+}
+
+function createAWSJobClose(order,opno,empid,work_cntr,closedate,closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason)
+{
+html5sql.process("INSERT INTO  MyJobClose (orderno , opno, empid, work_cntr, state , closedate, closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason) VALUES ("+
+			 "'"+order+"','"+opno+"','"+empid+"','"+workcntr+"','NEW','"+closedate+"','"+closetime+"','"+
+			 funcloc+"','"+equipment+"','"+inshift+"','"+outofshift+"','"+pgrp+"','"+pcode+"','"+agrp+"','"+
+			 acode+"','"+igrp+"','"+icode+"','"+followon+"','"+variance+"','"+reason+"');",
+	 function(){
+		rebuildTimeConfs();
+	 },
+	 function(error, statement){
+
+		opMessage("Error: " + error.message + " when createTConf processing " + statement);
+	 }        
+	);
+}
+
+function createAWSTConf(order,opno,empid,work_cntr,acttype,reasontype,startdate,starttime,enddate, endtime, actwork,remwork,text,details,finalconf)
+{
+html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,act_type,type, confno , description , longtext, date , time , enddate, endtime, duration, rem_work, empid, work_cntr, final , datestamp, user, state) VALUES ("+
+			 "'"+order+"','"+opno+"','"+reasontype+"','"+acttype+"','NEW','"+text+"','"+details+"','"+startdate+"','"+starttime+"','"+enddate+"','"+endtime+"','"+actwork+"','"+remwork+"','"+empid+"','"+work_cntr+"','"+finalconf+"','"+getDate()+" "+getTime()+"','"+localStorage.getItem("MobileUser")+"','');",
 	 function(){
 		rebuildTimeConfs();
 	 },
@@ -1319,7 +1346,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyMaterials     		( orderno TEXT, id TEXT, material TEXT, qty TEXT, description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyUserStatus     		( id integer primary key autoincrement, type TEXT, orderno TEXT, opno TEXT, inact TEXT, status TEXT, statuscode TEXT, statusdesc TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyOperationInfo     	( id integer primary key autoincrement, orderno TEXT, opno TEXT, type TEXT, value1 TEXT, value2 TEXT);'+
-					 'CREATE TABLE IF NOT EXISTS MyNotifications     	( id integer primary key autoincrement, notifno TEXT, changedby TEXT, changeddatetime TEXT, shorttext TEXT, longtext TEXT, cattype TEXT,  pgroup TEXT, pcode TEXT, grouptext TEXT, codetext TEXT, startdate TEXT, starttime TEXT, type TEXT, priority TEXT, funcloc TEXT,   equipment TEXT, orderno TEXT, reportedon TEXT,   reportedby TEXT, plant TEXT, funclocgis TEXT,   equipmentgis TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyNotifications     	( id integer primary key autoincrement, notifno TEXT, changedby TEXT, changeddatetime TEXT, shorttext TEXT, longtext TEXT, cattype TEXT,  pgroup TEXT, pcode TEXT, grouptext TEXT, codetext TEXT, startdate TEXT, starttime TEXT, enddate TEXT, endtime TEXT, type TEXT, priority TEXT, funcloc TEXT,   equipment TEXT, orderno TEXT, reportedon TEXT,   reportedby TEXT, plant TEXT, funclocgis TEXT,   equipmentgis TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyItems     			( id integer primary key autoincrement, notifno TEXT, item_id TEXT, descript TEXT, d_cat_typ TEXT, d_codegrp TEXT, d_code TEXT, dl_cat_typ TEXT, dl_codegrp TEXT, dl_code TEXT, long_text TEXT, stxt_grpcd TEXT ,txt_probcd TEXT  ,txt_grpcd TEXT , txt_objptcd TEXT, status TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyCauses      			( id integer primary key autoincrement, notifno TEXT, item_id TEXT, cause_id TEXT, cause_text TEXT, cause_cat_typ TEXT, cause_codegrp TEXT, cause_code TEXT, long_text TEXT, txt_causegrp TEXT, txt_causecd TEXT, status TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyActivities     		( id integer primary key autoincrement, notifno TEXT, task_id TEXT, item_id TEXT,  act_id TEXT, act_text TEXT, act_cat_typ TEXT, act_codegrp TEXT, act_code TEXT,  start_date TEXT, start_time TEXT ,end_date TEXT  ,end_time TEXT , long_text TEXT, txt_actgrp TEXT, txt_actcd TEXT, status TEXT);'+
@@ -1327,6 +1354,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyEffects      		( id integer primary key autoincrement, notifno TEXT, item_id TEXT, task_id TEXT, effect_cat_typ TEXT, effect_codegrp TEXT, effect_code TEXT, txt_effectgrp TEXT, txt_effectcd TEXT, value TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyStatus     			( id integer primary key autoincrement, orderno TEXT, opno TEXT, stsma TEXT, status TEXT, statusdesc, state TEXT, actdate TEXT, acttime TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyTimeConfs     		( id integer primary key autoincrement, orderno TEXT, opno TEXT, confno TEXT, type TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT,act_work TEXT, rem_work TEXT, act_type TEXT, work_cntr TEXT, reason TEXT, longtext TEXT, duration TEXT, datestamp TEXT,  user TEXT,  empid TEXT, final TEXT, state TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyJobClose             ( id integer primary key autoincrement, orderno TEXT , opno TEXT, empid TEXT, work_cntr TEXT, state TEXT , closedate TEXT, closetime TEXT, funcloc  TEXT, equipment TEXT, inshift  TEXT, outofshift  TEXT, pgrp TEXT, pcode TEXT, agrp TEXT, acode TEXT, igrp TEXT, icode TEXT, followon  TEXT, variance TEXT, reason TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyNewJobs     			( id integer primary key autoincrement, type TEXT, defect TEXT, mpoint TEXT, mpval TEXT, shorttext TEXT, longtext TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT, funcloc TEXT, equipment TEXT, cattype TEXT, codegroup TEXT, coding TEXT, activitycodegroup TEXT, activitycode TEXT, activitytext TEXT, prioritytype TEXT, priority TEXT, reportedby TEXT, state TEXT, assignment TEXT, spec_reqt TEXT, assig_tome TEXT, userid TEXT, eq_status TEXT, breakdown TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkConfig     		( id integer primary key autoincrement, paramname TEXT, paramvalue TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkSyncDets    		( id integer primary key autoincrement, lastsync TEXT, comments   TEXT);'+
@@ -1420,6 +1448,7 @@ function dropTables() {
 						'DROP TABLE IF EXISTS MyEffects;'+
 						'DROP TABLE IF EXISTS MyStatus;'+
 						'DROP TABLE IF EXISTS MyTimeConfs;'+
+						'DROP TABLE IF EXISTS MyJobClose;'+
 						'DROP TABLE IF EXISTS MyNewJobs;'+
 						'DROP TABLE IF EXISTS MyWorkConfig;'+
 						'DROP TABLE IF EXISTS MyRefUsers;'+
@@ -1497,6 +1526,7 @@ function emptyTables(type) {
 						'DELETE FROM  MyEffects;'+
 						'DELETE FROM  MyStatus;'+
 						'DELETE FROM  MyTimeConfs;'+
+						'DELETE FROM  MyJobClose;'+
 						'DELETE FROM  MyNewJobs;'+
 						'DELETE FROM  MyWorkConfig;'+
 						'DELETE FROM  MyRefUsers;'+
@@ -1593,6 +1623,7 @@ function loadDemoData() {
 					'DELETE FROM  MyEffects;'+
 					'DELETE FROM  MyStatus;'+
 					'DELETE FROM  MyTimeConfs;'+
+					'DELETE FROM  MyJobClose;'+
 					'DELETE FROM  MyNewJobs;'+
 					'DELETE FROM  MyWorkConfig;'+
 					'DELETE FROM  MyRefUsers;'+
@@ -1715,6 +1746,7 @@ function resetTables() {
 					'DELETE FROM  MyEffects;'+
 					'DELETE FROM  MyStatus;'+
 					'DELETE FROM  MyTimeConfs;'+
+					'DELETE FROM  MyJobClose;'+
 					'DELETE FROM  MyNewJobs;'+
 					'DELETE FROM  MyRefUsers;'+
 					'DELETE FROM  MyRefOrderTypes;'+
@@ -1898,6 +1930,7 @@ var changeddatetime=[];
 							'DELETE FROM MyAssets;'+
 		
 							'DELETE FROM MyTimeConfs;'+
+							
 							'DELETE FROM MyUserStatus;'+
 							'DELETE FROM MyOperationInfo;'+
 							'DELETE FROM MyStatus where state="SERVER";';
@@ -2248,12 +2281,14 @@ opMessage("Callback Notifications triggured");
 				}else{
 					notiftype=MyNotifications.notification[cntx].sortfield;
 				}*/
-				
+				x=MyNotifications.notification[cntx].shorttext.replace(/'/g, "");;
+				x=x.replace("\/", "");;
+				x=x.replace(/&/g, "");;
 				sqlstatement1='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment,orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
 					'"'+MyNotifications.notification[cntx].notifno +'",'+
 					'"'+MyNotifications.notification[cntx].changed_by+'",'+ 
 					'"'+MyNotifications.notification[cntx].changed_date +MyNotifications.notification[cntx].changed_time +'",'+ 
-					'"'+MyNotifications.notification[cntx].shorttext+'",'+ 
+					'"'+x+'",'+ 
 					'"'+MyNotifications.notification[cntx].longtext +'",'+ 
 					'"'+MyNotifications.notification[cntx].startdate+'",'+ 
 					'"'+MyNotifications.notification[cntx].priority+'",'+

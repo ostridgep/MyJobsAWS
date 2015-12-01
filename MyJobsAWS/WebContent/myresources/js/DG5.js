@@ -229,14 +229,17 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
                                                 fields: [ new sap.m.Switch("Close_Work",{
                                                 state:false,
                                                 change:[function(evt){
-                                                       formChanged(evt)
+                                                       
+                                                    	   sap.ui.getCore().getElementById("FEClose_Variance").setVisible(this.getState())   
+                                                    	   sap.ui.getCore().getElementById("FEClose_Reason").setVisible(this.getState())   
+                                                       
                                                        
                                                 }],
                                                 type: sap.m.SwitchType.AcceptReject
                                          })
                                                 ]
                                          }),
-                                         new sap.ui.layout.form.FormElement({
+                                         new sap.ui.layout.form.FormElement("FEClose_Variance",{
                                                 label: "Variance",
                                                 fields: [new sap.m.Select('Close_Variance',{
                                                        
@@ -251,7 +254,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
                                                 }),
                                                 ]
                                          }),
-                                         new sap.ui.layout.form.FormElement({
+                                         new sap.ui.layout.form.FormElement("FEClose_Reason",{
                                                 label: "Reason",
                                                 fields: [new sap.m.Input("Close_Reason",{type: sap.m.InputType.Input, enabled: true})
                                                 ]

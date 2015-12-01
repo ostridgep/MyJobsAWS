@@ -42,6 +42,11 @@ function getFormattedDate()	{
 return zeroFill1(currentdate.getFullYear().toString()) +"/"+ zeroFill1((currentdate.getMonth()+1).toString() ) + "/"+zeroFill1(currentdate.getDate().toString());
 
 }
+function formatDate(currentdate)	{			
+
+return zeroFill1(currentdate.getFullYear().toString()) +"/"+ zeroFill1((currentdate.getMonth()+1).toString() ) + "/"+zeroFill1(currentdate.getDate().toString());
+
+}
 function getTime()	{			
 				var currentdate = new Date(); 
     x1=zeroFill1( currentdate.getHours()).toString();
@@ -50,8 +55,32 @@ function getTime()	{
 	return x1+x2+x3;
 
 }
+function convertEODDate(dt)
+{
+	x=dt.split(",")
+	d=x[0].split("/")
+	t=x[1].split(":")
+	m=t[1].split(" ")
+	xdate=zeroFill1( d[1])+"."+zeroFill1( d[0])+".20"+d[2];
+	if(m[1]=="PM"){
+		hours=(parseInt(t[0])+12).toString()
+	}else{
+		hours=(parseInt(t[0])).toString()
+	}
+		
+	xtime=zeroFill1(hours)+":"+zeroFill1(m[0])+":00"
+	return xdate+" "+xtime
+	}
 function getFormattedTime()	{			
 	var currentdate = new Date(); 
+x1=zeroFill1( currentdate.getHours()).toString();
+x2=zeroFill1(currentdate.getMinutes()).toString();
+x3=zeroFill1( currentdate.getSeconds()).toString();
+return x1+":"+x2+":"+x3;
+
+}
+function formatTime(currentdate)	{			
+	
 x1=zeroFill1( currentdate.getHours()).toString();
 x2=zeroFill1(currentdate.getMinutes()).toString();
 x3=zeroFill1( currentdate.getSeconds()).toString();

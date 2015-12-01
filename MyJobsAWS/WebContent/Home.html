@@ -90,7 +90,9 @@ var formEndOfDay = new sap.m.Dialog("dlgEndOfDay",{
                                     text: "Save",
                                     type: 	sap.m.ButtonType.Accept,
                                     tap: [ function(oEvt) { 
-                                       
+                                    	createAWSEODNotif(sap.ui.getCore().getElementById('EndOfDayWorkTime').getValue(),
+                                    			sap.ui.getCore().getElementById('EndOfDayHomeTime').getValue(),
+                                    			localStorage.getItem("EmployeeID"))
 										
                                        	
                                     	formEndOfDay.close()
@@ -115,14 +117,14 @@ var formEndOfDay = new sap.m.Dialog("dlgEndOfDay",{
                                                      new sap.m.DateTimeInput('EndOfDayWorkTime',{
                      									width : "99%",
                      									type : "DateTime",
-                     									displayFormat : "yyyy/MM/dd hh:mm",
+                     									
                      									dateValue : new Date()
                      								}),
                                                      new sap.m.Label({text:"Home Arrival Date/Time"}),
                                                       new sap.m.DateTimeInput('EndOfDayHomeTime',{
                       									width : "99%",
                       									type : "DateTime",
-                      									displayFormat : "yyyy/MM/dd hh:mm",
+                      									
                       									dateValue : new Date()
                       								}),
                                        

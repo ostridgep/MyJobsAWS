@@ -23,15 +23,17 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 					    text: "Save",
 					    type: 	sap.m.ButtonType.Accept,
 					    tap: [ function(oEvt) {	
+					    	
 					    	var xntype=sap.ui.getCore().byId("NewType").getSelectedItem().getKey().split("|")
 					    	var xgroup=sap.ui.getCore().byId("NewGroup").getSelectedItem().getKey().split("|")
 					    	var xcode=sap.ui.getCore().byId("NewCode").getSelectedItem().getKey().split("|")
 					    	var xpriority=sap.ui.getCore().byId("NewPriority").getSelectedItem().getKey().split("|")
+					    	ndate=convertEODDate(sap.ui.getCore().getElementById('NewNotifStart').getValue()).split(" ")
 					    	if(sap.ui.getCore().byId("NewDescription").getValue().length>0){
 					    		createNotification(xntype[0],xpriority[0],xgroup[0],xcode[0],sap.ui.getCore().byId("NewGroup").getSelectedItem().getText(),
 										sap.ui.getCore().byId("NewCode").getSelectedItem().getText(),sap.ui.getCore().byId("NewDescription").getValue(),
 										sap.ui.getCore().byId("NewDetails").getValue(),
-										sap.ui.getCore().byId("NewNotifStart").getValue(),
+										ndate[0], ndate[1],
 										sap.ui.getCore().byId("NewFuncLoc").getValue(),
 										sap.ui.getCore().byId("NewEquipment").getValue())
 
@@ -111,7 +113,6 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 								new sap.m.DateTimeInput('NewNotifStart',{
 									width : "99%",
 									type : "DateTime",
-									displayFormat : "yyyy/MM/dd hh:mm",
 									dateValue : new Date()
 								}),
 								new sap.m.Label({text:"Description"}),
@@ -153,7 +154,12 @@ function BuildNotificationTypes(){
 	var FirstVal="";
 	SQLStatement="SELECT * from refnotificationtypes where level_number = '2'"
 	
-	
+		sap.ui.getCore().getElementById("NewType").destroyItems();
+	sap.ui.getCore().getElementById("NewType").addItem(
+	new sap.ui.core.Item({
+		key: "NOTSELECTED", 
+		text: "Please Select"
+	}))
 		html5sql.process(SQLStatement,
 		 function(transaction, results, rowsArray){
 				//alert(rowsArray.length)
@@ -192,7 +198,11 @@ function BuildPriorities(selectedId){
 			 function(transaction, results, rowsArray){
 				
 				sap.ui.getCore().getElementById("NewPriority").destroyItems();
-				
+				sap.ui.getCore().getElementById("NewPriority").addItem(
+						new sap.ui.core.Item({
+							key: "NOTSELECTED", 
+							text: "Please Select"
+						}))
 					for (var n = 0; n < rowsArray.length; n++) {
 						item = rowsArray[n];
 						sap.ui.getCore().getElementById("NewPriority").addItem(
@@ -225,7 +235,12 @@ function BuildPriorities(selectedId){
 				 function(transaction, results, rowsArray){
 
 						sap.ui.getCore().getElementById("NewGroup").destroyItems();
-						
+						sap.ui.getCore().getElementById("NewCode").destroyItems();
+						sap.ui.getCore().getElementById("NewGroup").addItem(
+								new sap.ui.core.Item({
+									key: "NOTSELECTED", 
+									text: "Please Select"
+								}))
 						for (var n = 0; n < rowsArray.length; n++) {
 							item = rowsArray[n];
 							sap.ui.getCore().getElementById("NewGroup").addItem(
@@ -257,6 +272,11 @@ function BuildPriorities(selectedId){
 				 function(transaction, results, rowsArray){
 
 						sap.ui.getCore().getElementById("NewCode").destroyItems();
+						sap.ui.getCore().getElementById("NewCode").addItem(
+								new sap.ui.core.Item({
+									key: "NOTSELECTED", 
+									text: "Please Select"
+								}))
 						
 						for (var n = 0; n < rowsArray.length; n++) {
 							item = rowsArray[n];
