@@ -26,19 +26,54 @@ var fdt="";
 return fdt;
 }
 
+
+
+function requestSAPData1(page,params){
+
+	opMessage(SAPServerPrefix+page+params);
+	var myurl=SAPServerPrefix+page+params;
+	console.log("Called URL:"+myurl)
+  $.getJSON(myurl).done(function() {
+    console.log("second success"+myurl );
+  })
+  .fail(function() {
+    console.log( "error" +myurl);
+  })
+  .always(function() {
+    console.log( "complete"+myurl );
+  });
+  
+  
+}
+	 
 function requestSAPData(page,params){
 
 	opMessage(SAPServerPrefix+page+params);
 	var myurl=SAPServerPrefix+page+params;
-	console.log(myurl)
-  $.getJSON(myurl)
+	console.log("Called URL:"+myurl)
+  $.getJSON(myurl).done(function() {
+    console.log("second success"+myurl );
+  })
+  .fail(function() {
+    console.log( "error" +myurl);
+  })
+  .always(function() {
+    console.log( "complete"+myurl );
+  });
   
-  
+	$.ajax({
+	    dataType: "json",
+	    url: myurl,
+	//    data: data,
+	//    success: function( ) { },
+	    timeout: 2000
+	}).fail( function( xhr, status ) {
+		 alert(status+":"+xhr)
+	    if( status == "timeout" ) {
+	      alert(status+"it timed out")
+	    }
+	}); 
 }
-
-
-	 
-
 function sendSAPData(page){
 	opMessage(page);
 
