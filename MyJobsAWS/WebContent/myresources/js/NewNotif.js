@@ -23,14 +23,14 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 					    text: "Save",
 					    type: 	sap.m.ButtonType.Accept,
 					    tap: [ function(oEvt) {	
-					    	
+					    	//alert(sap.ui.getCore().byId("NewType").getSelectedItem().getKey()+"--"+sap.ui.getCore().byId("NewGroup").getSelectedItem().getKey()+"--"+sap.ui.getCore().byId("NewCode").getSelectedItem().getKey())
 					    	var xntype=sap.ui.getCore().byId("NewType").getSelectedItem().getKey().split("|")
 					    	var xgroup=sap.ui.getCore().byId("NewGroup").getSelectedItem().getKey().split("|")
 					    	var xcode=sap.ui.getCore().byId("NewCode").getSelectedItem().getKey().split("|")
 					    	var xpriority=sap.ui.getCore().byId("NewPriority").getSelectedItem().getKey().split("|")
 					    	ndate=convertEODDate(sap.ui.getCore().getElementById('NewNotifStart').getValue()).split(" ")
 					    	if(sap.ui.getCore().byId("NewDescription").getValue().length>0){
-					    		createNotification(xntype[0],xpriority[0],xgroup[0],xcode[0],sap.ui.getCore().byId("NewGroup").getSelectedItem().getText(),
+					    		createNotification(xntype[0],xpriority[0],xgroup[1],xcode[0],sap.ui.getCore().byId("NewGroup").getSelectedItem().getText(),
 										sap.ui.getCore().byId("NewCode").getSelectedItem().getText(),sap.ui.getCore().byId("NewDescription").getValue(),
 										sap.ui.getCore().byId("NewDetails").getValue(),
 										ndate[0], ndate[1],

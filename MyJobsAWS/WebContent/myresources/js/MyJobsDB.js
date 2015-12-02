@@ -76,7 +76,7 @@ function requestSAPData(page,params){
 }
 function sendSAPData(page){
 	opMessage(page);
-
+	console.log(status+page)
    $.getJSON(page);
 }
 
@@ -656,14 +656,14 @@ var syncDetails = false	;
 								}
 							item = rowsArray[0];
 
-							newDets='&TYPE='+item['type']+'&EQUIPMENT='+item['equipment']+'&STARTDATE='+item['date']+'&STARTTIME='+item['time']+'&SHORTTEXT='+item['shorttext']+'&LONGTEXT='+escape(item['longtext'])+'&ID='+item['id']+'&REPORTEDBY='+item['reportedby']+'&DEFECT='+item['defect']+'&MPOINT='+item['mpoint']+'&MPVAL='+item['mpval'];
-							opMessage("NewJob Details="+newDets);
+							newJobDets='&TYPE='+item['type']+'&EQUIPMENT='+item['equipment']+'&STARTDATE='+item['date']+'&STARTTIME='+item['time']+'&SHORTTEXT='+item['shorttext']+'&LONGTEXT='+escape(item['longtext'])+'&ID='+item['id']+'&REPORTEDBY='+item['reportedby']+'&DEFECT='+item['defect']+'&MPOINT='+item['mpoint']+'&MPVAL='+item['mpval'];
+							opMessage("NewJob Details="+newJobDets);
 							SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 							sapCalls+=1;
 							
 							html5sql.process("UPDATE MyNewJobs SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-										sendSAPData(SAPServerPrefix+"MyJobsCreateVehicleDefect.htm"+SAPServerSuffix+newDets);
+										sendSAPData(SAPServerPrefix+"MyJobsCreateVehicleDefect.htm"+SAPServerSuffix+newJobDets);
 									 },
 									 function(error, statement){
 										 
@@ -677,8 +677,48 @@ var syncDetails = false	;
 						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
 					}
 				);	
+// Process New Notifications	EOD			
+				html5sql.process("SELECT * from MyNotifications where notifno = 'NEW' and type = 'Z7'",
+					function(transaction, results, rowsArray){
+						if( rowsArray.length > 0) {
+							if (syncDetails){
+								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", EOD:"+String(rowsArray.length));
+							}else{
+								syncDetails=true;
+								localStorage.setItem('LastSyncUploadDetails',"EOD:"+String(rowsArray.length));
+							}
+							if(!syncDetsSet){
+								syncDetsSet=true;
+								SetLastSyncDetails("LASTSYNC_UPLOAD");
+								
+								}
+							for (var n = 0; n < rowsArray.length; n++) {
+								item = rowsArray[n];
+								newEODDets='&TYPE='+item['type']+'&ACT_START_DATE='+item['startdate']+'&ACT_START_TIME='+item['starttime']+'&ACT_END_DATE='+item['enddate']+'&ACT_END_TIME='+item['endtime']+'&SHORT_TEXT='+item['shorttext']
+								newEODDets+='&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser')+'&ID='+item['id'];;
+								opMessage("New EOD Notifications Details="+newEODDets);
+								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+								sapCalls+=1;
+								
+								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
+										 function(){
+											sendSAPData(SAPServerPrefix+"MyJobsCreateEODNotification.htm"+SAPServerSuffix+newEODDets);
+										 },
+										 function(error, statement){
+											 
+											 opMessage("Error: " + error.message + " when processing " + statement);
+										 }        
+								);
+							}
+						 }
+						 
+					},
+					function(error, statement){
+						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
+					}
+				);				
 // Process New Notifications				
-				html5sql.process("SELECT * from MyNotifications where notifno = 'NEW'",
+				html5sql.process("SELECT * from MyNotifications where notifno = 'NEW' and type <> 'Z7'",
 					function(transaction, results, rowsArray){
 						if( rowsArray.length > 0) {
 							if (syncDetails){
@@ -694,16 +734,15 @@ var syncDetails = false	;
 								}
 							for (var n = 0; n < rowsArray.length; n++) {
 								item = rowsArray[n];
-
-								newDets='&TYPE='+item['type']+'&STARTDATE='+item['startdate'].substring(0,8)+'&STARTTIME='+item['startdate'].substring(9,13)+'&SHORTTEXT='+item['shorttext']+'&LONGTEXT='+item['longtext']+'&ID='+item['id'];
-								newDets+='&CODE='+item['pcode']+'&GROUP='+item['pgroup']+'&EQUIPMENT='+item['equipment']+'&FUNCLOC='+item['funcloc']+'&REPORTEDBY='+item['reportedby'];
-								opMessage("New Notifications Details="+newDets);
+								newNotifDets='&NOTIF_TYPE='+item['type']+'&START_DATE='+item['startdate']+'&START_TIME='+item['starttime']+'&END_DATE='+item['startdate']+'&END_TIME='+item['starttime']+'&SHORT_TEXT='+item['shorttext']+'&LONG_TEXT='+item['longtext']+'&ID='+item['id'];
+								newNotifDets+='&CODING='+item['pcode']+'&CODE_GROUP='+item['pgroup']+'&EQUIPMENT='+item['equipment']+'&FUNCT_LOC='+item['funcloc']+'&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser');
+								opMessage("New Notifications Details="+newNotifDets);
 								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 								sapCalls+=1;
 								
 								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateNotification.htm"+SAPServerSuffix+newDets);
+											sendSAPData(SAPServerPrefix+"MyJobsCreateNewJob.htm"+SAPServerSuffix+newNotifDets);
 										 },
 										 function(error, statement){
 											 
@@ -735,14 +774,20 @@ var syncDetails = false	;
 								}else{
 									fconf="";
 								}									
-								newDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&REASON='+item['description']+'&TIME='+item['duration']+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['date']+'&STIME='+item['time']+'&EDATE='+item['enddate']+'&ETIME='+item['endtime']+'&ACTIVITYTYPE='+item['type']+'&FINAL='+fconf;
-								opMessage("NewTconf Details="+newDets);
+								newTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT='+item['description']+'&TIME='+item['duration']+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['date'].substring(8,10)+"."+item['date'].substring(5,7)+"."+item['date'].substring(0,4)+'&STIME='+item['time']+'&EDATE='+item['enddate'].substring(8,10)+"."+item['enddate'].substring(5,7)+"."+item['enddate'].substring(0,4)+'&ETIME='+item['endtime']+
+								'&ACTIVITYTYPE='+item['type']+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+'&LONG_TEXT='+item['longtext']+
+								'&ACT_WORK='+item['act_work']+'&ACT_TYPE='+item['act_type']+'&REM_WORK='+item['rem_work']+'&FINAL='+fconf;
+								if (item['reason']!=null){
+									newTConfDets+='&REASON='+item['reason']
+								}
+									
+								opMessage("NewTconf Details="+newTConfDets);
 								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 								sapCalls+=1;
 								
 								html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newDets);
+											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newTConfDets);
 										 },
 										 function(error, statement){
 											 
@@ -769,14 +814,14 @@ var syncDetails = false	;
 							}
 							for (var n = 0; n < rowsArray.length; n++) {
 								item = rowsArray[n];
-								newDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&RECNO='+item['id'];
-								opMessage("Newstatus Details="+newDets);
+								newStatusDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
+								opMessage("Newstatus Details="+newStatusDets);
 								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));		
 								sapCalls+=1;							
 								
 								html5sql.process("UPDATE MyStatus SET state = 'SENDING' where id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsUpdateStatus.htm"+SAPServerSuffix+newDets);
+											sendSAPData(SAPServerPrefix+"MyJobsUpdateStatus.htm"+SAPServerSuffix+newStatusDets);
 										 },
 										 function(error, statement){
 											 
@@ -790,6 +835,59 @@ var syncDetails = false	;
 						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
 					}
 				);	
+// Process Close Jobs			
+				html5sql.process("SELECT * from MyJobClose where state = 'NEW' and type = 'Z7'",
+					function(transaction, results, rowsArray){
+						if( rowsArray.length > 0) {
+							if (syncDetails){
+								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", EOD:"+String(rowsArray.length));
+							}else{
+								syncDetails=true;
+								localStorage.setItem('LastSyncUploadDetails',"EOD:"+String(rowsArray.length));
+							}
+							if(!syncDetsSet){
+								syncDetsSet=true;
+								SetLastSyncDetails("LASTSYNC_UPLOAD");
+								
+								}
+							for (var n = 0; n < rowsArray.length; n++) {
+								item = rowsArray[n];
+								newCloseTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT=Close InShift'+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetiime']+
+								'&ACTIVITYTYPE=INSHIFT'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
+								'&ACT_WORK='+item['inshift']+'&FINAL=X';
+								if (item['followon']=='YES'){
+									newTConfDets+='&REASON='+item['reason']+'&ACT_TYPE='+item['variance']
+								}
+								newCloseTConfDets1='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT=Close Out Of Shift'+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetiime']+
+								'&ACTIVITYTYPE=OUTOFSHIFT'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
+								'&ACT_WORK='+item['inshift']+'&FINAL=X';
+								if (item['followon']=='YES'){
+									newTConfDets+='&REASON='+item['reason']+'&ACT_TYPE='+item['variance']
+								}
+								newCloseDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
+								opMessage("Newstatus Details="+newStatusDets);
+								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));		
+								sapCalls+=1;		
+								
+								html5sql.process("UPDATE MyJobClose SET state = 'SENDING' WHERE id='"+item['id']+"'",
+										 function(){
+											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets);
+											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets1);
+											sendSAPData(SAPServerPrefix+"MyJobsUpdateNotif.htm"+SAPServerSuffix+newCloseDets);
+										 },
+										 function(error, statement){
+											 
+											 opMessage("Error: " + error.message + " when processing " + statement);
+										 }        
+								);
+							}
+						 }
+						 
+					},
+					function(error, statement){
+						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
+					}
+				);		
 // Upload the Messages READ Indicator
 				
 				html5sql.process("SELECT * from MyMessages where state = 'READ'",
@@ -812,13 +910,13 @@ var syncDetails = false	;
 
 							item = rowsArray[0];
 
-							newDets='&ID='+item['id']+'&DOCID='+item['msgid'];
-							opMessage("READ Status= "+newDets);
+							newMessageDets='&ID='+item['id']+'&DOCID='+item['msgid'];
+							opMessage("READ Status= "+newMessageDets);
 							SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 							
 							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-									///sendSAPData(SAPServerPrefix+"MyJobsMessageSetReadFlag.htm"+SAPServerSuffix+newDets);
+									///sendSAPData(SAPServerPrefix+"MyJobsMessageSetReadFlag.htm"+SAPServerSuffix+newMessageDets);
 									 },
 									 function(error, statement){
 										 
@@ -854,13 +952,13 @@ var syncDetails = false	;
 
 							item = rowsArray[0];
 
-							newDets='&ID='+item['id']+'&TO='+item['msgtoid']+'&SUBJECT='+item['msgsubject']+'&CONTENT='+item['msgtext'];
-							opMessage("SEND Status= "+newDets);
+							newSentMsgDets='&ID='+item['id']+'&TO='+item['msgtoid']+'&SUBJECT='+item['msgsubject']+'&CONTENT='+item['msgtext'];
+							opMessage("SEND Status= "+newSentMsgDets);
 							SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 							
 							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-										      //sendSAPData(SAPServerPrefix+"MyJobsMessageSend.htm"+SAPServerSuffix+newDets);
+										      //sendSAPData(SAPServerPrefix+"MyJobsMessageSend.htm"+SAPServerSuffix+newSentMsgDets);
 										 },
 										 function(error, statement){
 											 
@@ -1213,17 +1311,17 @@ function createAWSEODNotif(workdate,homedate,empno)
 
 }
 
-function createAWSJobClose(order,opno,empid,work_cntr,closedate,closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason)
+function createAWSJobClose(order,opno,notifno, empid,work_cntr,closedate,closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason)
 {
-html5sql.process("INSERT INTO  MyJobClose (orderno , opno, empid, work_cntr, state , closedate, closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason) VALUES ("+
-			 "'"+order+"','"+opno+"','"+empid+"','"+workcntr+"','NEW','"+closedate+"','"+closetime+"','"+
+html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, empid, work_cntr, state , closedate, closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason) VALUES ("+
+			 "'"+order+"','"+opno+"','"+notifno+"','"+empid+"','"+work_cntr+"','NEW','"+closedate+"','"+closetime+"','"+
 			 funcloc+"','"+equipment+"','"+inshift+"','"+outofshift+"','"+pgrp+"','"+pcode+"','"+agrp+"','"+
 			 acode+"','"+igrp+"','"+icode+"','"+followon+"','"+variance+"','"+reason+"');",
 	 function(){
-		rebuildTimeConfs();
+		alert("good")
 	 },
 	 function(error, statement){
-
+			alert("Error: " + error.message + " when createTConf processing " + statement);
 		opMessage("Error: " + error.message + " when createTConf processing " + statement);
 	 }        
 	);
@@ -1389,7 +1487,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyEffects      		( id integer primary key autoincrement, notifno TEXT, item_id TEXT, task_id TEXT, effect_cat_typ TEXT, effect_codegrp TEXT, effect_code TEXT, txt_effectgrp TEXT, txt_effectcd TEXT, value TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyStatus     			( id integer primary key autoincrement, orderno TEXT, opno TEXT, stsma TEXT, status TEXT, statusdesc, state TEXT, actdate TEXT, acttime TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyTimeConfs     		( id integer primary key autoincrement, orderno TEXT, opno TEXT, confno TEXT, type TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT,act_work TEXT, rem_work TEXT, act_type TEXT, work_cntr TEXT, reason TEXT, longtext TEXT, duration TEXT, datestamp TEXT,  user TEXT,  empid TEXT, final TEXT, state TEXT);'+
-					 'CREATE TABLE IF NOT EXISTS MyJobClose             ( id integer primary key autoincrement, orderno TEXT , opno TEXT, empid TEXT, work_cntr TEXT, state TEXT , closedate TEXT, closetime TEXT, funcloc  TEXT, equipment TEXT, inshift  TEXT, outofshift  TEXT, pgrp TEXT, pcode TEXT, agrp TEXT, acode TEXT, igrp TEXT, icode TEXT, followon  TEXT, variance TEXT, reason TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyJobClose             ( id integer primary key autoincrement, orderno TEXT , opno TEXT, notifno TEXT, empid TEXT, work_cntr TEXT, state TEXT , closedate TEXT, closetime TEXT, funcloc  TEXT, equipment TEXT, inshift  TEXT, outofshift  TEXT, pgrp TEXT, pcode TEXT, agrp TEXT, acode TEXT, igrp TEXT, icode TEXT, followon  TEXT, variance TEXT, reason TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyNewJobs     			( id integer primary key autoincrement, type TEXT, defect TEXT, mpoint TEXT, mpval TEXT, shorttext TEXT, longtext TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT, funcloc TEXT, equipment TEXT, cattype TEXT, codegroup TEXT, coding TEXT, activitycodegroup TEXT, activitycode TEXT, activitytext TEXT, prioritytype TEXT, priority TEXT, reportedby TEXT, state TEXT, assignment TEXT, spec_reqt TEXT, assig_tome TEXT, userid TEXT, eq_status TEXT, breakdown TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkConfig     		( id integer primary key autoincrement, paramname TEXT, paramvalue TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkSyncDets    		( id integer primary key autoincrement, lastsync TEXT, comments   TEXT);'+
@@ -1425,7 +1523,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS FuncLocs			  	( id integer primary key autoincrement, flid TEXT, description TEXT, swerk TEXT, level TEXT, parentid TEXT, children TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS Equipments			  	( id integer primary key autoincrement, eqid TEXT, description TEXT, flid TEXT);'+
 					'CREATE TABLE IF NOT EXISTS MyMenuBar 		        ( id integer primary key autoincrement, scenario TEXT, level TEXT, item TEXT, position TEXT, type TEXT,  subitem TEXT, command TEXT, item2 TEXT);'+	
-					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT, acpt_date TEXT, acpt_time TEXT, onsite_date TEXT, onsite_time TEXT,park_date TEXT, park_time TEXT, tconf_date TEXT, tconf_time TEXT, status TEXT, status_l TEXT, status_s TEXT, notif_cat_profile TEXT);'+	
+					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, notifno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT, acpt_date TEXT, acpt_time TEXT, onsite_date TEXT, onsite_time TEXT,park_date TEXT, park_time TEXT, tconf_date TEXT, tconf_time TEXT, status TEXT, status_l TEXT, status_s TEXT, notif_cat_profile TEXT);'+	
 						
 					 'CREATE TABLE IF NOT EXISTS TSActivities		    ( id integer primary key autoincrement, code TEXT, skill TEXT,  subskill TEXT, description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS TSNPJobs			    ( id integer primary key autoincrement, jobno TEXT, subtype TEXT,  description TEXT);'+
@@ -2079,9 +2177,10 @@ var changeddatetime=[];
 				for(var pcnt=0; pcnt < MyOrders.order[cntx].jobdets.length ; pcnt++)
 					{
 						if(MyOrders.order[cntx].jobdets[pcnt].orderno.length>1){				
-							sqlstatement+='INSERT INTO MyJobDets (orderno, opno, eworkcentre, oworkcentre, priority_code, priority_desc, pmactivity_code, pmactivity_desc,oppmactivity_code, oppmactivity_desc, start_date, start_time, duration, equipment_code, equipment_desc, equipment_gis, funcloc_code, funcloc_desc, funcloc_gis, acpt_date, acpt_time, onsite_date, onsite_time, park_date, park_time, status, status_l, status_s, notif_cat_profile, site) VALUES ('+
+							sqlstatement+='INSERT INTO MyJobDets (orderno, opno, notifno, eworkcentre, oworkcentre, priority_code, priority_desc, pmactivity_code, pmactivity_desc,oppmactivity_code, oppmactivity_desc, start_date, start_time, duration, equipment_code, equipment_desc, equipment_gis, funcloc_code, funcloc_desc, funcloc_gis, acpt_date, acpt_time, onsite_date, onsite_time, park_date, park_time, status, status_l, status_s, notif_cat_profile, site) VALUES ('+
 							'"'+MyOrders.order[cntx].jobdets[pcnt].orderno+'","'+ 
 							MyOrders.order[cntx].jobdets[pcnt].opno+'","'+ 
+							MyOrders.order[cntx].jobdets[pcnt].notifno+'","'+ 
 							MyOrders.order[cntx].jobdets[pcnt].eworkcentre+'","'+ 
 							MyOrders.order[cntx].jobdets[pcnt].oworkcentre+'","'+ 
 							MyOrders.order[cntx].jobdets[pcnt].priority_code+'","'+ 
@@ -2540,6 +2639,44 @@ opMessage("Callback sapCB triggured");
 	if(MySAP.message.length>0){
 		
 			opMessage("Processing Update Response: ");
+//Handle NewJob Create Response
+			if (MySAP.message[0].type=="createnewjob"){
+				//alert(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].sapmessage+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
+				opMessage("-->Type= "+MySAP.message[0].type);
+				opMessage("-->row= "+MySAP.message[0].recno);
+				opMessage("-->Message= "+MySAP.message[0].sapmessage);
+				opMessage("-->Message= "+MySAP.message[0].message);
+				opMessage("-->NotifNo= "+MySAP.message[0].notifno);
+				if((MySAP.message[0].message=="Success")&&(MySAP.message[0].sapmessage.indexof("Created")>0))
+					{
+						sqlstatement+="UPDATE MyNotifications SET notifno = '"+ MySAP.message[0].notifno+"' WHERE id='"+ MySAP.message[0].recno+"';";
+					}else{
+						sqlstatement+="UPDATE MyNotifications SET notifno = 'SENT"+MySAP.message[0].recno+"' WHERE id='"+ MySAP.message[0].recno+"';";
+					}
+					
+
+		
+			}
+//Handle EOD Create Response
+			if (MySAP.message[0].type=="createeodnotification"){
+				//alert(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
+				opMessage("-->Type= "+MySAP.message[0].type);
+				opMessage("-->row= "+MySAP.message[0].recno);
+				opMessage("-->Message= "+MySAP.message[0].sapmessage);
+				opMessage("-->Message= "+MySAP.message[0].message);
+				opMessage("-->NotifNo= "+MySAP.message[0].notifno);
+				if(MySAP.message[0].message=="Success")
+					{
+					sqlstatement+="UPDATE MyNotifications SET notifno = '"+ MySAP.message[0].notifno+"' WHERE id='"+ MySAP.message[0].recno+"';";
+					}else{
+					sqlstatement+="UPDATE MyNotifications SET notifno = 'SENT"+MySAP.message[0].recno+"' WHERE id='"+ MySAP.message[0].recno+"';";	
+					}
+					
+					
+					
+
+		
+			}
 //Handle Notification Create Response
 			if (MySAP.message[0].type=="createnotificationxx"){
 				//alert(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
@@ -2574,16 +2711,18 @@ opMessage("Callback sapCB triggured");
 			}	
 //Handle Time Confirmation Create Response			
 			if (MySAP.message[0].type=="createtconf"){
-				//alert(MySAP.message[0].type+":"+MySAP.message[0].confno+":"+MySAP.message[0].recno)
+				//alert(MySAP.message[0].type+":"+MySAP.message[0].message+":"+MySAP.message[0].message_type+":"+MySAP.message[0].confno+":"+MySAP.message[0].recno)
 				opMessage("-->Type= "+MySAP.message[0].type);
 				opMessage("-->confno= "+MySAP.message[0].confno);
 				if(MySAP.message[0].confno!="0000000000"){
 
 					
 		
-						sqlstatement+="UPDATE MyTimeConfs SET confno = 'SERVER' WHERE id='"+MySAP.message[0].recno+"';";
+						sqlstatement+="UPDATE MyTimeConfs SET confno = '"+MySAP.message[0].confno+"' WHERE id='"+MySAP.message[0].recno+"';";
 						
 
+					}else{
+						sqlstatement+="UPDATE MyTimeConfs SET confno = 'SENT"+MySAP.message[0].recno+"' WHERE id='"+MySAP.message[0].recno+"';";
 					}
 		
 			}
@@ -2594,11 +2733,13 @@ opMessage("Callback sapCB triggured");
 				opMessage("-->Orderno= "+MySAP.message[0].orderno);
 				opMessage("-->Opno= "+MySAP.message[0].opno);
 				opMessage("-->Message= "+MySAP.message[0].message);
-				if(MySAP.message[0].message=="Status successfully changed"){
+				if(MySAP.message[0].message=="Operation successfully updated"){
 
 						
-						sqlstatement+="delete from MyStatus WHERE id='"+MySAP.message[0].recno + "';";
+						sqlstatement+="delete from MyStatus WHERE id = '"+MySAP.message[0].recno + "';";
 			
+					}else{
+						sqlstatement+="UPDATE MyStatus SET state = 'SENT"+MySAP.message[0].recno+"' WHERE id='"+ MySAP.message[0].recno+"';";	
 					}
 		
 			}	
@@ -2651,10 +2792,10 @@ opMessage("Callback sapCB triggured");
 			}
 			html5sql.process(sqlstatement,
 						 function(){
-							 //alert("Success Creating Tables");
+							 alert("Success handling SAPCB"+sqlstatement);
 						 },
 						 function(error, statement){
-							 
+							 alert("Error: " + error.message + " when processing " + statement);
 							 opMessage("Error: " + error.message + " when processing " + statement);
 						 }        
 				);	

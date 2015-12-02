@@ -259,26 +259,32 @@ new sap.m.Button( {
     		  setStatusChangeDT()
     		 formDG5.close()
     		 followOnWork="NO"
+    		 followOnVariance=""
+    		 followOnReason=""
              if(sap.ui.getCore().getElementById("Close_Work").getState()){
             	 followOnWork="YES"
              }
-            	
-             
-             createAWSJobClose(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
+    		  try {
+    			  followOnVariance=sap.ui.getCore().byId("Close_Variance").getSelectedItem().getKey()
+				  followOnReason= sap.ui.getCore().byId("Close_Reason").getValue()
+    			}
+    			catch(err) {
+    			    followOnWork="NO"
+    			}
+             alert(currentNotifNo)
+             createAWSJobClose(CurrentOrderNo, CurrentOpNo, currentNotifNo, localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
             		 statusUpdateDate,statusUpdateTime,
             		 sap.ui.getCore().byId("Close_FunctionalLocation").getValue(),
         			 sap.ui.getCore().byId("Close_Equipment").getValue(),
         			 sap.ui.getCore().byId("Close_InShiftTime").getValue(),
         			 sap.ui.getCore().byId("Close_OutOfShiftTime").getValue(),
         			 sap.ui.getCore().byId("Close_ProblemGroup").getSelectedItem().getKey(),
-        			 sap.ui.getCore().byId("Close_ProblemGroup").getSelectedItem().getKey(),
+        			 sap.ui.getCore().byId("Close_ProblemCode").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ActionGroup").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ActionCode").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ImpactGroup").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ImpactCode").getSelectedItem().getKey(),
-					 followOnWork,
-					 sap.ui.getCore().byId("Close_Variance").getSelectedItem().getKey(),
-         			 sap.ui.getCore().Close_Reason("StatusUpdateActualWork").getValue())
+					 followOnWork,followOnVariance,followOnReason )
 					}else{
 						if (CloseError=="1"){
 						DisplayErrorMessage("Close Job Error", "Close Details must be Completed\n-Functional Location\n-Equipment\n-Time Entries")
@@ -307,7 +313,7 @@ new sap.m.Button( {
             contentWidth:"85%",
             contentHeight: "85%",
       beforeOpen:function(){
-        
+        alert(currentNotifNo)
 		BuildCloseScreen();
 
       },
