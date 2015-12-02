@@ -820,11 +820,11 @@ function MenuPressed(id){
 						//formWebPage.open()
 						alert(selectedWebPage)
 						
-						cordova.inAppBrowser.open(selectedWebPage,"_system")
+						cordova.InAppBrowser.open(selectedWebPage,"_system")
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
 						alert(selectedWebPage)
-						cordova.inAppBrowser.open(selectedWebPage,"_system")
+						cordova.InAppBrowser.open(selectedWebPage,"_system")
 					}else if(rowsArray[0].type=='C'){
 						if (rowsArray[0].command=="VehicleCheckViewModel"){
 							window.location.href="VehicleCheck.html"
@@ -866,11 +866,11 @@ function SubMenuPressed(id){
 						//window.open(selectedWebPage,"_system")
 						alert(selectedWebPage)
 						
-						cordova.inAppBrowser.open(selectedWebPage, '_blank', 'location=yes', 'closebuttoncaption = Return to MyJobs');
+						cordova.InAppBrowser.open(selectedWebPage, '_blank', 'location=yes', 'closebuttoncaption = Return to MyJobs');
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
 						alert(selectedWebPage)
-						cordova.inAppBrowser.open(selectedWebPage, '_blank', 'location=yes', 'closebuttoncaption = Return to MyJobs');
+						cordova.InAppBrowser.open(selectedWebPage, '_blank', 'location=yes', 'closebuttoncaption = Return to MyJobs');
 						//window.open(selectedWebPage,'_system')
 					}else if(rowsArray[0].type=='C'){
 						
