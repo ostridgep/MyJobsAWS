@@ -5,7 +5,30 @@
 <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>MyJobs - Home</title>
-
+<style>
+.inAppBrowserWrap {
+  background-color: rgba(0,0,0,0.75);
+  color: rgba(235,235,235,1.0);
+}
+.inAppBrowserWrap menu {
+  overflow: auto;
+  list-style-type: none;
+  padding-left: 0;
+}
+.inAppBrowserWrap menu li {
+  font-size: 25px;
+  height: 25px;
+  float: left;
+  margin: 0 10px;
+  padding: 3px 10px;
+  text-decoration: none;
+  color: #ccc;
+  display: block;
+  background: rgba(30,30,30,0.50);
+}
+.inAppBrowserWrap menu li.disabled {
+    color: #777;
+}</style>
 <script src="resources/sap-ui-core.js" type="text/javascript"
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.commons"
 	data-sap-ui-theme="sap_bluecrystal">
@@ -802,7 +825,8 @@ function BuildMenuBar(){
 	
 }
 function openWebPage(url){
-	ref=window.open(url,"_blank", 'location=yes',  'closebuttoncaption = Return to MyJobs')
+	alert(url)
+	ref=window.open(url,"_blank", 'location=yes','closebuttoncaption = Return to MyJobs')
 	ref.addEventListener('loadstart',function()
 		{
 		alert(event.url)
@@ -826,13 +850,12 @@ function MenuPressed(id){
 						formSubMenu.open()
 					}else if (rowsArray[0].type=='B'){
 						selectedWebPage=rowsArray[0].command.replace("{SUPUSERNAME}", localStorage.getItem("MobileUser"));
-						//formWebPage.open()
-						alert(selectedWebPage)
+						
 						openWebPage(selectedWebPage)
 
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
-						alert(selectedWebPage)
+						
 						openWebPage(selectedWebPage)
 						
 					}else if(rowsArray[0].type=='C'){
@@ -874,12 +897,12 @@ function SubMenuPressed(id){
 						selectedWebPage=rowsArray[0].command.replace("{SUPUSERNAME}", localStorage.getItem("MobileUser"));
 						//formWebPage.open()
 						//window.open(selectedWebPage,"_system")
-						alert(selectedWebPage)
+					
 						openWebPage(selectedWebPage)
 						
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
-						alert(selectedWebPage)
+						
 						openWebPage(selectedWebPage)
 					}else if(rowsArray[0].type=='C'){
 						
