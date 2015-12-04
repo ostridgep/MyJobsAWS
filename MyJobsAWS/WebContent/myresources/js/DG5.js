@@ -196,7 +196,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
                             formElements: [
                                  
                                   
-                                   new sap.ui.layout.form.FormElement({
+                                   new sap.ui.layout.form.FormElement("FEClose_LongText",{
                                   	 label: "Long Text",
                                           fields: [new sap.m.TextArea("Close_LongText",{ rows: 5})
                                           ]

@@ -66,7 +66,7 @@ function requestSAPData(page,params){
 	    url: myurl,
 	//    data: data,
 	//    success: function( ) { },
-	    timeout: 2000
+	    timeout: 5000
 	}).fail( function( xhr, status ) {
 		console.log(status+":"+xhr)
 	    if( status == "timeout" ) {
@@ -757,50 +757,7 @@ var syncDetails = false	;
 						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
 					}
 				);
-// Process Time Confirmations
-				html5sql.process("SELECT * from MyTimeConfs where confno = 'NEW'",
-					function(transaction, results, rowsArray){
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", TimeConfs:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"TimeConfs:"+String(rowsArray.length));
-							}
-							for (var n = 0; n < rowsArray.length; n++) {
-								item = rowsArray[n];
-								if(item['final']=="Yes"){
-									fconf="X";
-								}else{
-									fconf="";
-								}									
-								newTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT='+item['description']+'&TIME='+item['duration']+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['date'].substring(8,10)+"."+item['date'].substring(5,7)+"."+item['date'].substring(0,4)+'&STIME='+item['time']+'&EDATE='+item['enddate'].substring(8,10)+"."+item['enddate'].substring(5,7)+"."+item['enddate'].substring(0,4)+'&ETIME='+item['endtime']+
-								'&ACTIVITYTYPE='+item['type']+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+'&LONG_TEXT='+item['longtext']+
-								'&ACT_WORK='+item['act_work']+'&ACT_TYPE='+item['act_type']+'&REM_WORK='+item['rem_work']+'&FINAL='+fconf;
-								if (item['reason']!=null){
-									newTConfDets+='&REASON='+item['reason']
-								}
-									
-								opMessage("NewTconf Details="+newTConfDets);
-								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
-								sapCalls+=1;
-								
-								html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
-										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newTConfDets);
-										 },
-										 function(error, statement){
-											 
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);
-							 }
-						}
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);	
+
 
 // Process Status Updates				
 				html5sql.process("SELECT * from MyStatus where state = 'NEW'",
@@ -836,14 +793,14 @@ var syncDetails = false	;
 					}
 				);	
 // Process Close Jobs			
-				html5sql.process("SELECT * from MyJobClose where state = 'NEW' and type = 'Z7'",
+				html5sql.process("SELECT * from MyJobClose where state = 'NEW'",
 					function(transaction, results, rowsArray){
 						if( rowsArray.length > 0) {
 							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", EOD:"+String(rowsArray.length));
+								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Close:"+String(rowsArray.length));
 							}else{
 								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"EOD:"+String(rowsArray.length));
+								localStorage.setItem('LastSyncUploadDetails',"Close:"+String(rowsArray.length));
 							}
 							if(!syncDetsSet){
 								syncDetsSet=true;
@@ -852,31 +809,59 @@ var syncDetails = false	;
 								}
 							for (var n = 0; n < rowsArray.length; n++) {
 								item = rowsArray[n];
-								newCloseTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT=Close InShift'+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetiime']+
-								'&ACTIVITYTYPE=INSHIFT'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
-								'&ACT_WORK='+item['inshift']+'&FINAL=X';
+								newCloseTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&USER='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetime']+
+								'&ACTIVITYTYPE=SMEPIS'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
+								'&ACT_WORK='+item['inshift']
+								
+								newCloseTConfDets1='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&USER='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetime']+
+								'&ACTIVITYTYPE=SMEPOS'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
+								'&ACT_WORK='+item['outofshift'];
 								if (item['followon']=='YES'){
-									newTConfDets+='&REASON='+item['reason']+'&ACT_TYPE='+item['variance']
+									if (item['outofshift']>'0'){
+										newCloseTConfDets1+='&CONF_TEXT='+item['reason']+'&REASON='+item['variance']
+									}else{
+										newCloseTConfDets+='&CONF_TEXT='+item['reason']+'&REASON='+item['variance']
+									}
+									
 								}
-								newCloseTConfDets1='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT=Close Out Of Shift'+'&USER='+item['user']+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetiime']+
-								'&ACTIVITYTYPE=OUTOFSHIFT'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
-								'&ACT_WORK='+item['inshift']+'&FINAL=X';
-								if (item['followon']=='YES'){
-									newTConfDets+='&REASON='+item['reason']+'&ACT_TYPE='+item['variance']
+								if (item['outofshift']>'0'){
+									newCloseTConfDets1+='&FINAL='
+								}else{
+									newCloseTConfDets+='&FINAL='
 								}
-								newCloseDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
-								opMessage("Newstatus Details="+newStatusDets);
+								newCloseDets='&NOTIFNO='+item['notifno']+'&USERID='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+
+								'&FUNCT_LOC='+item['funcloc']+
+								'&EQUIPMENT='+item['equipment']+
+								'&LONG_TEXT='+item['details']+
+								'&DL_CAT_TYP=P'+'&DL_CODE_GRP='+item['pgrp']+'&DL_CODE='+item['pcode']+
+								'&D_CAT_TYP=R'+'&D_CODE_GRP='+item['agrp']+'&D_CODE='+item['acode']+
+								'&CAUSE_CAT_TYP=S'+'&CAUSE_CODE_GRP='+item['igrp']+'&CAUSE_CODE='+item['icode']+
+
+								
+								
+
+								
+								opMessage("Close Notif Update Details="+newCloseDets);
+							
 								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));		
 								sapCalls+=1;		
 								
 								html5sql.process("UPDATE MyJobClose SET state = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets);
-											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets1);
-											sendSAPData(SAPServerPrefix+"MyJobsUpdateNotif.htm"+SAPServerSuffix+newCloseDets);
+									//alert("Doing TC1")
+										//	sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets);
+								//			if (item['outofshift']>'0'){
+								//				alert("Doing TC2")
+							//					sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets1);
+							//				}
+											if (item['notifno'].length>5){
+								//				alert("Doing Notif Update")
+												sendSAPData(SAPServerPrefix+"MyJobsUpdateNotif.htm"+SAPServerSuffix+newCloseDets);
+											}
+											
 										 },
 										 function(error, statement){
-											 
+											 alert("Error: " + error.message + " when processing " + statement);
 											 opMessage("Error: " + error.message + " when processing " + statement);
 										 }        
 								);
@@ -887,7 +872,53 @@ var syncDetails = false	;
 					function(error, statement){
 						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
 					}
-				);		
+				);	
+// Process Time Confirmations
+				html5sql.process("SELECT * from MyTimeConfs where confno = 'NEW'",
+					function(transaction, results, rowsArray){
+						if( rowsArray.length > 0) {
+							if (syncDetails){
+								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", TimeConfs:"+String(rowsArray.length));
+							}else{
+								syncDetails=true;
+								localStorage.setItem('LastSyncUploadDetails',"TimeConfs:"+String(rowsArray.length));
+							}
+							for (var n = 0; n < rowsArray.length; n++) {
+								item = rowsArray[n];
+								if(item['final']=="Yes"){
+									fconf="X";
+								}else{
+									fconf="";
+								}									
+								newTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT='+item['description']+
+								'&TIME='+item['duration']+'&USER='+item['user']+'&RECNO='+item['id']+
+								'&SDATE='+item['date'].substring(8,10)+"."+item['date'].substring(5,7)+"."+item['date'].substring(0,4)+'&STIME='+item['time']+'&EDATE='+item['enddate'].substring(8,10)+"."+item['enddate'].substring(5,7)+"."+item['enddate'].substring(0,4)+'&ETIME='+item['endtime']+
+								'&ACTIVITYTYPE='+item['type']+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+'&LONG_TEXT='+item['longtext']+
+								'&ACT_WORK='+item['act_work']+'&REM_WORK='+item['rem_work']+'&FINAL='+item['final']
+								if (item['reason']!=null){
+									newTConfDets+='&REASON='+item['reason']
+								}
+									
+								opMessage("NewTconf Details="+newTConfDets);
+								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+								sapCalls+=1;
+								
+								html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
+										 function(){
+											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newTConfDets);
+										 },
+										 function(error, statement){
+											 
+											 opMessage("Error: " + error.message + " when processing " + statement);
+										 }        
+								);
+							 }
+						}
+					},
+					function(error, statement){
+						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
+					}
+				);	
 // Upload the Messages READ Indicator
 				
 				html5sql.process("SELECT * from MyMessages where state = 'READ'",
@@ -1311,17 +1342,17 @@ function createAWSEODNotif(workdate,homedate,empno)
 
 }
 
-function createAWSJobClose(order,opno,notifno, empid,work_cntr,closedate,closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason)
+function createAWSJobClose(order,opno,notifno, details, empid,work_cntr,closedate,closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason)
 {
-html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, empid, work_cntr, state , closedate, closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason) VALUES ("+
-			 "'"+order+"','"+opno+"','"+notifno+"','"+empid+"','"+work_cntr+"','NEW','"+closedate+"','"+closetime+"','"+
+html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, details, empid, work_cntr, state , closedate, closetime, funcloc , equipment, inshift , outofshift , pgrp, pcode, agrp, acode, igrp, icode, followon , variance, reason) VALUES ("+
+			 "'"+order+"','"+opno+"','"+notifno+"','"+details+"','"+empid+"','"+work_cntr+"','NEW','"+closedate+"','"+closetime+"','"+
 			 funcloc+"','"+equipment+"','"+inshift+"','"+outofshift+"','"+pgrp+"','"+pcode+"','"+agrp+"','"+
 			 acode+"','"+igrp+"','"+icode+"','"+followon+"','"+variance+"','"+reason+"');",
 	 function(){
-		alert("good")
+		
 	 },
 	 function(error, statement){
-			alert("Error: " + error.message + " when createTConf processing " + statement);
+			
 		opMessage("Error: " + error.message + " when createTConf processing " + statement);
 	 }        
 	);
@@ -1329,7 +1360,7 @@ html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, empid, work_
 
 function createAWSTConf(order,opno,empid,work_cntr,acttype,reasontype,startdate,starttime,enddate, endtime, actwork,remwork,text,details,finalconf)
 {
-html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,act_type,type, confno , description , longtext, date , time , enddate, endtime, duration, rem_work, empid, work_cntr, final , datestamp, user, state) VALUES ("+
+html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,reason,type, confno , description , longtext, date , time , enddate, endtime, act_work, rem_work, empid, work_cntr, final , datestamp, user, state) VALUES ("+
 			 "'"+order+"','"+opno+"','"+reasontype+"','"+acttype+"','NEW','"+text+"','"+details+"','"+startdate+"','"+starttime+"','"+enddate+"','"+endtime+"','"+actwork+"','"+remwork+"','"+empid+"','"+work_cntr+"','"+finalconf+"','"+getDate()+" "+getTime()+"','"+localStorage.getItem("MobileUser")+"','');",
 	 function(){
 		rebuildTimeConfs();
@@ -1487,7 +1518,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyEffects      		( id integer primary key autoincrement, notifno TEXT, item_id TEXT, task_id TEXT, effect_cat_typ TEXT, effect_codegrp TEXT, effect_code TEXT, txt_effectgrp TEXT, txt_effectcd TEXT, value TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyStatus     			( id integer primary key autoincrement, orderno TEXT, opno TEXT, stsma TEXT, status TEXT, statusdesc, state TEXT, actdate TEXT, acttime TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyTimeConfs     		( id integer primary key autoincrement, orderno TEXT, opno TEXT, confno TEXT, type TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT,act_work TEXT, rem_work TEXT, act_type TEXT, work_cntr TEXT, reason TEXT, longtext TEXT, duration TEXT, datestamp TEXT,  user TEXT,  empid TEXT, final TEXT, state TEXT);'+
-					 'CREATE TABLE IF NOT EXISTS MyJobClose             ( id integer primary key autoincrement, orderno TEXT , opno TEXT, notifno TEXT, empid TEXT, work_cntr TEXT, state TEXT , closedate TEXT, closetime TEXT, funcloc  TEXT, equipment TEXT, inshift  TEXT, outofshift  TEXT, pgrp TEXT, pcode TEXT, agrp TEXT, acode TEXT, igrp TEXT, icode TEXT, followon  TEXT, variance TEXT, reason TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyJobClose             ( id integer primary key autoincrement, orderno TEXT , opno TEXT, notifno TEXT, details TEXT, empid TEXT, work_cntr TEXT, state TEXT , closedate TEXT, closetime TEXT, funcloc  TEXT, equipment TEXT, inshift  TEXT, outofshift  TEXT, pgrp TEXT, pcode TEXT, agrp TEXT, acode TEXT, igrp TEXT, icode TEXT, followon  TEXT, variance TEXT, reason TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyNewJobs     			( id integer primary key autoincrement, type TEXT, defect TEXT, mpoint TEXT, mpval TEXT, shorttext TEXT, longtext TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT, funcloc TEXT, equipment TEXT, cattype TEXT, codegroup TEXT, coding TEXT, activitycodegroup TEXT, activitycode TEXT, activitytext TEXT, prioritytype TEXT, priority TEXT, reportedby TEXT, state TEXT, assignment TEXT, spec_reqt TEXT, assig_tome TEXT, userid TEXT, eq_status TEXT, breakdown TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkConfig     		( id integer primary key autoincrement, paramname TEXT, paramvalue TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkSyncDets    		( id integer primary key autoincrement, lastsync TEXT, comments   TEXT);'+
@@ -1497,7 +1528,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyRefNotifTypes     	(  id integer primary key autoincrement, scenario TEXT, type TEXT, description TEXT, statusprofile TEXT, taskstatusprofile TEXT,priority_type TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyRefPriorityTypes     (  id integer primary key autoincrement, scenario TEXT, type TEXT, priority TEXT, description TEXT);'+
 				  	 'CREATE TABLE IF NOT EXISTS MyRefUserStatusProfiles (  id integer primary key autoincrement, scenario TEXT, type TEXT, status TEXT, statuscode TEXT, statusdesc TEXT);'+
-					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, mpoint TEXT,description TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyVehicleCheck     	(  id integer primary key autoincrement, reg TEXT,  mileage TEXT,  tax TEXT,  horn TEXT,  tyres TEXT,  wheels TEXT,  lights TEXT,  wipers TEXT, checktype TEXT,  datestamp TEXT,  user TEXT,  state TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyMessages    			(  id integer primary key autoincrement, msgid TEXT, type TEXT,  date TEXT, time TEXT, msgfromid TEXT, msgfromname TEXT, msgtoid TEXT, msgtoname TEXT, msgsubject TEXT, msgtext TEXT,  expirydate TEXT, state TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS Assets     			(  type TEXT, id TEXT, eqart TEXT, eqtyp TEXT, shorttext TEXT,  address TEXT, workcenter TEXT);'+
@@ -2677,6 +2708,22 @@ opMessage("Callback sapCB triggured");
 
 		
 			}
+//Handle Close Create Response
+			if (MySAP.message[0].type=="updatenotification"){
+				alert(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
+				opMessage("-->Type= "+MySAP.message[0].type);
+				opMessage("-->row= "+MySAP.message[0].recno);
+				opMessage("-->Message= "+MySAP.message[0].sapmessage);
+				opMessage("-->Message= "+MySAP.message[0].message);
+				opMessage("-->NotifNo= "+MySAP.message[0].notifno);
+					sqlstatement+="UPDATE MyJobClose SET state = 'SENT"+MySAP.message[0].recno+"' WHERE id='"+ MySAP.message[0].recno+"';";
+
+					
+					
+					
+
+		
+			}
 //Handle Notification Create Response
 			if (MySAP.message[0].type=="createnotificationxx"){
 				//alert(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
@@ -3233,12 +3280,17 @@ var sqlstatement="";
 			opMessage("Loading"+MyVehicles.vehicle.length+" Vehicles");
 			for(var cntx=0; cntx < MyVehicles.vehicle.length ; cntx++)
 				{	
-
-				sqlstatement+='INSERT INTO MyVehicles (id , reg , description , mpoint ) VALUES ( '+
+			
+				sqlstatement+='INSERT INTO MyVehicles (id , reg , partner, level, sequence, description , mpoint, mpointdesc, mpointlongtext  ) VALUES ( '+
 					'"'+MyVehicles.vehicle[cntx].vehicle +'",'+ 
 					'"'+MyVehicles.vehicle[cntx].reg +'",'+ 
+					'"'+MyVehicles.vehicle[cntx].partner +'",'+ 
+					'"'+MyVehicles.vehicle[cntx].level +'",'+ 
+					'"'+MyVehicles.vehicle[cntx].sequence +'",'+ 
 					'"'+MyVehicles.vehicle[cntx].description+'",'+ 
-					'"'+MyVehicles.vehicle[cntx].mpoint+'");';
+					'"'+MyVehicles.vehicle[cntx].mpoint+'",'+
+					'"'+MyVehicles.vehicle[cntx].mpointdesc+'",'+
+					'"'+MyVehicles.vehicle[cntx].mpointlongtext+'");';
 					
 					
 

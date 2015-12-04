@@ -801,6 +801,15 @@ function BuildMenuBar(){
 	
 	
 }
+function openWebPage(url){
+	ref=window.open(url,"_blank", 'location=yes',  'closebuttoncaption = Return to MyJobs')
+	ref.addEventListener('loadstart',function()
+		{
+		alert(event.url)
+		}
+	);
+	ref.show();
+}
 function MenuPressed(id){
 
 
@@ -819,12 +828,13 @@ function MenuPressed(id){
 						selectedWebPage=rowsArray[0].command.replace("{SUPUSERNAME}", localStorage.getItem("MobileUser"));
 						//formWebPage.open()
 						alert(selectedWebPage)
-						
-						cordova.InAppBrowser.open(selectedWebPage,"_system")
+						openWebPage(selectedWebPage)
+
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
 						alert(selectedWebPage)
-						cordova.InAppBrowser.open(selectedWebPage,"_system")
+						openWebPage(selectedWebPage)
+						
 					}else if(rowsArray[0].type=='C'){
 						if (rowsArray[0].command=="VehicleCheckViewModel"){
 							window.location.href="VehicleCheck.html"
@@ -865,13 +875,12 @@ function SubMenuPressed(id){
 						//formWebPage.open()
 						//window.open(selectedWebPage,"_system")
 						alert(selectedWebPage)
+						openWebPage(selectedWebPage)
 						
-						cordova.InAppBrowser.open(selectedWebPage, '_blank', 'location=yes', 'closebuttoncaption = Return to MyJobs');
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
 						alert(selectedWebPage)
-						cordova.InAppBrowser.open(selectedWebPage, '_blank', 'location=yes', 'closebuttoncaption = Return to MyJobs');
-						//window.open(selectedWebPage,'_system')
+						openWebPage(selectedWebPage)
 					}else if(rowsArray[0].type=='C'){
 						
 						if (rowsArray[0].command=='RaiseNewJobViewModel'){

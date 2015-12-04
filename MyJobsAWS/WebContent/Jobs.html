@@ -271,8 +271,45 @@ new sap.m.Button( {
     			catch(err) {
     			    followOnWork="NO"
     			}
-             alert(currentNotifNo)
-             createAWSJobClose(CurrentOrderNo, CurrentOpNo, currentNotifNo, localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
+    			ifinal=''
+    			ofinal=''
+    			if(followOnWork=="NO")
+    				{
+    				followOnVariance=""
+    		    	followOnReason=""
+    				}
+    			if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()>0){
+    				ofinal='X'
+    				ofollowOnVariance=followOnVariance
+    				ofollowOnReason=followOnReason
+    				ifollowOnVariance=''
+    				ifollowOnReason=''
+    				
+    			}else{
+    				ifinal='X'
+    					ifollowOnVariance=followOnVariance
+        				ifollowOnReason=followOnReason
+        				ofollowOnVariance=''
+        				ofollowOnReason=''
+    			}
+    			
+    			 if(sap.ui.getCore().byId("Close_InShiftTime").getValue()>0){
+    				 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'SMEPIS',
+    					ifollowOnVariance,
+    					 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
+    					 sap.ui.getCore().byId("Close_InShiftTime").getValue(),'',
+    		           		ifollowOnReason,
+    		           		'',ifinal)
+    			 }
+    			 if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()>0){
+    				 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'SMEPOS',
+    						 ofollowOnVariance,
+        					 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
+        					 sap.ui.getCore().byId("Close_OutOfShiftTime").getValue(),'',
+        		           		ofollowOnReason,
+        		           		'',ofinal)
+    			 }
+             createAWSJobClose(CurrentOrderNo, CurrentOpNo, currentNotifNo,  sap.ui.getCore().byId("Close_LongText").getValue(),localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
             		 statusUpdateDate,statusUpdateTime,
             		 sap.ui.getCore().byId("Close_FunctionalLocation").getValue(),
         			 sap.ui.getCore().byId("Close_Equipment").getValue(),
@@ -313,7 +350,7 @@ new sap.m.Button( {
             contentWidth:"85%",
             contentHeight: "85%",
       beforeOpen:function(){
-        alert(currentNotifNo)
+      
 		BuildCloseScreen();
 
       },
@@ -560,8 +597,8 @@ function confirmAcceptStatus()
                                                     				sap.ui.getCore().getElementById("StatusUpdateActualWork").getValue(),
                                                     				sap.ui.getCore().getElementById("StatusUpdateRemainingWork").getValue(),
                                                     				
-                                                              		sap.ui.getCore().byId("StatusParkReasonText").getValue(),
-                                                               		sap.ui.getCore().byId("StatusParkReasonDetails").getValue(),'')
+                                                              		sap.ui.getCore().byId("StatusUpdateReasonText").getValue(),
+                                                               		sap.ui.getCore().byId("StatusUpdateReasonDetails").getValue(),'')
                                                      
                                             		 formChangeStatusUpdate.close()  
          												}else{
@@ -4640,6 +4677,8 @@ if((CurrentJobProfile==null)||
 sap.ui.getCore().getElementById("FEClose_Variance").setVisible(false)   
 sap.ui.getCore().getElementById("FEClose_Reason").setVisible(false)   
 sap.ui.getCore().getElementById("DG51F1C2").setVisible(PAIVisible)
+sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
+
 		var SQLStatement="";
 		var FirstVal="";
 		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
