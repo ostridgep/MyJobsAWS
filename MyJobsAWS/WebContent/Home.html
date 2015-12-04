@@ -825,14 +825,22 @@ function BuildMenuBar(){
 	
 }
 function openWebPage(url){
-	alert(url)
-	ref=window.open(url,"_blank", 'location=yes','closebuttoncaption = Return to MyJobs')
+	alert("xx"+url)
+	ref=window.open("http://www.bbc.co.uk", "_blank", 'location=yes', 'closebuttoncaption = Return to MyJobs')
 	ref.addEventListener('loadstart',function()
 		{
 		alert(event.url)
 		}
 	);
 	ref.show();
+	alert("xx1"+url)
+	ref1=window.open("http://www.bbc.co.uk", "_system", 'location=yes', 'closebuttoncaption = Return to MyJobs')
+	ref1.addEventListener('loadstart',function()
+		{
+		alert(event.url)
+		}
+	);
+	ref1.show();
 }
 function MenuPressed(id){
 
