@@ -1867,6 +1867,7 @@ function loadDemoData() {
 						
 						//requestDEMOData('funclocs.json');
 						requestDEMOData('MyJobsVehicles.json');
+						requestDEMOData('MyJobsVehiclesDefault.json');
 					
 						//requestDEMOData('GASSurvey.json');
 					
