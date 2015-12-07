@@ -1207,6 +1207,16 @@ function BuildMenuBar(){
 }
 function openWebPage(url){
 
+	ref1=window.open(url, "_system", 'location=yes', 'closebuttoncaption = Return to MyJobs')
+	ref1.addEventListener('loadstart',function()
+		{
+		alert(event.url)
+		}
+	);
+	ref1.show();
+}
+function openWebPage1(url){
+
 	ref1=window.open(url, "_blank", 'location=yes', 'closebuttoncaption = Return to MyJobs')
 	ref1.addEventListener('loadstart',function()
 		{
@@ -1305,7 +1315,7 @@ function SubMenuPressed(id){
 							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
-						sendit()
+						openWebPage1("www.bbc.co.uk")
 						}
 						}
 					}
