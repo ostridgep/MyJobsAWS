@@ -6,6 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>MyJobs - Home</title>
 <style>
+.largeFont{
+font-size: 150%;
+}
 .inAppBrowserWrap {
   background-color: rgba(0,0,0,0.75);
   color: rgba(235,235,235,1.0);
@@ -57,7 +60,14 @@ var NotificationsCnt=0
 var selectedWebPage=""
 var selectedMenuItem=""
 var w = null; // initialize variable
-
+var mpoint=[]
+var mpointdesc=[]
+var mpointlt=[]
+var mpointids=[]
+var mpointdefectdesc=[]
+var mpointdefectlt=[]
+var mpointdefects=[]
+var selectedDefect=0;
 var dispLog = 							new sap.m.Button("displayLog", {
     text: "Display Log",
     tap: [ function(oEvt) {		  
@@ -166,7 +176,315 @@ var formEndOfDay = new sap.m.Dialog("dlgEndOfDay",{
            contentWidth:"30%",
         	contentHeight: "30%",
      })
+var formVehicle = new sap.m.Dialog("dlgVehicle",{
+    title:"Vehicle Check",
+    modal: true,
+    contentWidth:"1em",
+    buttons: [
+              new sap.m.Button({
+                  
+                  icon:"sap-icon://close-command-field",
+                 text:"Cancel",
+                 type:        sap.m.ButtonType.Reject,
+                        press: [ function(){
+                               
+                        	formVehicle.close()
+                                      }]
+                 }),   
+                 new sap.m.Button({                 
+                    icon:"sap-icon://save",
+                    text:"Save",
+                    type:        sap.m.ButtonType.Accept,
+                           press: [ function(){
+                        	   formVehicle.close()
+                           }]                                    
+                    })
+                                ] ,                               
+    content:[
+				
+				new sap.m.Table("VTable",{
+					firstVisibleRow: 2,
+					
+					columns:[
+				          new sap.m.Column({header: new sap.m.Label({text:""}),
+					        	 hAlign: 'Right',width: '40%', minScreenWidth : "" , demandPopin: false}),
+					         new sap.m.Column({header: new sap.m.Label({text:""}),
+					        	 hAlign: 'Left',width: '5%',minScreenWidth : "" , demandPopin: true}),
+					        	  new sap.m.Column({header: new sap.m.Label({text:"Defect"}),
+							        	 hAlign: 'Left',width: '20%',minScreenWidth : "" , demandPopin: true}),
+				         new sap.m.Column({header: new sap.m.Label({text:"Mileage"}),
+				        	 hAlign: 'Left',width: '35%',minScreenWidth : "" , demandPopin: true}) 
+			           	     ]
+			           	  
 
+				})
+            ],
+            beforeOpen:function(){
+            	BuildVehicleCheck();
+                
+            },
+           contentWidth:"60%",
+        	contentHeight: "80%",
+     })
+var formDefect = new sap.m.Dialog("dlgDefect",{
+    title:"",
+    modal: true,
+    contentWidth:"1em",
+    buttons: [
+                            new sap.m.Button( {
+                                   
+                                   icon:"sap-icon://save",
+                                  type: sap.m.ButtonType.Accept,
+                                          press: [ function(){
+                                                mpointdefects[selectedDefect]="YES"
+                                                mpointdefectdesc[selectedDefect]=sap.ui.getCore().byId("DefectDesc").getValue()
+                                                mpointdefectlt[selectedDefect]=sap.ui.getCore().byId("DefectLongText").getValue()
+                                                formDefect.close();
+                                         
+                                                       }]
+                                   }),
+                            new sap.m.Button( {
+                                   
+                                   icon:"sap-icon://sys-cancel",
+                                         type: sap.m.ButtonType.Reject,
+                                          press: [ function(){
+                                                formDefect.close();
+                                         
+                                                       }]
+                                   })                                
+                           ],                                
+    content:[
+                    new sap.ui.layout.form.SimpleForm({
+                     
+                           maxContainerCols : 2,
+                           content :     [                                               
+                                     new sap.m.Label({text:"Description"}),
+                                                new sap.m.Input("DefectDesc",{type: sap.m.InputType.Input}),
+                                                new sap.m.Label({text:"Comments"}),
+                                                new sap.m.TextArea("DefectLongText",{rows: 5}),
+                                                
+                                                
+
+                                                ]
+                          })
+            ],
+            beforeOpen:function(){
+            	
+              //sap.ui.getCore().byId("ShortText").setValue(defect_shorttext[defect_no])
+                //           sap.ui.getCore().byId("LongText").setValue(defect_longtext[defect_no])
+            },
+
+})
+var vehicleList = new sap.m.List("vehicleList",{
+    
+    itemPress:[function(oEvt) {
+    	x=oEvt.getParameter("listItem").getTitle().split(" : ")
+           sap.ui.getCore().getElementById('VDesc').setValue(x[1])
+           sap.ui.getCore().getElementById('VReg').setValue(oEvt.getParameter("listItem").getId())
+           localStorage.setItem("VehicleReg",oEvt.getParameter("listItem").getId())
+                                      
+                                      html5sql.process("UPDATE MyUserDets SET vehiclereg = '"+oEvt.getParameter("listItem").getId()+"' WHERE employeeid = '"+localStorage.getItem('EmployeeID')+"';",
+                                      
+										 function(){
+										 
+                                      },
+                                      function(error, statement){
+                                             opMessage("Error: " + error.message + " when updateing Pincode " + statement);
+                                      }        
+                                      );
+           formSelectVehicle.close() 
+}]
+             }).addStyleClass("sapUiSizeCompact")
+var formSelectVehicle = new sap.m.Dialog("dlgSelectVehicle",{
+ title:"",
+ modal: true,
+ contentWidth:"1em",
+ buttons: [
+
+                               new sap.m.Button( {
+                                   text: "Cancel",
+                                   tap: [ function(oEvt) {         
+                                              
+                                      formSelectVehicle.close()} ]   
+                               })
+                               ],                                
+ content:[
+new sap.m.Label({text:"Registration"}),
+new sap.m.SearchField("SearchReg",{
+    tooltip: "Search for vehicles..",
+    
+    search: [function(event){
+           buildVehicleList(event.getParameter("query"))
+           
+    }]}),  
+vehicleList
+         ],
+    
+    contentWidth:"50%",
+	contentHeight: "60%"
+}
+    )
+
+function PrepDefect(n){
+    
+   
+  
+           formDefect.setTitle("Defect: "+unescape(mpointdesc[n]))
+           sap.ui.getCore().getElementById('DefectDesc').setValue(mpointdefectdesc[n])
+           sap.ui.getCore().getElementById('DefectLongText').setValue(mpointdefectlt[n])
+           
+    
+}
+function buildVehicleList(reg)
+{
+
+
+var sqlstatement = "select * from myvehicles where reg LIKE '"+reg+"%' group by id"
+vehicleList.destroyItems();
+
+
+
+html5sql.process(sqlstatement,
+              function(transaction, results, rowsArray){
+                     var n = 0;
+                     
+
+                     
+                     while (n < rowsArray.length) {
+
+                           
+                           vehicleList.addItem (new sap.m.StandardListItem(rowsArray[n].reg,{   
+                                  type: sap.m.ListType.Active,                                  
+                                  title : rowsArray[n].reg+" : "+rowsArray[n].description}))
+                                  
+                           
+                           n++;
+                     }
+                     
+              },
+              function(error, statement){
+                     //outputLogToDB(); 
+               }        
+              );
+}
+function BuildVehicleCheck(){
+	var msg='';
+	var help;
+	var first=0;
+	
+	
+	
+	 html5sql.process("select * from myvehiclesdefault",
+		 function(transaction, results, rowsArray){
+		             
+			for (n=0; n < rowsArray.length; n++ ){
+				mpoint.push(rowsArray[n].mpoint)
+				mpointdesc.push(rowsArray[n].mpointdesc)
+				mpointlt.push(rowsArray[n].mpointlongtext)
+			}                     
+			sap.ui.getCore().getElementById('VTable').destroyItems();
+			
+				
+		
+			sap.ui.getCore().getElementById('VTable').addItem (new sap.m.ColumnListItem({
+					cells : 
+						[
+						 new sap.m.Text({text: "Vehicle Rgistration"}),
+						 new sap.m.Text({text: ""}),
+						 new sap.m.SearchField("VReg",{
+								tooltip: "Search for Functional Locations..",
+								value:localStorage.getItem("VehicleReg"),
+								search: [function(event){
+
+	                                formSelectVehicle.open();
+									
+								}]}),
+						 new sap.m.Input("VDesc",{type: sap.m.InputType.Text, enabled:false})
+				 		]}))
+
+
+					
+			              
+
+		for (n=0; n < mpoint.length; n++ ){
+		
+if (n==0)	{
+	opMileage=new sap.m.Input("VMileage",{type: sap.m.InputType.Number})
+}else{
+	opMileage= new sap.m.Text({text: ""})
+}
+					sap.ui.getCore().getElementById('VTable').addItem (new sap.m.ColumnListItem({
+						cells : 
+							[
+new sap.m.Text({text: unescape(mpointdesc[n])}),
+new sap.m.Image("img:"+n,
+		{
+			src:'images/info.png',
+			height:'40px',
+			width:'40px',
+			press:function(evt){
+
+showMessageMiddle(evt.getParameters().id)
+			}
+ 
+  }),
+						   new sap.m.Switch("mp:"+n,{
+                           state: true,
+                           change:[function(evt){
+                        	   x=(evt.getParameters().id).split(":")
+                                  if(!this.getState())
+                                         {
+                                	    
+                                	     mpointdefects[parseInt(x[1])]="YES"
+                                         PrepDefect(parseInt(x[1]))
+                                         selectedDefect=parseInt(x[1])
+                                         formDefect.open();
+                                         }else{
+                                         mpointdefects[parseInt(x[1])]="NO"	 
+                                         }
+                           }],
+                           type: sap.m.SwitchType.AcceptReject
+                    }),opMileage
+
+]
+
+			
+		})  )
+		}			
+			
+	       html5sql.process("select * from myvehicles where reg = '"+localStorage.getItem("VehicleReg")+"'",      
+	                     function(transaction, results, rowsArray){
+	                     
+	                           
+	                           
+	                           if (rowsArray.length>0) {
+	                                  sap.ui.getCore().getElementById('VDesc').setValue(rowsArray[0].description)
+	                                  VehicleEQNo=rowsArray[0].id;  
+	                                  x=rowsArray[0].mpoints.split(":")
+	                                  for (n=0; n < x.length; n++ ){
+	                                	  mpointids.push(x[n])
+	                                	  mpointdefects.push('')
+	                                	  mpointdefectdesc.push('')
+	                                	  mpointdefectlt.push('')
+	                                  }
+	                                  VehicleMPoint=rowsArray[0].mpoint;                     
+	                           }
+	                          
+	                     },
+	                     function(error, statement){
+	                    	 alert("regnot set")
+	                           //outputLogToDB(); 
+	                      }        
+	                     );
+
+		},
+		function(error, statement){
+		      
+		      opMessage("Error: " + error.message + " when createNotification processing " + statement);
+		     
+		}        
+	)   
+}
 var formPinCode = new sap.m.Dialog("dlgPinCode",{
     title:"Set Login Pincode & Vehicle Reg",
     modal: true,
@@ -761,6 +1079,19 @@ function showMessage(msg){
 	});
 
 }
+function showMessageMiddle(msg){
+	x=msg.split(":")
+	sap.m.MessageToast.show(unescape(mpointlt[parseInt(x[1])]), {
+		type: Error,
+		duration: Number(2000),
+		width: "50em",
+		my: "center center",
+		at: "center center",		
+		autoClose: true,
+
+	});
+
+}
 
 var tileContainer = new sap.m.TileContainer({
 	tiles:
@@ -869,7 +1200,7 @@ function MenuPressed(id){
 						
 					}else if(rowsArray[0].type=='C'){
 						if (rowsArray[0].command=="VehicleCheckViewModel"){
-							window.location.href="VehicleCheck.html"
+							formVehicle.open();
 						}else if (rowsArray[0].command=='DayEndTravelViewModel'){
 							formEndOfDay.open()
 						}else{

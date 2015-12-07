@@ -28,7 +28,7 @@ return fdt;
 
 
 
-function requestSAPData1(page,params){
+function requestSAPData(page,params){
 
 	opMessage(SAPServerPrefix+page+params);
 	var myurl=SAPServerPrefix+page+params;
@@ -36,17 +36,11 @@ function requestSAPData1(page,params){
   $.getJSON(myurl).done(function() {
     console.log("second success"+myurl );
   })
-  .fail(function() {
-    console.log( "error" +myurl);
-  })
-  .always(function() {
-    console.log( "complete"+myurl );
-  });
-  
+ 
   
 }
 	 
-function requestSAPData(page,params){
+function requestSAPData11(page,params){
 
 	opMessage(SAPServerPrefix+page+params);
 	var myurl=SAPServerPrefix+page+params;
@@ -1046,6 +1040,7 @@ var SAPServerSuffix="";
 							requestSAPData("MyJobsRefData.htm",SAPServerSuffix);
 							requestSAPData("MyJobsRefDataCodes.htm",SAPServerSuffix+"&SCENARIO=MAMDEMO");
 							requestSAPData("MyJobsUsers.htm",SAPServerSuffix);
+							requestSAPData("MyJobsVehiclesDefault.htm",SAPServerSuffix);
 							requestSAPData("MyJobsVehicles.htm",SAPServerSuffix);
 							//requestSAPData("MyJobsFunclocs.htm",SAPServerSuffix);
 							//requestSAPData("MyJobsEquipment.htm",SAPServerSuffix);
@@ -1528,7 +1523,9 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyRefNotifTypes     	(  id integer primary key autoincrement, scenario TEXT, type TEXT, description TEXT, statusprofile TEXT, taskstatusprofile TEXT,priority_type TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyRefPriorityTypes     (  id integer primary key autoincrement, scenario TEXT, type TEXT, priority TEXT, description TEXT);'+
 				  	 'CREATE TABLE IF NOT EXISTS MyRefUserStatusProfiles (  id integer primary key autoincrement, scenario TEXT, type TEXT, status TEXT, statuscode TEXT, statusdesc TEXT);'+
-					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyVehiclesDefault     	(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, mpoints TEXT,description TEXT);'+
+
 					 'CREATE TABLE IF NOT EXISTS MyVehicleCheck     	(  id integer primary key autoincrement, reg TEXT,  mileage TEXT,  tax TEXT,  horn TEXT,  tyres TEXT,  wheels TEXT,  lights TEXT,  wipers TEXT, checktype TEXT,  datestamp TEXT,  user TEXT,  state TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyMessages    			(  id integer primary key autoincrement, msgid TEXT, type TEXT,  date TEXT, time TEXT, msgfromid TEXT, msgfromname TEXT, msgtoid TEXT, msgtoname TEXT, msgsubject TEXT, msgtext TEXT,  expirydate TEXT, state TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS Assets     			(  type TEXT, id TEXT, eqart TEXT, eqtyp TEXT, shorttext TEXT,  address TEXT, workcenter TEXT);'+
@@ -1623,6 +1620,7 @@ function dropTables() {
 						'DROP TABLE IF EXISTS MyWorkSyncDets;'+
 						'DROP TABLE IF EXISTS MyUserDets;'+
 						'DROP TABLE IF EXISTS MyVehicles;'+
+						'DROP TABLE IF EXISTS MyVehiclesDefault;'+
 						'DROP TABLE IF EXISTS MyVehicleCheck;'+
 						'DROP TABLE IF EXISTS MyMessages;'+
 						'DROP TABLE IF EXISTS Assets;'+
@@ -1701,6 +1699,7 @@ function emptyTables(type) {
 						'DELETE FROM  MyWorkSyncDets;'+
 						'DELETE FROM  MyUserDets;'+
 						'DELETE FROM  MyVehicles;'+
+						'DELETE FROM  MyVehiclesDefault;'+
 						'DELETE FROM  MyVehicleCheck;'+
 						'DELETE FROM  MyMessages;'+
 						'DELETE FROM  Assets;'+
@@ -1798,6 +1797,7 @@ function loadDemoData() {
 					'DELETE FROM  MyWorkSyncDets;'+
 					//'DELETE FROM  MyUserDets;'+
 					'DELETE FROM  MyVehicles;'+
+					'DELETE FROM  MyVehiclesDefault;'+
 					'DELETE FROM  MyVehicleCheck;'+
 					'DELETE FROM  MyMessages;'+
 					'DELETE FROM  Assets;'+
@@ -1919,6 +1919,7 @@ function resetTables() {
 					'DELETE FROM  MyRefUserStatusProfiles;'+
 					'DELETE FROM  MyWorkSyncDets;'+
 					'DELETE FROM  MyVehicles;'+
+					'DELETE FROM  MyVehiclesDefault;'+
 					'DELETE FROM  MyVehicleCheck;'+
 					'DELETE FROM  MyMessages;'+
 					'DELETE FROM  Assets;'+
@@ -2032,6 +2033,10 @@ function requestDEMOData(page){
 			}		
 			if(page=='MyJobsVehicles.json'){
 				vehicleCB(data);
+				
+			}
+			if(page=='MyJobsVehiclesDefault.json'){
+				vehicleDefaultCB(data);
 				
 			}
 			if(page=='MyMessagesData.json'){
@@ -3268,6 +3273,7 @@ var MyEmployeeID=""
 function vehicleCB(MyVehicles){
 var sqlstatement="";	
 
+var first=0;
 	if(MyVehicles.vehicle.length>0){
 		
 			if(syncReferenceDetsUpdated){
@@ -3280,21 +3286,27 @@ var sqlstatement="";
 			opMessage("Loading"+MyVehicles.vehicle.length+" Vehicles");
 			for(var cntx=0; cntx < MyVehicles.vehicle.length ; cntx++)
 				{	
-			
-				sqlstatement+='INSERT INTO MyVehicles (id , reg , partner, level, sequence, description , mpoint, mpointdesc, mpointlongtext  ) VALUES ( '+
+			if(MyVehicles.vehicle[cntx].level==1){
+				if(first==0)
+					{
+					first=1;
+					}else{
+						sqlstatement+='");';	
+					}
+				sqlstatement+='INSERT INTO MyVehicles (id , reg , partner, description , mpoints ) VALUES ( '+
+					'"'+MyVehicles.vehicle[cntx].equipment +'",'+ 
 					'"'+MyVehicles.vehicle[cntx].vehicle +'",'+ 
-					'"'+MyVehicles.vehicle[cntx].reg +'",'+ 
 					'"'+MyVehicles.vehicle[cntx].partner +'",'+ 
-					'"'+MyVehicles.vehicle[cntx].level +'",'+ 
-					'"'+MyVehicles.vehicle[cntx].sequence +'",'+ 
-					'"'+MyVehicles.vehicle[cntx].description+'",'+ 
-					'"'+MyVehicles.vehicle[cntx].mpoint+'",'+
-					'"'+MyVehicles.vehicle[cntx].mpointdesc+'",'+
-					'"'+MyVehicles.vehicle[cntx].mpointlongtext+'");';
+					'"'+MyVehicles.vehicle[cntx].description+'","'
+			}else{
+				
+				sqlstatement+=MyVehicles.vehicle[cntx].mpoint+':';	
+			}
 					
-					
+			
 
-				}		
+				}	
+			sqlstatement+='");';
 			html5sql.process(sqlstatement,
 				 function(){
 					 //alert("Success - Finished Loading Orders");
@@ -3307,6 +3319,52 @@ var sqlstatement="";
 
 	}
 }
+function vehicleDefaultCB(MyVehicles){
+	var sqlstatement="";	
+		//alert("def"+MyVehicles.vehicle.length)
+		if(MyVehicles.vehicle.length>0){
+			
+				if(syncReferenceDetsUpdated){
+					localStorage.setItem('LastSyncReferenceDetails',localStorage.getItem('LastSyncReferenceDetails')+', Vehicles:'+String(MyVehicles.vehicle.length));
+				}else{
+					localStorage.setItem('LastSyncReferenceDetails',localStorage.getItem('LastSyncReferenceDetails')+'Vehicles:'+String(MyVehicles.vehicle.length));
+				}
+				opMessage("Deleting Existing VehiclesDefault");
+				sqlstatement+='DELETE FROM MyVehiclesDefault;';
+				opMessage("Loading"+MyVehicles.vehicle.length+" Vehicles");
+				for(var cntx=0; cntx < MyVehicles.vehicle.length ; cntx++)
+					{	
+					//alert(cntx)
+				if(MyVehicles.vehicle[cntx].level=="2"){
+					//alert("lev2"+MyVehicles.vehicle[cntx].mpointdesc)
+					sqlstatement+='INSERT INTO MyVehiclesDefault (id , reg , partner, level, sequence, description , mpoint, mpointdesc, mpointlongtext  ) VALUES ( '+
+						'"'+MyVehicles.vehicle[cntx].equipment +'",'+ 
+						'"'+MyVehicles.vehicle[cntx].vehicle +'",'+ 
+						'"'+MyVehicles.vehicle[cntx].partner +'",'+ 
+						'"'+MyVehicles.vehicle[cntx].level +'",'+ 
+						'"'+MyVehicles.vehicle[cntx].sequence +'",'+ 
+						'"'+MyVehicles.vehicle[cntx].description+'",'+ 
+						'"'+MyVehicles.vehicle[cntx].mpoint+'",'+
+						'"'+escape(MyVehicles.vehicle[cntx].mpointdesc)+'",'+
+						'"'+escape(MyVehicles.vehicle[cntx].mpointLongtext)+'");';
+				}
+						
+
+					}
+				//alert("about to sql"+sqlstatement)
+				html5sql.process(sqlstatement,
+					 function(){
+						 //alert("Success - Finished Loading Orders");
+					 },
+					 function(error, statement){
+						 //alert("Error: " + error.message + " when processing " + statement);
+						 opMessage("Error: " + error.message + " when processing " + statement);
+					 }        
+				);
+
+
+		}
+	}
 function messageCB(MyMessages){
 var sqlstatement="";
 

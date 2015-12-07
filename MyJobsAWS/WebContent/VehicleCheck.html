@@ -41,7 +41,104 @@ return x1 + ":"+x2 + ":"+x3;
 function zeroFill1(x){
     return (x < 10) ? ("0" + x) : x;   
 }
+var mpoint=[]
+var mpointdesc=[]
+var mpointlt=[]
 
+
+function BuildVehicleCheck(){
+	var msg='';
+	var help;
+	var first=0;
+	
+	vpage.addContent(        new sap.ui.layout.form.SimpleForm('vCheck',{
+        maxContainerCols: 2,
+        editable: true,
+        content: []
+ 
+  }));
+	alert("1")
+	 html5sql.process("select * from myvehiclesdefault",
+		 function(transaction, results, rowsArray){
+		             
+			for (n=0; n < rowsArray.length; n++ ){
+				mpoint.push(rowsArray[n].mpoint)
+				mpointdesc.push(rowsArray[n].mpointdesc)
+				mpointlt.push(rowsArray[n].mpointlongtext)
+			}                     
+			sap.ui.getCore().getElementById('vCheck').addContent(
+					new sap.m.Label({text:"Vehicle Rgistration"}),
+                    new sap.m.Input("Reg",{type: sap.m.InputType.Text}),
+                    new sap.m.Button( {
+                        text: "Change Vehicle",
+                        icon:"sap-icon://edit",
+                        type:     sap.m.ButtonType.Accept,
+                        tap: [ function(oEvt) {         
+                           
+                           formSelectVehicle.open()
+                                    } ]
+                    }),
+			new sap.m.Label({text:"Description"}),
+            new sap.m.Input("Description",{type: sap.m.InputType.Text, enabled:false}),
+            new sap.m.Label({text:"Mileage"}),
+            new sap.m.Input("Mileage",{type: sap.m.InputType.Number}));
+			alert("regdesc,mileage done")
+		for (n=0; n < mpoint.length; n++ ){
+			sap.ui.getCore().getElementById('vCheck').addContent(
+					new sap.m.Label({text:mpointlt[n]}),
+                    new sap.m.Switch("mp:"+mpoint[n],{
+                           state: true,
+                           change:[function(evt){
+                                  if(!this.getState())
+                                         {
+                                         PrepDefect(2)
+                                         formDefect.open();
+                                         }
+                           }],
+                           type: sap.m.SwitchType.AcceptReject
+                    })
+					);
+			if(mpointlt[n].length > 10){
+				
+				sap.ui.getCore().getElementById('vCheck').addContent(
+						new sap.m.Label({text:mpointlt[n]}),
+						new sap.m.Label({text:' '})
+						);
+				
+			
+			}
+			
+		}  
+			alert("fields")
+		 sap.ui.getCore().getElementById('Reg').setValue(localStorage.getItem("VehicleReg"))
+	       html5sql.process("select * from myvehicles where reg = '"+localStorage.getItem("VehicleReg")+"'",      
+	                     function(transaction, results, rowsArray){
+	                     
+	                           
+
+	                           
+	                           if (rowsArray.length>0) {
+
+	                                  sap.ui.getCore().getElementById('Description').setValue(rowsArray[0].description)
+	                                  VehicleEQNo=rowsArray[0].id;                                  
+	                                  VehicleMPoint=rowsArray[0].mpoint;                     
+	                           }
+	                           alert("reg set")
+	                     },
+	                     function(error, statement){
+	                    	 alert("regnot set")
+	                           //outputLogToDB(); 
+	                      }        
+	                     );
+
+		},
+		function(error, statement){
+		      
+		      opMessage("Error: " + error.message + " when createNotification processing " + statement);
+		      window.location.href='Home.html'
+		}        
+	)   
+}
 var vehicleList = new sap.m.List("vehicleList",{
        
        itemPress:[function(oEvt) {
@@ -133,14 +230,16 @@ var formDefect = new sap.m.Dialog("dlgDefect",{
                           })
             ],
             beforeOpen:function(){
+            	
               sap.ui.getCore().byId("ShortText").setValue(defect_shorttext[defect_no])
                            sap.ui.getCore().byId("LongText").setValue(defect_longtext[defect_no])
             },
 })
 
-var page  = new sap.m.Page('VehicleCheck',{
+var vpage  = new sap.m.Page('VehicleCheck',{
        title:"Vehicle Check",  
-
+       content: 
+           [],
        footer:
            new sap.m.Bar (
                      {
@@ -175,142 +274,23 @@ var page  = new sap.m.Page('VehicleCheck',{
               
        }),
 
-    content: 
-       [
-               new sap.ui.layout.form.SimpleForm('vCheck:',{
-                     maxContainerCols: 2,
-                     editable: true,
-                     content: [
-                                  new sap.m.Label({text:"Vehicle Rgistration"}),
-                                  new sap.m.Input("Reg",{type: sap.m.InputType.Text}),
-                                  new sap.m.Button( {
-                                      text: "Change Vehicle",
-                                      icon:"sap-icon://edit",
-                                      type:     sap.m.ButtonType.Accept,
-                                      tap: [ function(oEvt) {         
-                                         
-                                         formSelectVehicle.open()
-                                                  } ]
-                                  }),
-                                  new sap.m.Label({text:"Description"}),
-                                  new sap.m.Input("Description",{type: sap.m.InputType.Text, enabled:false}),
-                                  new sap.m.Label({text:"Mileage"}),
-                                  new sap.m.Input("Mileage",{type: sap.m.InputType.Number}),
-                                  new sap.m.Label({text:"Tax/MOT/Service displayed in Date:"}),
-                                  new sap.m.Switch('Tax',{
-                                         state: true,
-                                         change:[function(evt){
-                                                if(!this.getState())
-                                                       {
-                                                       PrepDefect(1)
-                                                       formDefect.open();
-                                                       }
-                                         }],
-                                         type: sap.m.SwitchType.AcceptReject
-                                  }),
-                                  new sap.m.Label({text:"Is the Horn Working"}),
-                                  new sap.m.Switch('Horn',{
-                                         state: true,
-                                         change:[function(evt){
-                                                if(!this.getState())
-                                                       {
-                                                       PrepDefect(2)
-                                                       formDefect.open();
-                                                       }
-                                         }],
-                                         type: sap.m.SwitchType.AcceptReject
-                                  }),
 
-                                  new sap.m.Label({text:"Do the tyres meet company requirements"}),
-                                  new sap.m.Switch('Tyres',{
-                                         tooltip:"Check the depth, cuts/bulges/damage, visual inflation daily, check pressures weekly",
-                                         state: true,
-                                         change:[function(evt){
-                                                if(!this.getState())
-                                                       {
-                                                       PrepDefect(3)
-                                                       formDefect.open();
-                                                       }
-                                         }],
-                                         type: sap.m.SwitchType.AcceptReject
-                                  }),
-
-                                  new sap.m.Label({text:"Wheels secure and nut indicators aligned"}),
-                                  new sap.m.Switch('Wheels',{
-                                         tooltip:"Check the wheel nuts and wheel nut indicator alignment if fitted",
-                                         state: true,
-                                         change:[function(evt){
-                                                if(!this.getState())
-                                                       {
-                                                       PrepDefect(4)
-                                                       formDefect.open();
-                                                       }
-                                         }],
-                                         type: sap.m.SwitchType.AcceptReject
-                                  }),
-
-                                  new sap.m.Label({text:"Are all lights clean and working"}),
-                                  new sap.m.Switch('Lights',{
-                                         tooltip:"Check headlights, sidelights, brake and reversing lights, indicators and hazard warning",
-                                         state: true,
-                                         change:[function(evt){
-                                                if(!this.getState())
-                                                       {
-                                                       PrepDefect(5)
-                                                       formDefect.open();
-                                                       }
-                                         }],
-                                         type: sap.m.SwitchType.AcceptReject
-                                  }),
-                                  new sap.m.Label({text:"Are the windscreen wipers/washers working"}),
-                                  new sap.m.Switch('Windscreen',{
-                                         tooltip:"Check headlights, sidelights, brake and reversing lights, indicators and hazard warning",
-                                         state: true,
-                                         change:[function(evt){
-                                                if(!this.getState())
-                                                       {
-                                                       PrepDefect(6)
-                                                       formDefect.open();
-                                                       }
-                                         }],
-                                         type: sap.m.SwitchType.AcceptReject
-                                  })
-                     
-                     ]
               
-               })
-              ],
     enableScrolling:true,showNavButton: "{device>/isPhone}" });
 
 var app = new sap.m.App();
 
-app.setInitialPage(page.getId()); 
+app.setInitialPage(vpage.getId()); 
        
 
 
-page.placeAt("body");
+vpage.placeAt("body");
+
 $(function() {
        formSelectVehicle.addStyleClass("sapUiSizeCompact")
-       sap.ui.getCore().getElementById('Reg').setValue(localStorage.getItem("VehicleReg"))
-       html5sql.process("select * from myvehicles where reg = '"+localStorage.getItem("VehicleReg")+"'",      
-                     function(transaction, results, rowsArray){
-                     
-                           
-
-                           
-                           if (rowsArray.length>0) {
-
-                                  sap.ui.getCore().getElementById('Description').setValue(rowsArray[0].description)
-                                  VehicleEQNo=rowsArray[0].id;                                  
-                                  VehicleMPoint=rowsArray[0].mpoint;                     
-                           }
-                           
-                     },
-                     function(error, statement){
-                           //outputLogToDB(); 
-                      }        
-                     );
-
+      
+       	
+       
        });
 </script>
 </head>
@@ -318,6 +298,7 @@ $(function() {
 
 
 <script>
+BuildVehicleCheck() 
 function PrepDefect(n){
        defect_no=n-1;
        defect_shorttext[defect_no]=""
@@ -441,6 +422,7 @@ function SaveVehicleCheck(){
                            }
               }
        }
+
 </script>
 </body>
 
