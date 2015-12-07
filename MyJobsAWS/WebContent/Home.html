@@ -1207,7 +1207,7 @@ function BuildMenuBar(){
 }
 function openWebPage(url){
 
-	ref1=window.open(url, "_system", 'location=yes', 'closebuttoncaption = Return to MyJobs')
+	ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return to MyJobs')
 	ref1.addEventListener('loadstart',function()
 		{
 		alert(event.url)
@@ -1215,16 +1215,7 @@ function openWebPage(url){
 	);
 	ref1.show();
 }
-function openWebPage1(url){
 
-	ref1=window.open(url, "_blank", 'location=yes', 'closebuttoncaption = Return to MyJobs')
-	ref1.addEventListener('loadstart',function()
-		{
-		alert(event.url)
-		}
-	);
-	ref1.show();
-}
 function MenuPressed(id){
 
 
@@ -1241,12 +1232,10 @@ function MenuPressed(id){
 						formSubMenu.open()
 					}else if (rowsArray[0].type=='B'){
 						selectedWebPage=rowsArray[0].command.replace("{SUPUSERNAME}", localStorage.getItem("MobileUser"));
-						
 						openWebPage(selectedWebPage)
 
 					}else if (rowsArray[0].type=='U'){
 						selectedWebPage=rowsArray[0].command
-						
 						openWebPage(selectedWebPage)
 						
 					}else if(rowsArray[0].type=='C'){
@@ -1273,17 +1262,7 @@ function MenuPressed(id){
 		);
 	
 }
-function sendit() {
-	for (n=0; n <400;n++){
-	  body_message+="1234567890"
-	}
-	  body_message+="end 4000"
-	    var mailto_link = 'mailto:paul@ostridge.com?subject=testlongmess&body=' + body_message;
 
-	  openWebPage(mailto_link);
-	  
-
-	}
 function SubMenuPressed(id){
 	
 	cnt=parseInt(id.substring(7,20))
@@ -1298,14 +1277,10 @@ function SubMenuPressed(id){
 						alert("Not Implemented")
 					}else if (rowsArray[0].type=='B'){
 						selectedWebPage=rowsArray[0].command.replace("{SUPUSERNAME}", localStorage.getItem("MobileUser"));
-						//formWebPage.open()
-						//window.open(selectedWebPage,"_system")
-					
 						openWebPage(selectedWebPage)
 						
 					}else if (rowsArray[0].type=='U'){
-						selectedWebPage=rowsArray[0].command
-						
+						selectedWebPage=rowsArray[0].command						
 						openWebPage(selectedWebPage)
 					}else if(rowsArray[0].type=='C'){
 						
@@ -1315,7 +1290,7 @@ function SubMenuPressed(id){
 							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
-						openWebPage1("www.bbc.co.uk")
+						
 						}
 						}
 					}
