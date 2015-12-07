@@ -187,7 +187,7 @@ function BuildDBTableNames(){
 	var HTMLToOutput="";
 	var selected=""
 	var first=false;
-		html5sql.process("SELECT * FROM sqlite_master WHERE type='table';",
+		html5sql.process("SELECT * FROM sqlite_master WHERE type='table' order by name;",
 		 function(transaction, results, rowsArray){
 
 			for (var n = 0; n < rowsArray.length; n++) {

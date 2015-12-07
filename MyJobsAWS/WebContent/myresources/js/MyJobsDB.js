@@ -1,3 +1,11 @@
+// delete not in
+// DELETE FROM myvehicleCheck WHERE id NOT IN (67,68,69)
+
+
+
+
+
+
 var objtype="";	
 var objid="";	
 var objshorttext="";	
@@ -30,48 +38,88 @@ return fdt;
 
 function requestSAPData(page,params){
 
-	opMessage(SAPServerPrefix+page+params);
-	var myurl=SAPServerPrefix+page+params;
-	console.log("Called URL:"+myurl)
+
+	opMessage(SAPServerPrefix+page);
+	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
+	createAjaxCall(page,params)
   $.getJSON(myurl).done(function() {
-    console.log("second success"+myurl );
+    
   })
  
   
 }
-	 
-function requestSAPData11(page,params){
+function requestSAPData1(page,params){
 
-	opMessage(SAPServerPrefix+page+params);
-	var myurl=SAPServerPrefix+page+params;
-	console.log("Called URL:"+myurl)
-  $.getJSON(myurl).done(function() {
-    console.log("second success"+myurl );
-  })
-  .fail(function() {
-    console.log( "error" +myurl);
-  })
-  .always(function() {
-    console.log( "complete"+myurl );
-  });
+
+	opMessage(SAPServerPrefix+page);
+	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
+	createAjaxCall(page,params)
+  //$.getJSON(myurl).done(function() {
+    
+  //})
+ 
   
-	$.ajax({
-	    dataType: "json",
-	    url: myurl,
-	//    data: data,
-	//    success: function( ) { },
-	    timeout: 5000
-	}).fail( function( xhr, status ) {
-		console.log(status+":"+xhr)
-	    if( status == "timeout" ) {
-	    	console.log(status+"it timed out")
-	    }
-	}); 
+}	 
+function requestSAPDataCall(){
+timedout=false;
+alert("xx")
+	html5sql.process("SELECT * from MyAjax where astate = 'NEW'",
+			function(transaction, results, rowsArray){
+				
+				if( rowsArray.length > 0) {
+					html5sql.process(
+							
+							["UPDATE MyAjax set astate  = 'SERVER' WHERE id = "+ rowsArray[0].id],
+							function(transaction, results, rowsArray1){
+								
+							},
+							 function(error, statement){
+								 window.console&&console.log("Error: " + error.message + " when processing " + statement);
+							 }   
+						);
+					opMessage(SAPServerPrefix+rowsArray[0].acall);
+					var myurl=SAPServerPrefix+rowsArray[0].acall+SAPServerSuffix+rowsArray[0].aparams;
+					console.log("Called URL:"+myurl)
+					$.ajax({
+					    dataType: "json",
+					    url: myurl,
+					    timeout: 120000
+						}).done(function() {
+						    //console.log("call success"+page );
+						  }).fail( function( xhr, status ) {
+							  	if (status!="parsererror"){
+									//console.log(page+status+":"+xhr)
+								    if( status == "timeout" ) {
+								    	timedout=true;
+								    }
+							  	}
+							}).always(function() {
+								if(timedout==false){
+									console.log( "Timedout"+rowsArray[0].acall );
+								}else{
+									console.log( "Complete"+rowsArray[0].acall );
+									requestSAPDataCall()
+								}
+							  });
+				}
+					
+				
+				
+				
+			},
+			 function(error, statement){
+				 window.console&&console.log("Error: " + error.message + " when processing " + statement);
+			 }   
+		);
+
+  
+	
+
 }
-function sendSAPData(page){
+function sendSAPData(page,params){
 	opMessage(page);
 	console.log(status+page)
-   $.getJSON(page);
+   $.getJSON(SAPServerPrefix+page+SAPServerSuffix+params);
 }
 
 function opMessage(msg){
@@ -484,6 +532,26 @@ function CheckSyncInterval(SyncType){
 
 
 }
+function createAjaxCall(acall,aparams){
+
+	nowd=getDate();
+	nowt=getTime();
+	dtstamp=nowd+nowt;
+
+
+	var sqlstatement='INSERT INTO MyAjax (adate , atime, astate, acall, aparams ) VALUES ("'+nowd+'","'+nowt+'","NEW","'+ acall+'","'+ aparams+'");';
+
+			html5sql.process(sqlstatement,
+							 function(){
+								
+							 },
+							 function(error, statement){
+								 window.console&&console.log("Error: " + error.message + " when processing " + statement);
+							 }        
+					);
+
+
+	}
 function createNotification(type,priority,group,code,grouptext,codetext,description,details,startdate,starttime,funcloc,equipment)
 {
 	
@@ -570,9 +638,8 @@ var lastsync=localStorage.getItem('LastSyncedDT')	;
 
 
 }
-
 function syncTransactional(){
-var SAPServerSuffix="";
+
 
 	if (!CheckSyncInterval('TRANSACTIONAL')){return; }
 	opMessage("Synchronizing Transactional Data");
@@ -590,10 +657,57 @@ var SAPServerSuffix="";
 									localStorage.setItem('LastSyncTransactionalDetails','');
 									syncTransactionalDetsUpdated=false;
 									SAPServerPrefix=$.trim(rowsArray[0].paramvalue);
-									requestSAPData("MyJobsOrders.htm",SAPServerSuffix);
-									requestSAPData("MyJobsOrdersObjects.htm",SAPServerSuffix);
-									requestSAPData("MyJobsNotifications.htm",SAPServerSuffix);
-									//requestSAPData("MyJobsMessages.htm",SAPServerSuffix);
+									requestSAPData("MyJobsOrders.htm",'');
+									requestSAPData("MyJobsOrdersObjects.htm",'');
+									requestSAPData("MyJobsNotifications.htm",'');
+									//requestSAPData("MyJobsMessages.htm",'');
+						 }
+						 
+					},
+					function(error, statement){
+						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
+					}
+				);
+			}
+		},
+		function(error, statement){
+		 opMessage("Error: " + error.message + " when syncTransactional processing " + statement);          
+		}
+	);
+	
+
+	
+	
+	
+	
+
+}
+function syncTransactional1(){
+
+return;
+
+	opMessage("Synchronizing Transactional Data");
+
+	html5sql.process(
+		["SELECT * from MyUserDets"],
+		function(transaction, results, rowsArray){
+			if( rowsArray.length > 0) {
+				SAPServerSuffix="?jsonCallback=?&sap-client="+localStorage.getItem('SAPClient')+"&sap-user="+rowsArray[0].user+"&sap-password="+rowsArray[0].password+"&username="+rowsArray[0].user;
+				
+				html5sql.process("SELECT * from MyWorkConfig where paramname = 'SERVERNAME'",
+					function(transaction, results, rowsArray){
+						if( rowsArray.length > 0) {
+									SetLastSyncDetails("LASTSYNC_TRANSACTIONAL");
+									localStorage.setItem('LastSyncTransactionalDetails','');
+									syncTransactionalDetsUpdated=false;
+									SAPServerPrefix=$.trim(rowsArray[0].paramvalue);
+									requestSAPDataCall();
+									requestSAPData1("MyJobsOrders.htm",'');
+									requestSAPData1("MyJobsOrders1.htm",'');
+									requestSAPData1("MyJobsOrdersObjects.htm",'');
+									requestSAPData1("MyJobsNotifications.htm",'');
+									//requestSAPData("MyJobsMessages.htm",'');
+									//requestSAPDataCall();
 						 }
 						 
 					},
@@ -617,11 +731,11 @@ var SAPServerSuffix="";
 }
 
 function syncUpload(){
-var SAPServerSuffix="";
+
 var newDets="";
 var currentUser="";
 syncDetsSet=false;
-
+SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 sapCalls = 0;
 	if (!CheckSyncInterval('UPLOAD')){return; }
 	opMessage("Synchronizing Upload Data");
@@ -652,12 +766,12 @@ var syncDetails = false	;
 
 							newJobDets='&TYPE='+item['type']+'&EQUIPMENT='+item['equipment']+'&STARTDATE='+item['date']+'&STARTTIME='+item['time']+'&SHORTTEXT='+item['shorttext']+'&LONGTEXT='+escape(item['longtext'])+'&ID='+item['id']+'&REPORTEDBY='+item['reportedby']+'&DEFECT='+item['defect']+'&MPOINT='+item['mpoint']+'&MPVAL='+item['mpval'];
 							opMessage("NewJob Details="+newJobDets);
-							SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+							
 							sapCalls+=1;
 							
 							html5sql.process("UPDATE MyNewJobs SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-										sendSAPData(SAPServerPrefix+"MyJobsCreateVehicleDefect.htm"+SAPServerSuffix+newJobDets);
+										sendSAPData("MyJobsCreateVehicleDefect.htm",newJobDets);
 									 },
 									 function(error, statement){
 										 
@@ -691,12 +805,12 @@ var syncDetails = false	;
 								newEODDets='&TYPE='+item['type']+'&ACT_START_DATE='+item['startdate']+'&ACT_START_TIME='+item['starttime']+'&ACT_END_DATE='+item['enddate']+'&ACT_END_TIME='+item['endtime']+'&SHORT_TEXT='+item['shorttext']
 								newEODDets+='&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser')+'&ID='+item['id'];;
 								opMessage("New EOD Notifications Details="+newEODDets);
-								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+								
 								sapCalls+=1;
 								
 								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateEODNotification.htm"+SAPServerSuffix+newEODDets);
+											sendSAPData("MyJobsCreateEODNotification.htm",newEODDets);
 										 },
 										 function(error, statement){
 											 
@@ -731,12 +845,12 @@ var syncDetails = false	;
 								newNotifDets='&NOTIF_TYPE='+item['type']+'&START_DATE='+item['startdate']+'&START_TIME='+item['starttime']+'&END_DATE='+item['startdate']+'&END_TIME='+item['starttime']+'&SHORT_TEXT='+item['shorttext']+'&LONG_TEXT='+item['longtext']+'&ID='+item['id'];
 								newNotifDets+='&CODING='+item['pcode']+'&CODE_GROUP='+item['pgroup']+'&EQUIPMENT='+item['equipment']+'&FUNCT_LOC='+item['funcloc']+'&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser');
 								opMessage("New Notifications Details="+newNotifDets);
-								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+								
 								sapCalls+=1;
 								
 								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateNewJob.htm"+SAPServerSuffix+newNotifDets);
+											sendSAPData("MyJobsCreateNewJob.htm",newNotifDets);
 										 },
 										 function(error, statement){
 											 
@@ -767,12 +881,12 @@ var syncDetails = false	;
 								item = rowsArray[n];
 								newStatusDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
 								opMessage("Newstatus Details="+newStatusDets);
-								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));		
+									
 								sapCalls+=1;							
 								
 								html5sql.process("UPDATE MyStatus SET state = 'SENDING' where id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsUpdateStatus.htm"+SAPServerSuffix+newStatusDets);
+											sendSAPData("MyJobsUpdateStatus.htm",newStatusDets);
 										 },
 										 function(error, statement){
 											 
@@ -837,20 +951,20 @@ var syncDetails = false	;
 								
 								opMessage("Close Notif Update Details="+newCloseDets);
 							
-								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));		
+								
 								sapCalls+=1;		
 								
 								html5sql.process("UPDATE MyJobClose SET state = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
 									//alert("Doing TC1")
-										//	sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets);
+										//	sendSAPData("MyJobsCreateTConf.htm",newCloseTConfDets);
 								//			if (item['outofshift']>'0'){
 								//				alert("Doing TC2")
-							//					sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newCloseTConfDets1);
+							//					sendSAPData("MyJobsCreateTConf.htm",newCloseTConfDets1);
 							//				}
 											if (item['notifno'].length>5){
 								//				alert("Doing Notif Update")
-												sendSAPData(SAPServerPrefix+"MyJobsUpdateNotif.htm"+SAPServerSuffix+newCloseDets);
+												sendSAPData("MyJobsUpdateNotif.htm",newCloseDets);
 											}
 											
 										 },
@@ -894,12 +1008,12 @@ var syncDetails = false	;
 								}
 									
 								opMessage("NewTconf Details="+newTConfDets);
-								SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+							
 								sapCalls+=1;
 								
 								html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData(SAPServerPrefix+"MyJobsCreateTConf.htm"+SAPServerSuffix+newTConfDets);
+											sendSAPData("MyJobsCreateTConf.htm",newTConfDets);
 										 },
 										 function(error, statement){
 											 
@@ -937,11 +1051,11 @@ var syncDetails = false	;
 
 							newMessageDets='&ID='+item['id']+'&DOCID='+item['msgid'];
 							opMessage("READ Status= "+newMessageDets);
-							SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+							
 							
 							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-									///sendSAPData(SAPServerPrefix+"MyJobsMessageSetReadFlag.htm"+SAPServerSuffix+newMessageDets);
+									///sendSAPData("MyJobsMessageSetReadFlag.htm",newMessageDets);
 									 },
 									 function(error, statement){
 										 
@@ -979,11 +1093,11 @@ var syncDetails = false	;
 
 							newSentMsgDets='&ID='+item['id']+'&TO='+item['msgtoid']+'&SUBJECT='+item['msgsubject']+'&CONTENT='+item['msgtext'];
 							opMessage("SEND Status= "+newSentMsgDets);
-							SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+							
 							
 							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-										      //sendSAPData(SAPServerPrefix+"MyJobsMessageSend.htm"+SAPServerSuffix+newSentMsgDets);
+										      //sendSAPData("MyJobsMessageSend.htm",newSentMsgDets);
 										 },
 										 function(error, statement){
 											 
@@ -1000,7 +1114,7 @@ var syncDetails = false	;
 				);					
 				
 // Check for New Messages to retrieve
-				SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
+				
 				//requestSAPData("MyJobsMessages.htm",SAPServerSuffix+currentUser);
 			}
 		},
@@ -1019,7 +1133,7 @@ var syncDetails = false	;
 
 function syncReference(){
 
-var SAPServerSuffix="";
+
 	if (!CheckSyncInterval('REFERENCE')){return; }
 	opMessage("Synchronizing Reference Data");
 
@@ -1037,13 +1151,13 @@ var SAPServerSuffix="";
 							syncReferenceDetsUpdated=false;
 							SAPServerPrefix=$.trim(rowsArray[0].paramvalue);							
 							opMessage("Sending SAP Request for Ref Data");	
-							requestSAPData("MyJobsRefData.htm",SAPServerSuffix);
-							requestSAPData("MyJobsRefDataCodes.htm",SAPServerSuffix+"&SCENARIO=MAMDEMO");
-							requestSAPData("MyJobsUsers.htm",SAPServerSuffix);
-							requestSAPData("MyJobsVehiclesDefault.htm",SAPServerSuffix);
-							requestSAPData("MyJobsVehicles.htm",SAPServerSuffix);
-							//requestSAPData("MyJobsFunclocs.htm",SAPServerSuffix);
-							//requestSAPData("MyJobsEquipment.htm",SAPServerSuffix);
+							requestSAPData("MyJobsRefData.htm",'');
+							requestSAPData("MyJobsRefDataCodes.htm",'');
+							requestSAPData("MyJobsUsers.htm",'');
+							requestSAPData("MyJobsVehiclesDefault.htm",'');
+							requestSAPData("MyJobsVehicles.htm",'');
+							//requestSAPData("MyJobsFunclocs.htm",'');
+							//requestSAPData("MyJobsEquipment.htm",'');
 						 }
 						 
 					},
@@ -1523,7 +1637,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyRefNotifTypes     	(  id integer primary key autoincrement, scenario TEXT, type TEXT, description TEXT, statusprofile TEXT, taskstatusprofile TEXT,priority_type TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyRefPriorityTypes     (  id integer primary key autoincrement, scenario TEXT, type TEXT, priority TEXT, description TEXT);'+
 				  	 'CREATE TABLE IF NOT EXISTS MyRefUserStatusProfiles (  id integer primary key autoincrement, scenario TEXT, type TEXT, status TEXT, statuscode TEXT, statusdesc TEXT);'+
-					 'CREATE TABLE IF NOT EXISTS MyVehiclesDefault     	(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyVehiclesDefault     	(  sysid integer primary key autoincrement, equipment TEXT, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, mpoints TEXT,description TEXT);'+
 
 					 'CREATE TABLE IF NOT EXISTS MyVehicleCheck     	(  id integer primary key autoincrement, equipment TEXT, reg TEXT,  mileage TEXT,  mpoint TEXT,  desc TEXT,  longtext TEXT,  mdate TEXT, mtime TEXT, mreadby TEXT, user TEXT,  state TEXT);'+
@@ -1552,7 +1666,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS Equipments			  	( id integer primary key autoincrement, eqid TEXT, description TEXT, flid TEXT);'+
 					'CREATE TABLE IF NOT EXISTS MyMenuBar 		        ( id integer primary key autoincrement, scenario TEXT, level TEXT, item TEXT, position TEXT, type TEXT,  subitem TEXT, command TEXT, item2 TEXT);'+	
 					'CREATE TABLE IF NOT EXISTS MyJobDets 		        ( id integer primary key autoincrement, orderno TEXT, opno TEXT, notifno TEXT, eworkcentre TEXT, oworkcentre TEXT,priority_code TEXT,priority_desc TEXT, pmactivity_code TEXT,pmactivity_desc TEXT,oppmactivity_code TEXT,oppmactivity_desc TEXT,start_date TEXT, start_time TEXT,duration TEXT, equipment_code TEXT, equipment_desc TEXT, equipment_gis TEXT, funcloc_code TEXT,funcloc_desc TEXT,funcloc_gis TEXT, site TEXT, acpt_date TEXT, acpt_time TEXT, onsite_date TEXT, onsite_time TEXT,park_date TEXT, park_time TEXT, tconf_date TEXT, tconf_time TEXT, status TEXT, status_l TEXT, status_s TEXT, notif_cat_profile TEXT);'+	
-						
+					'CREATE TABLE IF NOT EXISTS MyAjax		  	 		( id integer primary key autoincrement, adate TEXT,atime TEXT, astate TEXT, acall TEXT,aparams TEXT);'+	
 					 'CREATE TABLE IF NOT EXISTS TSActivities		    ( id integer primary key autoincrement, code TEXT, skill TEXT,  subskill TEXT, description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS TSNPJobs			    ( id integer primary key autoincrement, jobno TEXT, subtype TEXT,  description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS TSData		    		( id integer primary key autoincrement, date TEXT, job TEXT, skill TEXT, activity TEXT, time TEXT, ot15 TEXT, ot20 TEXT);'+
@@ -1594,6 +1708,7 @@ function dropTables() {
 
 
 		sqlstatement=	'DROP TABLE IF EXISTS MyOrders;'+
+		'DROP TABLE IF EXISTS MyAjax;'+
 						'DROP TABLE IF EXISTS MyOperations;'+
 						'DROP TABLE IF EXISTS MyOperationsSplit;'+
 						'DROP TABLE IF EXISTS MyPartners;'+
@@ -1673,6 +1788,7 @@ function dropTables() {
 function emptyTables(type) { 
 	
 		sqlstatement=	'DELETE FROM  MyOrders;'+
+						'DELETE FROM  MyAjax;'+
 						'DELETE FROM  MyOperations;'+
 						'DELETE FROM  MyOperationsSplit;'+
 						'DELETE FROM  MyPartners;'+
@@ -1771,6 +1887,7 @@ function loadDemoData() {
 	
 	localStorage.setItem("LastSyncedDT",getDate()+getTime())
 	sqlstatement=	'DELETE FROM  MyOrders;'+
+					'DELETE FROM  MyAjax;'+
 					'DELETE FROM  MyOperations;'+
 					'DELETE FROM  MyOperationsSplit;'+
 					'DELETE FROM  MyPartners;'+
@@ -1895,6 +2012,7 @@ function resetTables() {
 	var sqlstatement="";
 
 	sqlstatement=	'DELETE FROM  MyOrders;'+
+					'DELETE FROM  MyAjax;'+
 					'DELETE FROM  MyOperations;'+
 					'DELETE FROM  MyOperationsSplit;'+
 					'DELETE FROM  MyJobDets;'+
@@ -2081,8 +2199,9 @@ var sqlstatement="";
 var sqlstatements=[];
 var ordernos=[];
 var changeddatetime=[];
+var orderlist="";
 		opMessage("Doing Orders");
-		
+		console.log(MyOrders.order.length+"Orders")
 		
 		if(MyOrders.order.length>0){
 			if(syncTransactionalDetsUpdated){
@@ -2118,6 +2237,10 @@ var changeddatetime=[];
 	
 			for(var cntx=0; cntx < MyOrders.order.length ; cntx++)
 				{
+				if(cntx>0){
+					orderlist+=","	
+					}
+				orderlist+="'"+MyOrders.order[cntx].orderno+"'"
 				ordernos.push(MyOrders.order[cntx].orderno)
 				changeddatetime.push(MyOrders.order[cntx].changed_date+MyOrders.order[cntx].changed_time)
 				
@@ -2309,7 +2432,26 @@ var changeddatetime=[];
 				
 				InsertOrder(sqlstatements[cntx],ordernos[cntx],changeddatetime[cntx])
 			}
+			sqldeleteorders="delete from MyOrders WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyOperations WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyOperationsSplit WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyJobDets WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyPartners  WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyMaterials  WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyAssets  WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyTimeConfs WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyUserStatus WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyOperationInfo WHERE orderno NOT IN ("+orderlist+");"
+			sqldeleteorders+="DELETE FROM MyStatus where state='SERVER' and orderno NOT IN ("+orderlist+");"
+			
+			html5sql.process(sqldeleteorders,
+					 function(transaction, results, rowsArray){
 
+					 },
+					 function(error, statement){
+					
+					 }        
+					);
 
 		var x = window.location.href.split("/")
 		if(x[x.length-1]=="Home.html"){
@@ -3338,7 +3480,7 @@ function vehicleDefaultCB(MyVehicles){
 					//alert(cntx)
 				if(MyVehicles.vehicle[cntx].level=="2"){
 					//alert("lev2"+MyVehicles.vehicle[cntx].mpointdesc)
-					sqlstatement+='INSERT INTO MyVehiclesDefault (id , reg , partner, level, sequence, description , mpoint, mpointdesc, mpointlongtext  ) VALUES ( '+
+					sqlstatement+='INSERT INTO MyVehiclesDefault (equipment , reg , partner, level, sequence, description , mpoint, mpointdesc, mpointlongtext  ) VALUES ( '+
 						'"'+MyVehicles.vehicle[cntx].equipment +'",'+ 
 						'"'+MyVehicles.vehicle[cntx].vehicle +'",'+ 
 						'"'+MyVehicles.vehicle[cntx].partner +'",'+ 

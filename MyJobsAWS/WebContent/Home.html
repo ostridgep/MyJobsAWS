@@ -44,6 +44,7 @@ font-size: 150%;
 <script src="myresources/js/MyJobsDB.js"></script>
 <script src="myresources/js/MyJobsUtils.js"></script>
 <script src="myresources/js/NewNotif.js"></script>
+
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript">
 var MenuBar=["My AnglianWater","Vehicles","End of Day", "Jobs", "Reference Documents", "MC Web", "Office", "Assets", "Material"]
@@ -61,6 +62,8 @@ var selectedWebPage=""
 var selectedMenuItem=""
 var w = null; // initialize variable
 var mpointdefaults=[]
+var mpointdefaultequipment=''
+var mpointequipment=''
 var mpoint=[]
 var mpointdesc=[]
 var mpointlt=[]
@@ -309,13 +312,39 @@ var vehicleList = new sap.m.List("vehicleList",{
     itemPress:[function(oEvt) {
     	x=oEvt.getParameter("listItem").getTitle().split(" : ")
            sap.ui.getCore().getElementById('VDesc').setValue(x[1])
-           sap.ui.getCore().getElementById('VReg').setValue(oEvt.getParameter("listItem").getId())
-           localStorage.setItem("VehicleReg",oEvt.getParameter("listItem").getId())
+           y=oEvt.getParameter("listItem").getId().split(":")
+           sap.ui.getCore().getElementById('VReg').setValue(y[0])
+           mpointequipment=y[1]
+    	   
+           localStorage.setItem("VehicleReg",y[0])
                                       
-                                      html5sql.process("UPDATE MyUserDets SET vehiclereg = '"+oEvt.getParameter("listItem").getId()+"' WHERE employeeid = '"+localStorage.getItem('EmployeeID')+"';",
+                                      html5sql.process("UPDATE MyUserDets SET vehiclereg = '"+y[0]+"' WHERE employeeid = '"+localStorage.getItem('EmployeeID')+"';",
                                       
 										 function(){
-										 
+                               	       html5sql.process("select * from myvehicles where reg = '"+localStorage.getItem("VehicleReg")+"'",      
+                      	                     function(transaction, results, rowsArray){
+                      	                     
+                      	                           
+                      	                           
+                      	                           if (rowsArray.length>0) {
+                      	                                
+                      	                                    
+                      	                                  x=rowsArray[0].mpoints.split(":")
+                      	                                  for (n=0; n < x.length; n++ ){
+                      	                                	  mpointids[n]=x[n]
+                      	                                	  mpointdefects[n]=''
+                      	                                	  mpointdefectdesc[n]=''
+                      	                                	  mpointdefectlt[n]=''
+                      	                                  }
+                      	                                  VehicleMPoint=rowsArray[0].mpoint;                     
+                      	                           }
+                      	                          
+                      	                     },
+                      	                     function(error, statement){
+                      	                    	 //alert("regnot set")
+                      	                           //outputLogToDB(); 
+                      	                      }        
+                      	                     );
                                       },
                                       function(error, statement){
                                              opMessage("Error: " + error.message + " when updateing Pincode " + statement);
@@ -382,7 +411,7 @@ html5sql.process(sqlstatement,
                      while (n < rowsArray.length) {
 
                            
-                           vehicleList.addItem (new sap.m.StandardListItem(rowsArray[n].reg,{   
+                           vehicleList.addItem (new sap.m.StandardListItem(rowsArray[n].reg+":"+rowsArray[n].id,{   
                                   type: sap.m.ListType.Active,                                  
                                   title : rowsArray[n].reg+" : "+rowsArray[n].description}))
                                   
@@ -408,12 +437,14 @@ function BuildVehicleCheck(){
     mpointdefects=[]
     mpointdefectdesc=[]
     mpointdefectlt=[]
+	mpointdefaults=[]
 	sap.ui.getCore().getElementById('VCheckType').setText("Weekly")
 	sap.ui.getCore().getElementById('VTable').destroyItems();
 	 html5sql.process("select * from myvehiclesdefault",
 		 function(transaction, results, rowsArray){
 		             
 			for (n=0; n < rowsArray.length; n++ ){
+				mpointdefaults.push(rowsArray[n].mpoint)
 				mpoint.push(rowsArray[n].mpoint)
 				mpointdesc.push(rowsArray[n].mpointdesc)
 				mpointlt.push(rowsArray[n].mpointlongtext)
@@ -421,6 +452,7 @@ function BuildVehicleCheck(){
 	            mpointdefects.push('')
 	            mpointdefectdesc.push('')
 	            mpointdefectlt.push('')
+	            mpointdefaultequipment=rowsArray[n].equipment
 			}                     
 			
 			
@@ -483,7 +515,7 @@ showMessageMiddle(evt.getParameters().id)
                         	   x=(evt.getParameters().id).split(":")
                                   if(!this.getState())
                                          {
-                                	    
+                                	     
                                 	     mpointdefects[parseInt(x[1])]="YES"
                                          PrepDefect(parseInt(x[1]))
                                          selectedDefect=parseInt(x[1])
@@ -508,6 +540,7 @@ showMessageMiddle(evt.getParameters().id)
 	                           
 	                           if (rowsArray.length>0) {
 	                                  sap.ui.getCore().getElementById('VDesc').setValue(rowsArray[0].description)
+	                                  mpointequipment=rowsArray[0].id;
 	                                  VehicleEQNo=rowsArray[0].id;  
 	                                  x=rowsArray[0].mpoints.split(":")
 	                                  for (n=0; n < x.length; n++ ){
@@ -1237,6 +1270,8 @@ function MenuPressed(id){
 						if (rowsArray[0].command=="VehicleCheckViewModel"){
 							formVehicle.open();
 						}else if (rowsArray[0].command=='DayEndTravelViewModel'){
+							alert("special sync")
+							syncTransactional1();
 							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
@@ -1451,78 +1486,62 @@ function SaveVehicleCheck(vreg,vdesc,vmileage,vtype){
     var starttime=getSAPTime()
     var ReportedBy=localStorage.getItem("MobileUser");
    
-   
+  
     if (vtype=="Daily"){
     	NoOfDefects=mpointdefects.length
     }else{
     	NoOfDefects=1
     }
-  	
+    if (vdesc==""){
+    	theequipment=mpointdefaultequipment
+    }else{
+    	theequipment=mpointequipment
+    }
+    createVehicleDefect(theequipment,'','0',vmileage,startdate,starttime,ReportedBy,ReportedBy,'Mileage','Mileage')
     for (i = 0; i< NoOfDefects; i++) { 
     	if(vdesc.length<1){
     		id=mpoint[i]
+    		
     	}else{
     		id=mpointids[i]
     	}
+    	if(i==0){
+    		thereg=vreg
+    		
+    	}else{
+    		thereg=''
+    		}
+    	
+	    if (vdesc==""){
+	    	thempoint=mpointdefaults[i]
+	    }else{
+	    	thempoint=mpointids[i]
+	    }	
+	  
            if(mpointdefects[i]=="YES"){
-        	   alert(id+":"+unescape(mpointdesc[i])+":"+mpointdefectdesc[i]+":"+mpointdefectlt[i])
+        	   createVehicleDefect(theequipment,thereg,id,vmileage,startdate,starttime,ReportedBy,ReportedBy,mpointdefectdesc[i],mpointdefectlt[i])
                   }
     }
 }
-function xx(){
-  /*          if(raiseNotification){
-           
-                        if (vmileage.length < 1){
-                                sap.m.MessageBox.show(
-                                            "Please enter correct mileage.", {
-                                                icon: sap.m.MessageBox.Icon.ERROR,
-                                                title: "Vehicle Mileage - Error",
-                                                actions: [sap.m.MessageBox.Action.OK],
-                                                onClose: function(oAction) { / * do something * / }
-                                            }
-                                          );
-                               }else{
-                                      html5sql.process("INSERT INTO MyNewJobs (state , defect, type, date, time, shorttext, longtext, equipment, mpoint, mpval, reportedby) VALUES ("+
-                                                    "'VEHICLEDEFECT','YES', 'ZD','"+startdate+"','"+starttime+"','VEHICLE DEFECT for "+reg+"','"+NotificationText+"','"+VehicleEQNo+"','"+VehicleMPoint+"','"+vmileage+"','"+ReportedBy+"');",
-                                      function(){
-                                                    
-                                                    //window.location.href='Home.htm'        
+   
+     
+   
+function createVehicleDefect(equipment,reg, mpoint,mileage,mdate,mtime,mreadby,user,desc,longtext){
+      html5sql.process("INSERT INTO MyVehicleCheck (state , equipment, reg, mpoint,mileage, mdate, mtime, mreadby, user, desc, longtext) VALUES ("+
+                    "'NEW','"+equipment+"','"+reg+"','"+mpoint+"','"+mileage+"','"+mdate+"','"+mtime+"','"+mreadby+"','"+user+"','"+desc+"','"+longtext+"');",
+      function(){
+                    
+                          
 
-                                      },
-                                      function(error, statement){
-                                             
-                                             opMessage("Error: " + error.message + " when createNotification processing " + statement);
-                                             //window.location.href='Home.htm'
-                                      }        
-                                      )
-                               }
-           }else{
+      },
+      function(error, statement){
+             
+             opMessage("Error: " + error.message + " when createNotification processing " + statement);
+             //window.location.href='Home.htm'
+      }        
+      )
+                               
            
-                  if (vmileage.length < 1){
-                        sap.m.MessageBox.show(
-                                     "Please enter correct mileage.", {
-                                         icon: sap.m.MessageBox.Icon.ERROR,
-                                         title: "Vehicle Mileage - Error",
-                                         actions: [sap.m.MessageBox.Action.OK],
-                                         onClose: function(oAction) { / * do something * / }
-                                     }
-                                   );
-                        }else{
-                                      html5sql.process("INSERT INTO  MyNewJobs (state , defect, type, date, time, shorttext, longtext, equipment, mpoint, mpval, reportedby) VALUES ("+
-                                                    "'VEHICLEDEFECT','NO', 'ZD','"+startdate+"','"+starttime+"','','','','"+VehicleMPoint+"','"+vmileage+"','"+ReportedBy+"');",
-                                      function(){
-                                                    
-                                                    window.location.href='Home.html'                       
-
-                                      },
-                                      function(error, statement){
-                                             
-                                             opMessage("Error: " + error.message + " when createNotification processing " + statement);
-                                             window.location.href='Home.html'
-                                      }        
-                                      )                      
-                        }
-           } */
     }
 </Script>
 </body>

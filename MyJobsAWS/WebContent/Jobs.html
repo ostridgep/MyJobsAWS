@@ -1529,19 +1529,25 @@ var detailFooterAWS = new sap.m.Bar({
 						 text: "Map",
 						 icon:"sap-icon://map",
 						 press: [ function(){
-							 formMap.open();
-
+							
+							  if(currentEquipment_GIS.length>6){
+								 
+								  x=convertToLatLon(currentEquipment_GIS)
+								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+								  ref1.show();
+								  }else if (currentFuncLoc_GIS.length>6)
+								  {
+									 
+								  x=convertToLatLon(currentFuncLoc_GIS)
+								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+								  ref1.show();
+								  }
+								  
+						    	  
+						    	 
 								}]
 					 }),
-						/* new sap.m.Button({
-							 text: "Route",
-							 icon:"sap-icon://map-3",
-							 press: [ function(){
-								 navigator.geolocation.getCurrentPosition(getDestinationDetails); 
-								 formRoute.open();
-
-									}]
-						 }) */
+						
 					],
 					contentMiddle : [
 					 				new sap.m.Button('btnStatusAccept', {
@@ -1718,6 +1724,8 @@ var materialFooter = new sap.m.Bar({
 						 text: "Map",
 						 icon:"sap-icon://map",
 						 press: [ function(){
+							 
+							
 							 formMap.open();
 
 								}]
