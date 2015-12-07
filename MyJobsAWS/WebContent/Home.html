@@ -1207,12 +1207,7 @@ function BuildMenuBar(){
 }
 function openWebPage(url){
 
-	ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return to MyJobs')
-	ref1.addEventListener('loadstart',function()
-		{
-		alert(event.url)
-		}
-	);
+	ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return')
 	ref1.show();
 }
 
