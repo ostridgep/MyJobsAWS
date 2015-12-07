@@ -55,10 +55,10 @@ sap.ui.core.Control.extend('KeyPad', {
     this.vbox = new sap.m.VBox({
     	 items: [	
         new sap.m.HBox({ items: [ 
-          new sap.m.Input("NewPassword1",{type: sap.m.InputType.Password}), 
-          new sap.m.Input("NewPassword2",{type: sap.m.InputType.Password}), 
-          new sap.m.Input("NewPassword3",{type: sap.m.InputType.Password}), 
-          new sap.m.Input("NewPassword4",{type: sap.m.InputType.Password}),
+          new sap.m.Input("NewPassword1",{type: sap.m.InputType.Password, enabled:false}), 
+          new sap.m.Input("NewPassword2",{type: sap.m.InputType.Password, enabled:false}), 
+          new sap.m.Input("NewPassword3",{type: sap.m.InputType.Password, enabled:false}), 
+          new sap.m.Input("NewPassword4",{type: sap.m.InputType.Password, enabled:false}),
       ]
     }),
         new sap.m.HBox({ items: [ createBtn('1'), createBtn('2'), createBtn('3')] }),
