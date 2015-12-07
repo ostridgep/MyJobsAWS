@@ -60,6 +60,7 @@ var NotificationsCnt=0
 var selectedWebPage=""
 var selectedMenuItem=""
 var w = null; // initialize variable
+var mpointdefaults=[]
 var mpoint=[]
 var mpointdesc=[]
 var mpointlt=[]
@@ -181,6 +182,26 @@ var formVehicle = new sap.m.Dialog("dlgVehicle",{
     modal: true,
     contentWidth:"1em",
     buttons: [
+			new sap.m.Button("VCheckType",{
+			    
+			   
+			   text:"Weekly",
+			   type:        sap.m.ButtonType.Emphasized,
+			          press: [ function(){
+			            if(sap.ui.getCore().byId("VCheckType").getText()=="Weekly")  {
+			            	this.setText("Daily")
+			            	for (n=1; n < mpoint.length; n++ ){
+			            		sap.ui.getCore().byId("VCheckDefect"+n).setVisible(true)
+			            	}
+			            } else{
+			            	this.setText("Weekly")	
+			            	for (n=1; n < mpoint.length; n++ ){
+			            		sap.ui.getCore().byId("VCheckDefect"+n).setVisible(false)
+			            	}
+			            }  
+			          	
+			                        }]
+			   }),   
               new sap.m.Button({
                   
                   icon:"sap-icon://close-command-field",
@@ -196,7 +217,15 @@ var formVehicle = new sap.m.Dialog("dlgVehicle",{
                     text:"Save",
                     type:        sap.m.ButtonType.Accept,
                            press: [ function(){
-                        	   formVehicle.close()
+                        	   if (sap.ui.getCore().byId("VMileage").getValue().length <1){
+                        	   		DisplayErrorMessage("Vehicle Inspection", "Mileage is Mandatory")
+                        	   
+                        	   }else{
+                        		   
+                        		   
+                        		   SaveVehicleCheck(sap.ui.getCore().byId("VReg").getValue(),sap.ui.getCore().byId("VDesc").getValue(),sap.ui.getCore().byId("VMileage").getValue(),sap.ui.getCore().byId("VCheckType").getText())
+                        	  	   formVehicle.close()
+                        	   }
                            }]                                    
                     })
                                 ] ,                               
@@ -372,8 +401,15 @@ function BuildVehicleCheck(){
 	var help;
 	var first=0;
 	
-	
-	
+	mpoint=[];
+	mpointdesc=[]
+	mpointlt=[]
+	mpointids=[]
+    mpointdefects=[]
+    mpointdefectdesc=[]
+    mpointdefectlt=[]
+	sap.ui.getCore().getElementById('VCheckType').setText("Weekly")
+	sap.ui.getCore().getElementById('VTable').destroyItems();
 	 html5sql.process("select * from myvehiclesdefault",
 		 function(transaction, results, rowsArray){
 		             
@@ -381,22 +417,32 @@ function BuildVehicleCheck(){
 				mpoint.push(rowsArray[n].mpoint)
 				mpointdesc.push(rowsArray[n].mpointdesc)
 				mpointlt.push(rowsArray[n].mpointlongtext)
+				mpointids.push('')
+	            mpointdefects.push('')
+	            mpointdefectdesc.push('')
+	            mpointdefectlt.push('')
 			}                     
-			sap.ui.getCore().getElementById('VTable').destroyItems();
+			
 			
 				
 		
-			sap.ui.getCore().getElementById('VTable').addItem (new sap.m.ColumnListItem({
+			sap.ui.getCore().getElementById('VTable').addItem (new sap.m.ColumnListItem("VCheckReg",{
+				
 					cells : 
 						[
 						 new sap.m.Text({text: "Vehicle Rgistration"}),
 						 new sap.m.Text({text: ""}),
 						 new sap.m.SearchField("VReg",{
-								tooltip: "Search for Functional Locations..",
+								tooltip: "Search for Vehicle..",
 								value:localStorage.getItem("VehicleReg"),
 								search: [function(event){
 
 	                                formSelectVehicle.open();
+									
+								}],
+								liveChange: [function(event){
+
+									 sap.ui.getCore().getElementById('VDesc').setValue("")
 									
 								}]}),
 						 new sap.m.Input("VDesc",{type: sap.m.InputType.Text, enabled:false})
@@ -409,17 +455,20 @@ function BuildVehicleCheck(){
 		for (n=0; n < mpoint.length; n++ ){
 		
 if (n==0)	{
+	rowVisible=true;
 	opMileage=new sap.m.Input("VMileage",{type: sap.m.InputType.Number})
 }else{
+	rowVisible=false;
 	opMileage= new sap.m.Text({text: ""})
 }
-					sap.ui.getCore().getElementById('VTable').addItem (new sap.m.ColumnListItem({
+					sap.ui.getCore().getElementById('VTable').addItem (new sap.m.ColumnListItem("VCheckDefect"+n,{
+						visible:rowVisible,
 						cells : 
 							[
 new sap.m.Text({text: unescape(mpointdesc[n])}),
 new sap.m.Image("img:"+n,
 		{
-			src:'images/info.png',
+			src:'images\\info.png',
 			height:'40px',
 			width:'40px',
 			press:function(evt){
@@ -462,17 +511,17 @@ showMessageMiddle(evt.getParameters().id)
 	                                  VehicleEQNo=rowsArray[0].id;  
 	                                  x=rowsArray[0].mpoints.split(":")
 	                                  for (n=0; n < x.length; n++ ){
-	                                	  mpointids.push(x[n])
-	                                	  mpointdefects.push('')
-	                                	  mpointdefectdesc.push('')
-	                                	  mpointdefectlt.push('')
+	                                	  mpointids[n]=x[n]
+	                                	  mpointdefects[n]=''
+	                                	  mpointdefectdesc[n]=''
+	                                	  mpointdefectlt[n]=''
 	                                  }
 	                                  VehicleMPoint=rowsArray[0].mpoint;                     
 	                           }
 	                          
 	                     },
 	                     function(error, statement){
-	                    	 alert("regnot set")
+	                    	 //alert("regnot set")
 	                           //outputLogToDB(); 
 	                      }        
 	                     );
@@ -1205,6 +1254,7 @@ function MenuPressed(id){
 							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
+						
 						}
 					}else{	
 						
@@ -1221,6 +1271,17 @@ function MenuPressed(id){
 		);
 	
 }
+function sendit() {
+	for (n=0; n <400;n++){
+	  body_message+="1234567890"
+	}
+	  body_message+="end 4000"
+	    var mailto_link = 'mailto:paul@ostridge.com?subject=testlongmess&body=' + body_message;
+
+	  openWebPage(mailto_link);
+	  
+
+	}
 function SubMenuPressed(id){
 	
 	cnt=parseInt(id.substring(7,20))
@@ -1252,6 +1313,7 @@ function SubMenuPressed(id){
 							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
+						sendit()
 						}
 						}
 					}
@@ -1410,7 +1472,86 @@ sap.m.MessageBox.show(
     }
   );   
 }
+function SaveVehicleCheck(vreg,vdesc,vmileage,vtype){
+    var raiseNotification=false;
+    var NotificationText=""
+    var startdate=getSAPDate()
+    var starttime=getSAPTime()
+    var ReportedBy=localStorage.getItem("MobileUser");
+   
+   
+    if (vtype=="Daily"){
+    	NoOfDefects=mpointdefects.length
+    }else{
+    	NoOfDefects=1
+    }
+  	
+    for (i = 0; i< NoOfDefects; i++) { 
+    	if(vdesc.length<1){
+    		id=mpoint[i]
+    	}else{
+    		id=mpointids[i]
+    	}
+           if(mpointdefects[i]=="YES"){
+        	   alert(id+":"+unescape(mpointdesc[i])+":"+mpointdefectdesc[i]+":"+mpointdefectlt[i])
+                  }
+    }
+}
+function xx(){
+  /*          if(raiseNotification){
+           
+                        if (vmileage.length < 1){
+                                sap.m.MessageBox.show(
+                                            "Please enter correct mileage.", {
+                                                icon: sap.m.MessageBox.Icon.ERROR,
+                                                title: "Vehicle Mileage - Error",
+                                                actions: [sap.m.MessageBox.Action.OK],
+                                                onClose: function(oAction) { / * do something * / }
+                                            }
+                                          );
+                               }else{
+                                      html5sql.process("INSERT INTO MyNewJobs (state , defect, type, date, time, shorttext, longtext, equipment, mpoint, mpval, reportedby) VALUES ("+
+                                                    "'VEHICLEDEFECT','YES', 'ZD','"+startdate+"','"+starttime+"','VEHICLE DEFECT for "+reg+"','"+NotificationText+"','"+VehicleEQNo+"','"+VehicleMPoint+"','"+vmileage+"','"+ReportedBy+"');",
+                                      function(){
+                                                    
+                                                    //window.location.href='Home.htm'        
 
+                                      },
+                                      function(error, statement){
+                                             
+                                             opMessage("Error: " + error.message + " when createNotification processing " + statement);
+                                             //window.location.href='Home.htm'
+                                      }        
+                                      )
+                               }
+           }else{
+           
+                  if (vmileage.length < 1){
+                        sap.m.MessageBox.show(
+                                     "Please enter correct mileage.", {
+                                         icon: sap.m.MessageBox.Icon.ERROR,
+                                         title: "Vehicle Mileage - Error",
+                                         actions: [sap.m.MessageBox.Action.OK],
+                                         onClose: function(oAction) { / * do something * / }
+                                     }
+                                   );
+                        }else{
+                                      html5sql.process("INSERT INTO  MyNewJobs (state , defect, type, date, time, shorttext, longtext, equipment, mpoint, mpval, reportedby) VALUES ("+
+                                                    "'VEHICLEDEFECT','NO', 'ZD','"+startdate+"','"+starttime+"','','','','"+VehicleMPoint+"','"+vmileage+"','"+ReportedBy+"');",
+                                      function(){
+                                                    
+                                                    window.location.href='Home.html'                       
+
+                                      },
+                                      function(error, statement){
+                                             
+                                             opMessage("Error: " + error.message + " when createNotification processing " + statement);
+                                             window.location.href='Home.html'
+                                      }        
+                                      )                      
+                        }
+           } */
+    }
 </Script>
 </body>
 </html>

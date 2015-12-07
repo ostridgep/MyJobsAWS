@@ -1526,7 +1526,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS MyVehiclesDefault     	(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, mpoints TEXT,description TEXT);'+
 
-					 'CREATE TABLE IF NOT EXISTS MyVehicleCheck     	(  id integer primary key autoincrement, reg TEXT,  mileage TEXT,  tax TEXT,  horn TEXT,  tyres TEXT,  wheels TEXT,  lights TEXT,  wipers TEXT, checktype TEXT,  datestamp TEXT,  user TEXT,  state TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS MyVehicleCheck     	(  id integer primary key autoincrement, equipment TEXT, reg TEXT,  mileage TEXT,  mpoint TEXT,  desc TEXT,  longtext TEXT,  datestamp TEXT,  user TEXT,  state TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS MyMessages    			(  id integer primary key autoincrement, msgid TEXT, type TEXT,  date TEXT, time TEXT, msgfromid TEXT, msgfromname TEXT, msgtoid TEXT, msgtoname TEXT, msgsubject TEXT, msgtext TEXT,  expirydate TEXT, state TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS Assets     			(  type TEXT, id TEXT, eqart TEXT, eqtyp TEXT, shorttext TEXT,  address TEXT, workcenter TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS AssetClassVals     	(  type TEXT, id TEXT,  charact TEXT,  valuechar TEXT,  valueto TEXT, valueneutral TEXT, description TEXT);'+
