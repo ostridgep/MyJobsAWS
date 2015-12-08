@@ -5,7 +5,7 @@
 
 
 
-
+var w = null;
 var objtype="";	
 var objid="";	
 var objshorttext="";	
@@ -36,25 +36,49 @@ return fdt;
 
 
 
+function requestSAPData1(page,params){
+	var SAPCalls = JSON.parse(localStorage.getItem("SAPCalls"));
+	callstomake=""
+	for(n=0;n<SAPCalls.length;n++){
+		callstomake+=SAPCalls[n]+"\n\n"
+	}
+	alert("Calls+"+SAPCalls.length+"\n"+callstomake)
+	opMessage(SAPServerPrefix+page);
+	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
+	SAPCalls.push(myurl)
+	localStorage.setItem("SAPCalls",JSON.stringify(SAPCalls));
+
+ 
+  
+}
+
 function requestSAPData(page,params){
 
 
 	opMessage(SAPServerPrefix+page);
 	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
-	createAjaxCall(page,params)
-  $.getJSON(myurl).done(function() {
-    
-  })
- 
-  
-}
-function requestSAPData1(page,params){
+	
+	$.ajax({
+	    dataType: "json",
+	    url: myurl,
+	    
+	    timeout: 120000
+		}).done(function() {
+		    console.log("call success"+page );
+		  }).fail( function( xhr, status ) {
+			  console.log(page+status+":"+xhr)
+			  	if (status!="parsererror"){
+					
+				    if( status == "timeout" ) {
+				    	console.log(page+status)
+				    }
+			  	}
+			}).always(function() {
 
-
-	opMessage(SAPServerPrefix+page);
-	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
-	createAjaxCall(page,params)
-  //$.getJSON(myurl).done(function() {
+					console.log( "Complete"+page );
+					
+				
+			  });
     
   //})
  
@@ -62,7 +86,7 @@ function requestSAPData1(page,params){
 }	 
 function requestSAPDataCall(){
 timedout=false;
-alert("xx")
+
 	html5sql.process("SELECT * from MyAjax where astate = 'NEW'",
 			function(transaction, results, rowsArray){
 				
@@ -85,10 +109,10 @@ alert("xx")
 					    url: myurl,
 					    timeout: 120000
 						}).done(function() {
-						    //console.log("call success"+page );
+						    console.log("call success"+page );
 						  }).fail( function( xhr, status ) {
-							  	if (status!="parsererror"){
-									//console.log(page+status+":"+xhr)
+							  console.log("call fail "+status+page );
+							  	if (status!="parsererror"){//console.log(page+status+":"+xhr)
 								    if( status == "timeout" ) {
 								    	timedout=true;
 								    }
@@ -98,7 +122,7 @@ alert("xx")
 									console.log( "Timedout"+rowsArray[0].acall );
 								}else{
 									console.log( "Complete"+rowsArray[0].acall );
-									requestSAPDataCall()
+								
 								}
 							  });
 				}
@@ -116,12 +140,65 @@ alert("xx")
 	
 
 }
-function sendSAPData(page,params){
+function sendSAPData(page,params,timedOutSQL){
+	var TimedOut=false;
+	SetLastSyncDetails("LASTSYNC_UPLOAD");
+	localStorage.setItem("SAPCalling","true")
 	opMessage(page);
 	console.log(status+page)
-   $.getJSON(SAPServerPrefix+page+SAPServerSuffix+params);
-}
+	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
+	
+	$.ajax({
+	    dataType: "json",
+	    url: myurl,  
+	    timeout: 15000
+		}).done(function() {
+		    console.log("call success"+page );
+		  }).fail( function( xhr, status ) {
+			    
+			  	if (status!="parsererror"){
+					
+				    if( status == "timeout" ) {
+				    	console.log("TimedOut1"+TimedOut)
+				    	TimedOut=true;
+				    	resetSENDINGData(timedOutSQL);
+				    	console.log(page+status)
+				    	console.log("TimedOut2"+TimedOut)
+				    }
+			  	}
+			}).always(function() {
+					
+					console.log( "Complete"+page+ TimedOut);
+					if(TimedOut==false){
+						localStorage.setItem("SAPCalling","false")
+						syncUpload()
+					}else{
+						localStorage.setItem("SAPCalling","false")
+						
+					}
+					
+				
+			  });
+    
+  //})
+ 
+  
+}	
+function resetSENDINGData(sql){
+	
+		html5sql.process(sql,
+				function(transaction, results, rowsArray){
+				
+					},
+				 function(error, statement){
+					 window.console&&console.log("Error: " + error.message + " when processing " + statement);
+				 }   
+			);
 
+	  
+		
+
+	}
 function opMessage(msg){
 
 
@@ -684,7 +761,7 @@ function syncTransactional(){
 }
 function syncTransactional1(){
 
-return;
+
 
 	opMessage("Synchronizing Transactional Data");
 
@@ -701,7 +778,6 @@ return;
 									localStorage.setItem('LastSyncTransactionalDetails','');
 									syncTransactionalDetsUpdated=false;
 									SAPServerPrefix=$.trim(rowsArray[0].paramvalue);
-									requestSAPDataCall();
 									requestSAPData1("MyJobsOrders.htm",'');
 									requestSAPData1("MyJobsOrders1.htm",'');
 									requestSAPData1("MyJobsOrdersObjects.htm",'');
@@ -738,6 +814,10 @@ syncDetsSet=false;
 SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 sapCalls = 0;
 	if (!CheckSyncInterval('UPLOAD')){return; }
+	if (localStorage.getItem("SAPCalling")=="true"){
+		console.log("SAP is being Called")
+		return
+		}
 	opMessage("Synchronizing Upload Data");
 	
 var syncDetails = false	;
@@ -771,7 +851,8 @@ var syncDetails = false	;
 							
 							html5sql.process("UPDATE MyNewJobs SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-										sendSAPData("MyJobsCreateVehicleDefect.htm",newJobDets);
+										sendSAPData("MyJobsCreateVehicleDefect.htm","UPDATE MyNewJobs SET state = 'NEW' WHERE id='"+item['id']+"'");
+										
 									 },
 									 function(error, statement){
 										 
@@ -807,10 +888,11 @@ var syncDetails = false	;
 								opMessage("New EOD Notifications Details="+newEODDets);
 								
 								sapCalls+=1;
-								
+								n=rowsArray.length
 								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData("MyJobsCreateEODNotification.htm",newEODDets);
+											sendSAPData("MyJobsCreateEODNotification.htm",newEODDets,"UPDATE MyNotifications SET notifno = 'NEW' WHERE id='"+item['id']+"'");
+											
 										 },
 										 function(error, statement){
 											 
@@ -847,10 +929,11 @@ var syncDetails = false	;
 								opMessage("New Notifications Details="+newNotifDets);
 								
 								sapCalls+=1;
-								
+								n=rowsArray.length
 								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData("MyJobsCreateNewJob.htm",newNotifDets);
+											sendSAPData("MyJobsCreateNewJob.htm",newNotifDets,"UPDATE MyNotifications SET notifno = 'NEW' WHERE id='"+item['id']+"'");
+											
 										 },
 										 function(error, statement){
 											 
@@ -877,16 +960,22 @@ var syncDetails = false	;
 								syncDetails=true;
 								localStorage.setItem('LastSyncUploadDetails',"Status:"+String(rowsArray.length));
 							}
+							if(!syncDetsSet){
+								syncDetsSet=true;
+								SetLastSyncDetails("LASTSYNC_UPLOAD");
+								
+								}
 							for (var n = 0; n < rowsArray.length; n++) {
 								item = rowsArray[n];
 								newStatusDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
 								opMessage("Newstatus Details="+newStatusDets);
 									
 								sapCalls+=1;							
-								
+								n = rowsArray.length
 								html5sql.process("UPDATE MyStatus SET state = 'SENDING' where id='"+item['id']+"'",
 										 function(){
-											sendSAPData("MyJobsUpdateStatus.htm",newStatusDets);
+											sendSAPData("MyJobsUpdateStatus.htm",newStatusDets,"UPDATE MyStatus SET state = 'NEW' where id='"+item['id']+"'");
+											
 										 },
 										 function(error, statement){
 											 
@@ -953,7 +1042,7 @@ var syncDetails = false	;
 							
 								
 								sapCalls+=1;		
-								
+								n=rowsArray.length
 								html5sql.process("UPDATE MyJobClose SET state = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
 									//alert("Doing TC1")
@@ -964,7 +1053,8 @@ var syncDetails = false	;
 							//				}
 											if (item['notifno'].length>5){
 								//				alert("Doing Notif Update")
-												sendSAPData("MyJobsUpdateNotif.htm",newCloseDets);
+												sendSAPData("MyJobsUpdateNotif.htm",newCloseDets,"UPDATE MyJobClose SET state = 'NEW' WHERE id='"+item['id']+"'");
+												
 											}
 											
 										 },
@@ -1010,10 +1100,11 @@ var syncDetails = false	;
 								opMessage("NewTconf Details="+newTConfDets);
 							
 								sapCalls+=1;
-								
+								n = rowsArray.length
 								html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-											sendSAPData("MyJobsCreateTConf.htm",newTConfDets);
+											sendSAPData("MyJobsCreateTConf.htm",newTConfDets,"UPDATE MyTimeConfs SET confno = 'NEW' WHERE id='"+item['id']+"'");
+											
 										 },
 										 function(error, statement){
 											 
@@ -1055,7 +1146,8 @@ var syncDetails = false	;
 							
 							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-									///sendSAPData("MyJobsMessageSetReadFlag.htm",newMessageDets);
+									///sendSAPData("MyJobsMessageSetReadFlag.htm",newMessageDets,"UPDATE MyMessages SET state = 'NEW' WHERE id='"+item['id']+"'");
+										
 									 },
 									 function(error, statement){
 										 
@@ -1097,7 +1189,8 @@ var syncDetails = false	;
 							
 							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
 										 function(){
-										      //sendSAPData("MyJobsMessageSend.htm",newSentMsgDets);
+										      //sendSAPData("MyJobsMessageSend.htm",newSentMsgDets,"UPDATE MyMessages SET state = 'NEW' WHERE id='"+item['id']+"'");
+											
 										 },
 										 function(error, statement){
 											 

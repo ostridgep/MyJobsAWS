@@ -60,7 +60,7 @@ var OrdersCnt=0
 var NotificationsCnt=0
 var selectedWebPage=""
 var selectedMenuItem=""
-var w = null; // initialize variable
+ // initialize variable
 var mpointdefaults=[]
 var mpointdefaultequipment=''
 var mpointequipment=''
@@ -1434,6 +1434,7 @@ function startBGSync()
     	
 		 syncReference()
 		 syncTransactional()
+		 localStorage.setItem('SAPCalling','false')
 		 syncUpload()
 		 syncDT=localStorage.getItem('LastSyncedDT')		 
 		 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
@@ -1459,9 +1460,7 @@ function httpGet(theUrl)
 $(function() {
 
 		  
-
-
-    		
+	
     		
 	
 	
