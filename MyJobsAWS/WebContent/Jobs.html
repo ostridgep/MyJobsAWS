@@ -322,6 +322,8 @@ new sap.m.Button( {
 					 sap.ui.getCore().byId("Close_ImpactGroup").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ImpactCode").getSelectedItem().getKey(),
 					 followOnWork,followOnVariance,followOnReason )
+					updateJobDetsStatus(CurrentOrderNo, CurrentOpNo, "CLOSED")
+					localStorage.setItem('totalAccepted','0');
 					}else{
 						if (CloseError=="1"){
 						DisplayErrorMessage("Close Job Error", "Close Details must be Completed\n-Functional Location\n-Equipment\n-Time Entries")
@@ -713,7 +715,8 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                                             		 setStatusChangeDT()
                                             		 formChangeStatusReject.close()
                                                      
-                                                     changeStatus("REJ1")   
+                                                     changeStatus("REJ1")  
+                                                    
                                                       prepareChangeStatus()   
          												}else{
          													DisplayErrorMessage("Reject Job Error", "Reason must be completed")
@@ -2017,9 +2020,14 @@ var historyList  = new sap.m.List("HistoryList",
 	 }).addStyleClass("sapUiSizeCompact");
 var firstEntry="none:-1";
 function prepareChangeStatus(){
-
+	
 	if(currentStatus=="DEPL"){
-		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(true);
+		if(localStorage.getItem('totalAccepted')=='0'){
+			sap.ui.getCore().getElementById('btnStatusAccept').setVisible(true);
+		}else{
+			sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
+		}
+		
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(true);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusUpdate').setVisible(false);
@@ -2029,6 +2037,7 @@ function prepareChangeStatus(){
 		sap.ui.getCore().getElementById('btnStatusReject').setEnabled(true);
 
 	}else if(currentStatus=="ACPT"){
+
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(true);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(false);
@@ -2039,9 +2048,9 @@ function prepareChangeStatus(){
 		sap.ui.getCore().getElementById('btnStatusOnSite').setEnabled(true);
 
 
-	}else if((currentStatus=="REJ1")||(currentStatus=="REJ2")){
+	}else if((currentStatus=="REJ1")||(currentStatus=="REJ2")||(currentStatus=="CLOSED")){
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
-		sap.ui.getCore().getElementById('btnStatusReject').setVisible(true);
+		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusUpdate').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusOnSite').setVisible(false);
@@ -2051,9 +2060,13 @@ function prepareChangeStatus(){
 		
 
 	}else if(currentStatus=="SITE"){
+		if(localStorage.getItem('totalParked')=='0'){
+			sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(true);
+		}else{
+			sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(false);
+		}
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
-		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(true);
 		sap.ui.getCore().getElementById('btnStatusUpdate').setVisible(true);
 		sap.ui.getCore().getElementById('btnStatusOnSite').setVisible(true);
 		sap.ui.getCore().getElementById('btnStatusClose').setVisible(true);
@@ -2065,7 +2078,11 @@ function prepareChangeStatus(){
 		sap.ui.getCore().getElementById('btnStatusSuspend').setText("Un-Park");
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
-		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(true);
+		if(localStorage.getItem('totalAccepted')=='0'){
+			sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(true);
+		}else{
+			sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(false);
+		}
 		sap.ui.getCore().getElementById('btnStatusUpdate').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusOnSite').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusClose').setVisible(false);
@@ -2094,7 +2111,7 @@ function changeStatus(Status){
  		statusUpdateDate=d.substring(0,4)+"-"+d.substring(4,6)+"-"+d.substring(6,8)
  		statusUpdateTime=	t.substring(0,2)+":"+t.substring(2,4)+":"+t.substring(4,6) 
 	 if(Status=="ACPT"){
-	 
+		 localStorage.setItem('totalAccepted','1');
 		 sap.ui.getCore().getElementById('btnStatusSuspend').setText("Park");
 	 }
 	
@@ -2114,13 +2131,14 @@ function changeStatus(Status){
 		 StatusIcon="accept"
 	 }else if(Status=="REJ1"){
 		 if(currentStatus=="DEPL"){
-			 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ1" ,"Job Rejected")
+			
 			 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'REJ1',
 				 sap.ui.getCore().byId("StatusRejectVarianceCode").getSelectedItem().getKey(),
 				 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
 				 '','',
 	           		sap.ui.getCore().byId("StatusRejectReasonText").getValue(),
 	           		sap.ui.getCore().byId("StatusRejectReasonDetails").getValue(),'')
+	         updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ1" ,"Job Rejected")
 		 }else{
 			 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ2" ,"Job Rejected")
 			 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'REJ2',
@@ -2129,6 +2147,7 @@ function changeStatus(Status){
 				 '','',
 	           		sap.ui.getCore().byId("StatusRejectReasonText").getValue(),
 	           		sap.ui.getCore().byId("StatusRejectReasonDetails").getValue(),'')
+	         updateOperationStatus(CurrentOrderNo, CurrentOpNo, "REJ2" ,"Job Rejected")
 		 }
 		 
 		 StatusText="Rejected"
@@ -2149,6 +2168,7 @@ function changeStatus(Status){
 			 StatusState=sap.ui.core.ValueState.Error
 			 StatusIcon="decline"
 		} else if(Status=="PARK"){
+			localStorage.setItem('totalParked','1');
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "PARK", "Job Suspended")
 		createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
 				sap.ui.getCore().byId("StatusParkActivityCode").getSelectedItem().getKey(),
@@ -2182,7 +2202,7 @@ function changeStatus(Status){
 	document.getElementById("JobHead_Status").innerHTML = "<Font color='"+StatusColour+"'>"+StatusText+"</font>";
 	
 	 document.getElementById('L'+CurrentOrderNo+'-'+CurrentOpNo).innerHTML = StatusText;
-
+	
 
 }
 
@@ -2206,6 +2226,7 @@ var jobicons=[]
 var jobtooltip=[]
 var priorityicons=[]
 var prioritytooltip=[]
+countStatus()
        SQLStatement="SELECT MyNotifications.pcode, myjobdets.status_s, MyNotifications.type as jobtype, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext ,MyOperations.shorttext as operationdesc , MyOrders.contact , " 
        SQLStatement+="(SELECT GROUP_CONCAT(status ) "
        SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) as opstat,"
@@ -2233,10 +2254,10 @@ var prioritytooltip=[]
                      
               SQLStatement+="left join myorders on myoperations.orderno = myorders.orderno "
                      SQLStatement+="left join mynotifications on myorders.notifno = mynotifications.notifno "
-                     SQLStatement+=" where myoperationssplit.assignedto = '"+EmployeeID+"' order by  MyOperations.orderno,  MyOperations.opno"
+                     SQLStatement+=" where myoperationssplit.assignedto = '"+EmployeeID+"' and myjobdets.status not in ('CLOSED', 'REJ1', 'REJ2') order by  MyOperations.orderno,  MyOperations.opno"
 html5sql.process(SQLStatement,
               function(transaction, results, rowsArray){
-
+	 
                      cnt = 0;
                      while (cnt<rowsArray.length){
                            item=rowsArray[cnt];
@@ -2263,7 +2284,11 @@ html5sql.process(SQLStatement,
                                   StatusText="Complete"
                                   StatusState=sap.ui.core.ValueState.Success
                                   StatusIcon="complete"
-                           }else if(item.status_s=="SITE"){
+                           }else if(item.status_s=="CLOSED"){
+                               StatusText="Complete"
+                                   StatusState=sap.ui.core.ValueState.Success
+                                   StatusIcon="complete"
+                            }else if(item.status_s=="SITE"){
                                   StatusText="On Site"
                                   StatusState=sap.ui.core.ValueState.Success
                                   StatusIcon="building"
@@ -2590,9 +2615,15 @@ html5sql.process(SQLStatement,
                          currentStatus="DEPL"
                          StatusColour="Yellow"
                          StatusText="Deployed"
-                                StatusState=sap.ui.core.ValueState.None
-                                StatusIcon="create"
-                         }else {
+                         StatusState=sap.ui.core.ValueState.None
+                         StatusIcon="create"
+                   }else if(item.status_s=="CLOSED"){
+                       currentStatus="CLOSED"
+                           StatusColour="Red"
+                           StatusText="Complete"
+                                  StatusState=sap.ui.core.ValueState.None
+                                  StatusIcon="decline"
+                           }else {
                          currentStatus="INIT"
                         StatusColour="Yellow"
                          StatusText=""

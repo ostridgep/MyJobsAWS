@@ -144,8 +144,8 @@ function sendSAPData(page,params,timedOutSQL){
 	var TimedOut=false;
 	SetLastSyncDetails("LASTSYNC_UPLOAD");
 	localStorage.setItem("SAPCalling","true")
-	opMessage(page);
-	console.log(status+page)
+	opMessage(page+getTime());
+	console.log(page+getTime())
 	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
 	
 	$.ajax({
@@ -168,7 +168,7 @@ function sendSAPData(page,params,timedOutSQL){
 			  	}
 			}).always(function() {
 					
-					console.log( "Complete"+page+ TimedOut);
+					console.log( "Complete "+page+ " at "+getTime()+" Timedout = "+TimedOut);
 					if(TimedOut==false){
 						localStorage.setItem("SAPCalling","false")
 						syncUpload()
@@ -859,352 +859,362 @@ var syncDetails = false	;
 										 opMessage("Error: " + error.message + " when processing " + statement);
 									 }        
 							);
+						 return;
 						 }
-						 
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);	
-// Process New Notifications	EOD			
-				html5sql.process("SELECT * from MyNotifications where notifno = 'NEW' and type = 'Z7'",
-					function(transaction, results, rowsArray){
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", EOD:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"EOD:"+String(rowsArray.length));
-							}
-							if(!syncDetsSet){
-								syncDetsSet=true;
-								SetLastSyncDetails("LASTSYNC_UPLOAD");
-								
-								}
-							for (var n = 0; n < rowsArray.length; n++) {
-								item = rowsArray[n];
-								newEODDets='&TYPE='+item['type']+'&ACT_START_DATE='+item['startdate']+'&ACT_START_TIME='+item['starttime']+'&ACT_END_DATE='+item['enddate']+'&ACT_END_TIME='+item['endtime']+'&SHORT_TEXT='+item['shorttext']
-								newEODDets+='&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser')+'&ID='+item['id'];;
-								opMessage("New EOD Notifications Details="+newEODDets);
-								
-								sapCalls+=1;
-								n=rowsArray.length
-								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
-										 function(){
-											sendSAPData("MyJobsCreateEODNotification.htm",newEODDets,"UPDATE MyNotifications SET notifno = 'NEW' WHERE id='"+item['id']+"'");
-											
-										 },
-										 function(error, statement){
-											 
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);
-							}
-						 }
-						 
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);				
-// Process New Notifications				
-				html5sql.process("SELECT * from MyNotifications where notifno = 'NEW' and type <> 'Z7'",
-					function(transaction, results, rowsArray){
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Notifications:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"Notifications:"+String(rowsArray.length));
-							}
-							if(!syncDetsSet){
-								syncDetsSet=true;
-								SetLastSyncDetails("LASTSYNC_UPLOAD");
-								
-								}
-							for (var n = 0; n < rowsArray.length; n++) {
-								item = rowsArray[n];
-								newNotifDets='&NOTIF_TYPE='+item['type']+'&START_DATE='+item['startdate']+'&START_TIME='+item['starttime']+'&END_DATE='+item['startdate']+'&END_TIME='+item['starttime']+'&SHORT_TEXT='+item['shorttext']+'&LONG_TEXT='+item['longtext']+'&ID='+item['id'];
-								newNotifDets+='&CODING='+item['pcode']+'&CODE_GROUP='+item['pgroup']+'&EQUIPMENT='+item['equipment']+'&FUNCT_LOC='+item['funcloc']+'&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser');
-								opMessage("New Notifications Details="+newNotifDets);
-								
-								sapCalls+=1;
-								n=rowsArray.length
-								html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
-										 function(){
-											sendSAPData("MyJobsCreateNewJob.htm",newNotifDets,"UPDATE MyNotifications SET notifno = 'NEW' WHERE id='"+item['id']+"'");
-											
-										 },
-										 function(error, statement){
-											 
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);
-							}
-						 }
-						 
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);
-
-
-// Process Status Updates				
-				html5sql.process("SELECT * from MyStatus where state = 'NEW'",
-					function(transaction, results, rowsArray){
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Status:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"Status:"+String(rowsArray.length));
-							}
-							if(!syncDetsSet){
-								syncDetsSet=true;
-								SetLastSyncDetails("LASTSYNC_UPLOAD");
-								
-								}
-							for (var n = 0; n < rowsArray.length; n++) {
-								item = rowsArray[n];
-								newStatusDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
-								opMessage("Newstatus Details="+newStatusDets);
-									
-								sapCalls+=1;							
-								n = rowsArray.length
-								html5sql.process("UPDATE MyStatus SET state = 'SENDING' where id='"+item['id']+"'",
-										 function(){
-											sendSAPData("MyJobsUpdateStatus.htm",newStatusDets,"UPDATE MyStatus SET state = 'NEW' where id='"+item['id']+"'");
-											
-										 },
-										 function(error, statement){
-											 
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);
-							}
-						} 
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);	
-// Process Close Jobs			
-				html5sql.process("SELECT * from MyJobClose where state = 'NEW'",
-					function(transaction, results, rowsArray){
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Close:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"Close:"+String(rowsArray.length));
-							}
-							if(!syncDetsSet){
-								syncDetsSet=true;
-								SetLastSyncDetails("LASTSYNC_UPLOAD");
-								
-								}
-							for (var n = 0; n < rowsArray.length; n++) {
-								item = rowsArray[n];
-								newCloseTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&USER='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetime']+
-								'&ACTIVITYTYPE=SMEPIS'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
-								'&ACT_WORK='+item['inshift']
-								
-								newCloseTConfDets1='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&USER='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetime']+
-								'&ACTIVITYTYPE=SMEPOS'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
-								'&ACT_WORK='+item['outofshift'];
-								if (item['followon']=='YES'){
-									if (item['outofshift']>'0'){
-										newCloseTConfDets1+='&CONF_TEXT='+item['reason']+'&REASON='+item['variance']
+						// Process New Notifications	EOD			
+						html5sql.process("SELECT * from MyNotifications where notifno = 'NEW' and type = 'Z7'",
+							function(transaction, results, rowsArray){
+								if( rowsArray.length > 0) {
+									if (syncDetails){
+										localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", EOD:"+String(rowsArray.length));
 									}else{
-										newCloseTConfDets+='&CONF_TEXT='+item['reason']+'&REASON='+item['variance']
+										syncDetails=true;
+										localStorage.setItem('LastSyncUploadDetails',"EOD:"+String(rowsArray.length));
 									}
-									
-								}
-								if (item['outofshift']>'0'){
-									newCloseTConfDets1+='&FINAL='
-								}else{
-									newCloseTConfDets+='&FINAL='
-								}
-								newCloseDets='&NOTIFNO='+item['notifno']+'&USERID='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+
-								'&FUNCT_LOC='+item['funcloc']+
-								'&EQUIPMENT='+item['equipment']+
-								'&LONG_TEXT='+item['details']+
-								'&DL_CAT_TYP=P'+'&DL_CODE_GRP='+item['pgrp']+'&DL_CODE='+item['pcode']+
-								'&D_CAT_TYP=R'+'&D_CODE_GRP='+item['agrp']+'&D_CODE='+item['acode']+
-								'&CAUSE_CAT_TYP=S'+'&CAUSE_CODE_GRP='+item['igrp']+'&CAUSE_CODE='+item['icode']+
-
-								
-								
-
-								
-								opMessage("Close Notif Update Details="+newCloseDets);
-							
-								
-								sapCalls+=1;		
-								n=rowsArray.length
-								html5sql.process("UPDATE MyJobClose SET state = 'SENDING' WHERE id='"+item['id']+"'",
-										 function(){
-									//alert("Doing TC1")
-										//	sendSAPData("MyJobsCreateTConf.htm",newCloseTConfDets);
-								//			if (item['outofshift']>'0'){
-								//				alert("Doing TC2")
-							//					sendSAPData("MyJobsCreateTConf.htm",newCloseTConfDets1);
-							//				}
-											if (item['notifno'].length>5){
-								//				alert("Doing Notif Update")
-												sendSAPData("MyJobsUpdateNotif.htm",newCloseDets,"UPDATE MyJobClose SET state = 'NEW' WHERE id='"+item['id']+"'");
-												
-											}
-											
-										 },
-										 function(error, statement){
-											 alert("Error: " + error.message + " when processing " + statement);
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);
-							}
-						 }
-						 
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);	
-// Process Time Confirmations
-				html5sql.process("SELECT * from MyTimeConfs where confno = 'NEW'",
-					function(transaction, results, rowsArray){
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", TimeConfs:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"TimeConfs:"+String(rowsArray.length));
-							}
-							for (var n = 0; n < rowsArray.length; n++) {
-								item = rowsArray[n];
-								if(item['final']=="Yes"){
-									fconf="X";
-								}else{
-									fconf="";
-								}									
-								newTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT='+item['description']+
-								'&TIME='+item['duration']+'&USER='+item['user']+'&RECNO='+item['id']+
-								'&SDATE='+item['date'].substring(8,10)+"."+item['date'].substring(5,7)+"."+item['date'].substring(0,4)+'&STIME='+item['time']+'&EDATE='+item['enddate'].substring(8,10)+"."+item['enddate'].substring(5,7)+"."+item['enddate'].substring(0,4)+'&ETIME='+item['endtime']+
-								'&ACTIVITYTYPE='+item['type']+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+'&LONG_TEXT='+item['longtext']+
-								'&ACT_WORK='+item['act_work']+'&REM_WORK='+item['rem_work']+'&FINAL='+item['final']
-								if (item['reason']!=null){
-									newTConfDets+='&REASON='+item['reason']
-								}
-									
-								opMessage("NewTconf Details="+newTConfDets);
-							
-								sapCalls+=1;
-								n = rowsArray.length
-								html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
-										 function(){
-											sendSAPData("MyJobsCreateTConf.htm",newTConfDets,"UPDATE MyTimeConfs SET confno = 'NEW' WHERE id='"+item['id']+"'");
-											
-										 },
-										 function(error, statement){
-											 
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);
-							 }
-						}
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);	
-// Upload the Messages READ Indicator
-				
-				html5sql.process("SELECT * from MyMessages where state = 'READ'",
-					function(transaction, results, rowsArray){
-						
-						opMessage("done READ Message Select");
-						opMessage("READ Messages = "+rowsArray.length);
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Read Messages:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"Read Messages:"+String(rowsArray.length));
-							}
-							if(!syncDetsSet){
-								syncDetsSet=true;
-								SetLastSyncDetails("LASTSYNC_UPLOAD");
-								
-								}
-
-							item = rowsArray[0];
-
-							newMessageDets='&ID='+item['id']+'&DOCID='+item['msgid'];
-							opMessage("READ Status= "+newMessageDets);
-							
-							
-							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
-									 function(){
-									///sendSAPData("MyJobsMessageSetReadFlag.htm",newMessageDets,"UPDATE MyMessages SET state = 'NEW' WHERE id='"+item['id']+"'");
+									if(!syncDetsSet){
+										syncDetsSet=true;
+										SetLastSyncDetails("LASTSYNC_UPLOAD");
 										
-									 },
-									 function(error, statement){
-										 
-										 opMessage("Error: " + error.message + " when processing " + statement);
-									 }        
-							);	
-						 }
-						 
-					},
-					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
-					}
-				);				
-// Upload the NEW Sent Messages
-			
-				html5sql.process("SELECT * from MyMessages where state = 'NEW'",
-					function(transaction, results, rowsArray){
-					
-						opMessage("done SEND Message Select");
-						opMessage("SEND Messages = "+rowsArray.length);
-						if( rowsArray.length > 0) {
-							if (syncDetails){
-								localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Messages:"+String(rowsArray.length));
-							}else{
-								syncDetails=true;
-								localStorage.setItem('LastSyncUploadDetails',"Messages:"+String(rowsArray.length));
+										}
+									for (var n = 0; n < rowsArray.length; n++) {
+										item = rowsArray[n];
+										newEODDets='&TYPE='+item['type']+'&ACT_START_DATE='+item['startdate']+'&ACT_START_TIME='+item['starttime']+'&ACT_END_DATE='+item['enddate']+'&ACT_END_TIME='+item['endtime']+'&SHORT_TEXT='+item['shorttext']
+										newEODDets+='&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser')+'&ID='+item['id'];;
+										opMessage("New EOD Notifications Details="+newEODDets);
+										
+										sapCalls+=1;
+										n=rowsArray.length
+										html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
+												 function(){
+													sendSAPData("MyJobsCreateEODNotification.htm",newEODDets,"UPDATE MyNotifications SET notifno = 'NEW' WHERE id='"+item['id']+"'");
+													
+												 },
+												 function(error, statement){
+													 
+													 opMessage("Error: " + error.message + " when processing " + statement);
+												 }        
+										);
+									}
+								 return;	
+								 }
+								// Process New Notifications				
+								html5sql.process("SELECT * from MyNotifications where notifno = 'NEW' and type <> 'Z7'",
+									function(transaction, results, rowsArray){
+										if( rowsArray.length > 0) {
+											if (syncDetails){
+												localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Notifications:"+String(rowsArray.length));
+											}else{
+												syncDetails=true;
+												localStorage.setItem('LastSyncUploadDetails',"Notifications:"+String(rowsArray.length));
+											}
+											if(!syncDetsSet){
+												syncDetsSet=true;
+												SetLastSyncDetails("LASTSYNC_UPLOAD");
+												
+												}
+											for (var n = 0; n < rowsArray.length; n++) {
+												item = rowsArray[n];
+												newNotifDets='&NOTIF_TYPE='+item['type']+'&START_DATE='+item['startdate']+'&START_TIME='+item['starttime']+'&END_DATE='+item['startdate']+'&END_TIME='+item['starttime']+'&SHORT_TEXT='+item['shorttext']+'&LONG_TEXT='+item['longtext']+'&ID='+item['id'];
+												newNotifDets+='&CODING='+item['pcode']+'&CODE_GROUP='+item['pgroup']+'&EQUIPMENT='+item['equipment']+'&FUNCT_LOC='+item['funcloc']+'&REPORTED_BY='+localStorage.getItem('EmployeeID')+'&USERID='+localStorage.getItem('MobileUser');
+												opMessage("New Notifications Details="+newNotifDets);
+												
+												sapCalls+=1;
+												n=rowsArray.length
+												html5sql.process("UPDATE MyNotifications SET notifno = 'SENDING' WHERE id='"+item['id']+"'",
+														 function(){
+															sendSAPData("MyJobsCreateNewJob.htm",newNotifDets,"UPDATE MyNotifications SET notifno = 'NEW' WHERE id='"+item['id']+"'");
+															
+														 },
+														 function(error, statement){
+															 
+															 opMessage("Error: " + error.message + " when processing " + statement);
+														 }        
+												);
+											}
+											return;
+										 }
+										// Process Status Updates				
+										html5sql.process("SELECT * from MyStatus where state = 'NEW'",
+											function(transaction, results, rowsArray){
+												if( rowsArray.length > 0) {
+													if (syncDetails){
+														localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Status:"+String(rowsArray.length));
+													}else{
+														syncDetails=true;
+														localStorage.setItem('LastSyncUploadDetails',"Status:"+String(rowsArray.length));
+													}
+													if(!syncDetsSet){
+														syncDetsSet=true;
+														SetLastSyncDetails("LASTSYNC_UPLOAD");
+														
+														}
+													for (var n = 0; n < rowsArray.length; n++) {
+														item = rowsArray[n];
+														newStatusDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&STATUS='+item['status']+'&STSMA='+item['stsma']+'&ACT_DATE='+item['actdate'].substring(8,10)+"."+item['actdate'].substring(5,7)+"."+item['actdate'].substring(0,4)+'&ACT_TIME='+item['acttime']+'&RECNO='+item['id']+'&USERID='+localStorage.getItem('MobileUser');
+														opMessage("Newstatus Details="+newStatusDets);
+															
+														sapCalls+=1;							
+														n = rowsArray.length
+														html5sql.process("UPDATE MyStatus SET state = 'SENDING' where id='"+item['id']+"'",
+																 function(){
+																	sendSAPData("MyJobsUpdateStatus.htm",newStatusDets,"UPDATE MyStatus SET state = 'NEW' where id='"+item['id']+"'");
+																	
+																 },
+																 function(error, statement){
+																	 
+																	 opMessage("Error: " + error.message + " when processing " + statement);
+																 }        
+														);
+													}
+													return;
+												}
+												// Process Close Jobs			
+												html5sql.process("SELECT * from MyJobClose where state = 'NEW'",
+													function(transaction, results, rowsArray){
+														if( rowsArray.length > 0) {
+															if (syncDetails){
+																localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Close:"+String(rowsArray.length));
+															}else{
+																syncDetails=true;
+																localStorage.setItem('LastSyncUploadDetails',"Close:"+String(rowsArray.length));
+															}
+															if(!syncDetsSet){
+																syncDetsSet=true;
+																SetLastSyncDetails("LASTSYNC_UPLOAD");
+																
+																}
+															for (var n = 0; n < rowsArray.length; n++) {
+																item = rowsArray[n];
+																/*newCloseTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&USER='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetime']+
+																'&ACTIVITYTYPE=SMEPIS'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
+																'&ACT_WORK='+item['inshift']
+																
+																newCloseTConfDets1='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&USER='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+'&SDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&STIME='+item['closetime']+'&EDATE='+item['closedate'].substring(8,10)+"."+item['closedate'].substring(5,7)+"."+item['closedate'].substring(0,4)+'&ETIME='+item['closetime']+
+																'&ACTIVITYTYPE=SMEPOS'+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+
+																'&ACT_WORK='+item['outofshift'];
+																if (item['followon']=='YES'){
+																	if (item['outofshift']>'0'){
+																		newCloseTConfDets1+='&CONF_TEXT='+item['reason']+'&REASON='+item['variance']
+																	}else{
+																		newCloseTConfDets+='&CONF_TEXT='+item['reason']+'&REASON='+item['variance']
+																	}
+																	
+																}
+																if (item['outofshift']>'0'){
+																	newCloseTConfDets1+='&FINAL='
+																}else{
+																	newCloseTConfDets+='&FINAL='
+																}*/
+																newCloseDets='&NOTIFNO='+item['notifno']+'&USERID='+localStorage.getItem('MobileUser')+'&RECNO='+item['id']+
+																'&FUNCT_LOC='+item['funcloc']+
+																'&EQUIPMENT='+item['equipment']+
+																'&LONG_TEXT='+item['details']+
+																'&DL_CAT_TYP=P'+'&DL_CODE_GRP='+item['pgrp']+'&DL_CODE='+item['pcode']+
+																'&D_CAT_TYP=R'+'&D_CODE_GRP='+item['agrp']+'&D_CODE='+item['acode']+
+																'&CAUSE_CAT_TYP=S'+'&CAUSE_CODE_GRP='+item['igrp']+'&CAUSE_CODE='+item['icode']
+
+																
+																
+
+																
+																opMessage("Close Notif Update Details="+newCloseDets);
+															
+																
+																sapCalls+=1;		
+																n=rowsArray.length
+																html5sql.process("UPDATE MyJobClose SET state = 'SENDING' WHERE id='"+item['id']+"'",
+																		 function(){
+																	//alert("Doing TC1")
+																		//	sendSAPData("MyJobsCreateTConf.htm",newCloseTConfDets);
+																//			if (item['outofshift']>'0'){
+																//				alert("Doing TC2")
+															//					sendSAPData("MyJobsCreateTConf.htm",newCloseTConfDets1);
+															//				}
+																			if (item['notifno'].length>5){
+																//				alert("Doing Notif Update")
+																				sendSAPData("MyJobsUpdateNotif.htm",newCloseDets,"UPDATE MyJobClose SET state = 'NEW' WHERE id='"+item['id']+"'");
+																				
+																			}
+																			
+																		 },
+																		 function(error, statement){
+																			 alert("Error: " + error.message + " when processing " + statement);
+																			 opMessage("Error: " + error.message + " when processing " + statement);
+																		 }        
+																);
+															}
+															return;
+														 }
+														// Process Time Confirmations
+														html5sql.process("SELECT * from MyTimeConfs where confno = 'NEW'",
+															function(transaction, results, rowsArray){
+																if( rowsArray.length > 0) {
+																	if (syncDetails){
+																		localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", TimeConfs:"+String(rowsArray.length));
+																	}else{
+																		syncDetails=true;
+																		localStorage.setItem('LastSyncUploadDetails',"TimeConfs:"+String(rowsArray.length));
+																	}
+																	for (var n = 0; n < rowsArray.length; n++) {
+																		item = rowsArray[n];
+																		if(item['final']=="Yes"){
+																			fconf="X";
+																		}else{
+																			fconf="";
+																		}									
+																		newTConfDets='&ORDERNO='+item['orderno']+'&OPNO='+item['opno']+'&CONF_TEXT='+item['description']+
+																		'&TIME='+item['duration']+'&USER='+item['user']+'&RECNO='+item['id']+
+																		'&SDATE='+item['date'].substring(8,10)+"."+item['date'].substring(5,7)+"."+item['date'].substring(0,4)+'&STIME='+item['time']+'&EDATE='+item['enddate'].substring(8,10)+"."+item['enddate'].substring(5,7)+"."+item['enddate'].substring(0,4)+'&ETIME='+item['endtime']+
+																		'&ACTIVITYTYPE='+item['type']+'&WORK_CNTR='+item['work_cntr']+'&PERS_NO='+item['empid']+'&LONG_TEXT='+item['longtext']+
+																		'&ACT_WORK='+item['act_work']+'&REM_WORK='+item['rem_work']+'&FINAL='+item['final']
+																		if (item['reason']!=null){
+																			newTConfDets+='&REASON='+item['reason']
+																		}
+																			
+																		opMessage("NewTconf Details="+newTConfDets);
+																	
+																		sapCalls+=1;
+																		n = rowsArray.length
+																		html5sql.process("UPDATE MyTimeConfs SET confno = 'SENDING' WHERE id='"+item['id']+"'",
+																				 function(){
+																					sendSAPData("MyJobsCreateTConf.htm",newTConfDets,"UPDATE MyTimeConfs SET confno = 'NEW' WHERE id='"+item['id']+"'");
+																					
+																				 },
+																				 function(error, statement){
+																					 
+																					 opMessage("Error: " + error.message + " when processing " + statement);
+																				 }        
+																		);
+																	 }
+																	return
+																}
+																// Upload the Messages READ Indicator
+																
+																html5sql.process("SELECT * from MyMessages where state = 'READ'",
+																	function(transaction, results, rowsArray){
+																		
+																		opMessage("done READ Message Select");
+																		opMessage("READ Messages = "+rowsArray.length);
+																		if( rowsArray.length > 0) {
+																			if (syncDetails){
+																				localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Read Messages:"+String(rowsArray.length));
+																			}else{
+																				syncDetails=true;
+																				localStorage.setItem('LastSyncUploadDetails',"Read Messages:"+String(rowsArray.length));
+																			}
+																			if(!syncDetsSet){
+																				syncDetsSet=true;
+																				SetLastSyncDetails("LASTSYNC_UPLOAD");
+																				
+																				}
+
+																			item = rowsArray[0];
+
+																			newMessageDets='&ID='+item['id']+'&DOCID='+item['msgid'];
+																			opMessage("READ Status= "+newMessageDets);
+																			
+																			
+																			html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
+																					 function(){
+																					///sendSAPData("MyJobsMessageSetReadFlag.htm",newMessageDets,"UPDATE MyMessages SET state = 'NEW' WHERE id='"+item['id']+"'");
+																					
+																					 },
+																					 function(error, statement){
+																						 
+																						 opMessage("Error: " + error.message + " when processing " + statement);
+																					 }        
+																			);	
+																			return;	
+																		 }
+																		// Upload the NEW Sent Messages
+																		
+																		html5sql.process("SELECT * from MyMessages where state = 'NEW'",
+																			function(transaction, results, rowsArray){
+																			
+																				opMessage("done SEND Message Select");
+																				opMessage("SEND Messages = "+rowsArray.length);
+																				if( rowsArray.length > 0) {
+																					if (syncDetails){
+																						localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Messages:"+String(rowsArray.length));
+																					}else{
+																						syncDetails=true;
+																						localStorage.setItem('LastSyncUploadDetails',"Messages:"+String(rowsArray.length));
+																					}
+																					if(!syncDetsSet){
+																						syncDetsSet=true;
+																						SetLastSyncDetails("LASTSYNC_UPLOAD");
+																						sapCalls+=1;
+																						}
+
+																					item = rowsArray[0];
+
+																					newSentMsgDets='&ID='+item['id']+'&TO='+item['msgtoid']+'&SUBJECT='+item['msgsubject']+'&CONTENT='+item['msgtext'];
+																					opMessage("SEND Status= "+newSentMsgDets);
+																					
+																					
+																					html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
+																								 function(){
+																								      //sendSAPData("MyJobsMessageSend.htm",newSentMsgDets,"UPDATE MyMessages SET state = 'NEW' WHERE id='"+item['id']+"'");
+																										
+																								 },
+																								 function(error, statement){
+																									 
+																									 opMessage("Error: " + error.message + " when processing " + statement);
+																								 }        
+																						);	
+																					return;
+																				 }
+																				 
+																			},
+																			function(error, statement){
+																				opMessage("Error: " + error.message + " when New Message processing New " + statement); 
+																			}
+																		);		 
+																	},
+																	function(error, statement){
+																		opMessage("Error: " + error.message + " when Message Read processing " + statement); 
+																	}
+																);		
+															},
+															function(error, statement){
+																opMessage("Error: " + error.message + " when Time Confirmation processing " + statement); 
+															}
+														);	 
+													},
+													function(error, statement){
+														opMessage("Error: " + error.message + " when Job Status processing " + statement); 
+													}
+												);	
+											},
+											function(error, statement){
+												opMessage("Error: " + error.message + " when New Notif processing " + statement); 
+											}
+										);	
+									},
+									function(error, statement){
+										opMessage("Error: " + error.message + " when EOD Notif processing " + statement); 
+									}
+								);	 
+							
+							},
+							function(error, statement){
+								opMessage("Error: " + error.message + " when Defects processing " + statement); 
 							}
-							if(!syncDetsSet){
-								syncDetsSet=true;
-								SetLastSyncDetails("LASTSYNC_UPLOAD");
-								sapCalls+=1;
-								}
-
-							item = rowsArray[0];
-
-							newSentMsgDets='&ID='+item['id']+'&TO='+item['msgtoid']+'&SUBJECT='+item['msgsubject']+'&CONTENT='+item['msgtext'];
-							opMessage("SEND Status= "+newSentMsgDets);
-							
-							
-							html5sql.process("UPDATE MyMessages SET state = 'SENDING' WHERE id='"+item['id']+"'",
-										 function(){
-										      //sendSAPData("MyJobsMessageSend.htm",newSentMsgDets,"UPDATE MyMessages SET state = 'NEW' WHERE id='"+item['id']+"'");
-											
-										 },
-										 function(error, statement){
-											 
-											 opMessage("Error: " + error.message + " when processing " + statement);
-										 }        
-								);	
-							
-						 }
-						 
+						);	 
 					},
 					function(error, statement){
-						opMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
+						opMessage("Error: " + error.message + " when Users processing " + statement); 
 					}
-				);					
+				);	
+				
+
+
+
+
+	
+	
+			
+				
 				
 // Check for New Messages to retrieve
 				
@@ -1408,7 +1418,10 @@ function updateOperationStatus(orderno, opno, code, status)
 				html5sql.process("insert into mystatus (orderno, opno, state,  stsma, status, actdate, acttime, statusdesc) values("+
 					 "'"+orderno+"','"+opno+"','NEW','ZMAM_1', '"+code+"','"+statusUpdateDate+"','"+statusUpdateTime+"','"+status+"');",				
 				function(){
-				
+					if((code=="REJ1")||(code=="REJ2")){
+						updateJobDetsStatus(orderno, opno, code)
+					}
+					 
 				 },
 				 function(error, statement){
 					opMessage("Error: " + error.message + " when InsertOperationStatus processing " + statement);
@@ -1421,6 +1434,46 @@ function updateOperationStatus(orderno, opno, code, status)
 		}
 	);
 }
+function updateJobDetsStatus(orderno, opno, status)
+{
+
+
+
+	html5sql.process("update  myjobdets set status = '"+status+"', status_s = '"+status+"', status_l =  '"+status+"' ,tconf_date = '"+statusUpdateDate+"', tconf_time = '"+statusUpdateTime+"' where  orderno = '"+orderno+"' and opno = '"+ opno+"';",
+		function(){
+		buildJobs()	
+				
+		},
+		function(error, statement){
+		opMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		
+		}
+	);
+}
+function countStatus()
+{
+
+
+
+	html5sql.process("select count(*) as PARK ,   (select count(*)   from myjobdets  where status = 'ACPT') as ACPT, (select count(*)   from myjobdets  where status = 'SITE') as SITE from myjobdets  where status = 'PARK'",
+		function(transaction, results, rowsArray){
+		localStorage.setItem("totalParked",rowsArray[0].PARK)
+		localStorage.setItem("totalAccepted",'0')
+		if(rowsArray[0].ACPT!='0'){
+			localStorage.setItem("totalAccepted",'1')
+		}
+		if(rowsArray[0].SITE!='0'){
+			localStorage.setItem("totalAccepted",'1')
+		}		
+					
+		},
+		function(error, statement){
+		opMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		
+		}
+	);
+}
+
 //*************************************************************************************************************************
 //
 //  Create Routines
@@ -2951,7 +3004,7 @@ opMessage("Callback sapCB triggured");
 			}
 //Handle Close Create Response
 			if (MySAP.message[0].type=="updatenotification"){
-				alert(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
+				console.log(MySAP.message[0].type+":"+MySAP.message[0].recno+":"+MySAP.message[0].message+":"+MySAP.message[0].notifno)
 				opMessage("-->Type= "+MySAP.message[0].type);
 				opMessage("-->row= "+MySAP.message[0].recno);
 				opMessage("-->Message= "+MySAP.message[0].sapmessage);
@@ -2999,7 +3052,7 @@ opMessage("Callback sapCB triggured");
 			}	
 //Handle Time Confirmation Create Response			
 			if (MySAP.message[0].type=="createtconf"){
-				//alert(MySAP.message[0].type+":"+MySAP.message[0].message+":"+MySAP.message[0].message_type+":"+MySAP.message[0].confno+":"+MySAP.message[0].recno)
+				console.log(MySAP.message[0].type+":"+MySAP.message[0].message+":"+MySAP.message[0].message_type+":"+MySAP.message[0].confno+":"+MySAP.message[0].recno)
 				opMessage("-->Type= "+MySAP.message[0].type);
 				opMessage("-->confno= "+MySAP.message[0].confno);
 				if(MySAP.message[0].confno!="0000000000"){
@@ -3016,7 +3069,7 @@ opMessage("Callback sapCB triggured");
 			}
 //Handle Status Update Response
 			if (MySAP.message[0].type=="updatestatus"){
-				//alert("-->UpdateStatus"+MySAP.message[0].orderno+":"+MySAP.message[0].opno+":"+MySAP.message[0].message+":"+MySAP.message[0].recno);
+				console.log("-->UpdateStatus"+MySAP.message[0].orderno+":"+MySAP.message[0].opno+":"+MySAP.message[0].message+":"+MySAP.message[0].recno);
 				opMessage("-->UpdateStatus");
 				opMessage("-->Orderno= "+MySAP.message[0].orderno);
 				opMessage("-->Opno= "+MySAP.message[0].opno);
@@ -3080,10 +3133,10 @@ opMessage("Callback sapCB triggured");
 			}
 			html5sql.process(sqlstatement,
 						 function(){
-							 alert("Success handling SAPCB"+sqlstatement);
+						 console.log("Success handling SAPCB"+sqlstatement);
 						 },
 						 function(error, statement){
-							 alert("Error: " + error.message + " when processing " + statement);
+							 console.log("Error: " + error.message + " when processing " + statement);
 							 opMessage("Error: " + error.message + " when processing " + statement);
 						 }        
 				);	
