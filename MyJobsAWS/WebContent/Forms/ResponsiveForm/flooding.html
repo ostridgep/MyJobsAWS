@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<!--<html  manifest="Manifest.html" xmlns="http://www.w3.org/1999/xhtml">-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="styles/site.css" rel="stylesheet" />
+    <script src="http://cdn.telemetry.aws/jq.1.10.2/js"></script>
+    <script src="http://cdn.telemetry.aws/jqui.1.9.2/js"></script>
+    <link rel="stylesheet" href="http://cdn.telemetry.aws/bs.3.1.1/css" />
+    <script src="scripts/functions.js"></script>
+    <script src="http://cdn.telemetry.aws/bs.3.1.1/js"></script>
+    <link rel="stylesheet" href="http://cdn.telemetry.aws/jqui.1.9.2/smoothness/css" />
+
+<!--    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />-->
+
+
+    <script language="JavaScript">
+        $(document).ready(function () {
+            var thisURL = document.URL;
+            var urlArray = thisURL.split("?");
+            var cleanArray = urlArray[1].split("&");
+
+            $.each(cleanArray, function (index, value) {
+                var thisQS = value;
+                var QSarray = thisQS.split("=");
+                var thisValue = QSarray[index, 1];
+                var thisProp = QSarray[index, 0];
+
+                $('#' + thisProp + '').val(thisValue);
+            });
+
+
+            //set headers for W-orker & Func loc
+            $('#workorderlabel').text($('#workorder').val());
+            $('#functionallocationlabel').text($('#functionallocation').val().toUpperCase());
+
+        });
+    </script>
+
+
+    <title>Flooding/DG5 Feedback</title>
+</head>
+<body>
+    <div class="container">
+        <div class="well row" style="margin-top: 10px">
+            <div class="col-md-6"><h1><b>Flooding/DG5 Feedback Form</b></h1></div>
+            <div class="col-md-6">
+                <div class="row">
+                    <label class="pull-right" id="workorderlabel"></label>
+                </div>
+                <div class="row">
+                    <label class="pull-right" id="functionallocationlabel"></label>
+                </div>
+            </div>
+
+        </div>
+        <form class="form-inline" method="get" id="pollutionFeedback">
+            <div class="form-group">
+                <div class="well row">
+                    <div class="col-md-6 col-sm-6">
+                        <input name="attendancedate" type="text" class="feedback-input" placeholder="Attendance Date" id="attendancedate" />
+                        <select class="feedback-input" id="attendanceweather" name="attendanceweather">
+                            <option value="" disabled selected>Attendance Weather</option>
+                            <option value="01">Dry</option>
+                            <option value="02">Storm</option>
+                            <option value="03">Rain</option>
+                            <option value="04">Snow Melt</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <input name="flooddate" type="text" class="feedback-input hideOnLoad" placeholder="Flood Date" id="flooddate" />
+                        <select class="hideOnLoad feedback-input" id="floodweather" name="floodweather">
+                            <option value="" disabled selected>Flood Weather</option>
+                            <option value="01">Dry</option>
+                            <option value="02">Storm</option>
+                            <option value="03">Rain</option>
+                            <option value="04">Snow Melt</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="well row">
+                    <div class="row ccol-md-6 col-sm-6">
+                        <select class="feedback-input cause" id="previousflooding" name="previousflooding" style="margin-left: 20px">
+                            <option value="" disabled selected>Is there any indication of previous flooding?</option>
+                            <option data-value="Blockage" value="01">None / Not Known</option>
+                            <option data-value="Collapse" value="02">Regular - every year</option>
+                            <option data-value="Equipment" value="03">Regular - every 2-3 years</option>
+                            <option data-value="Pumping" value="04">Regular - Infrequent    </option>
+                        </select>
+
+                    </div>
+                    <div class="row col-md-12 col-sm-12">
+                        <div class="btn-group btn-toggle col-md-2 col-sm-3" id="measurableimpact" style="margin-left: 10px">
+                            <button type="button" class="btn btn-lg btn-default">YES</button>
+                            <button type="button" class="btn btn-lg btn-primary active">No</button>
+                        </div>
+                        <label type="text" class="feedback-input col-md-9 col-sm-8">Has flooding caused pollution with measureable imapct?</label>
+                    </div>
+                </div>
+
+                <div class="well row">
+                    <div class="col-md-6 col-sm-6">
+                        <select class="feedback-input" id="floodingsource" name="floodingsource">
+                            <option value="" disabled selected>Flooding Source</option>
+                            <option value="01">Field Run Off</option>
+                            <option value="02">River or Stream</option>
+                            <option value="03">Highway Drainage</option>
+                            <option value="04">Non-AW Sewer</option>
+                            <option value="05">Water Main</option>
+                            <option value="06">AW sewer</option>
+                            <option value="07">AW Pumping Station</option>
+                        </select>
+
+                        <select class="feedback-input cause" id="causeofflood" name="causeofflood">
+                            <option value="" disabled selected>Cause of Flood</option>
+                            <option data-value="Blockage" value="B">Blockage</option>
+                            <option data-value="Collapse" value="C">Collapse</option>
+                            <option data-value="Equipment" value="O">Other Equipment Failure</option>
+                            <option data-value="Pumping" value="P">Pumping Station Failure</option>
+                            <option data-value="" value="W">P.S Failure due to 3rd Party</option>
+                            <option data-value="" value="X">Collapse due to 3rd Party</option>
+                            <option data-value="" value="Y">Blockage Due to 3rd Party</option>
+                            <option data-value="" value="X">Other Eq Failure due to 3rd Party</option>
+                        </select>
+
+                        <select class="feedback-input root" id="rootcause" name="rootcause">
+                            <option class="blockage" disabled selected>Root Cause</option>
+                            <!--If Cause Code = B (Blockage)-->
+                            <option value="B1" class="blockage">FOG</option>
+                            <option value="B2" class="blockage">Non-flushable</option>
+                            <option value="B3" class="blockage">Rubble</option>
+                            <option value="B4" class="blockage">Silt</option>
+                            <option value="B5" class="blockage">Roots</option>
+                            <option value="B6" class="blockage">Unknown</option>
+                            <option value="B7" class="blockage">3rd Party (X)</option>
+                            <!--If Cause Code = C (Collapse)-->
+                            <option class="collapse" disabled selected>Root Cause</option>
+                            <option value="C1" class="collapse">Natural Collapse</option>
+                            <option value="C2" class="collapse">Caused by 3rd Party</option>
+                            <option value="C3" class="collapse">Burst Rising Main</option>
+                            <!--If Cause Code = E (Other Equipment Failure)-->
+                            <option class="collapse" disabled selected>Root Cause</option>
+                            <option value="E1" class="equipment">NRV Failure</option>
+                            <option value="E2" class="equipment">Hydrobrake Failure</option>
+                            <option value="E3" class="equipment">Leaking Valve</option>
+                            <option value="E4" class="equipment">Vacuum Pot Failure</option>
+                            <option value="E5" class="equipment">3rd Party (Z)</option>
+                            <option value="E6" class="equipment">Other</option>
+                            <!--If Cause Code = P (Pumping Station Failure)-->
+                            <option value="P1" class="pumping">Failure</option>
+                            <option value="P2" class="pumping">Vandalism</option>
+                            <option value="P3" class="pumping">3rd Party (W)</option>
+                            <option value="P4" class="pumping">Power Failure</option>
+                            <!--If Cause Code = J (Jetting)
+                                <option value="J1" class="Collapse">Jetting Error</option>-->
+                            <!--If Cause Code = O (Overloaded)
+                                <option value="O1" class="Collapse">Insufficient Sewer Capacity</option>
+                                <option value="O2" class="Collapse">Insufficient PS Capacity</option>-->
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <select class="feedback-input" id="spillsize" name="spillsize">
+                            <option value="" disabled selected>Spill Size</option>
+                            <option value="1">Small</option>
+                            <option value="2">Medium</option>
+                            <option value="3">Large</option>
+                        </select>
+
+                        <select class="feedback-input" id="sewersize" name="sewersize">
+                            <option value="" disabled selected>Sewer Size</option>
+                            <option value="1">???</option>
+                            <option value="2">???</option>
+                            <option value="3">???</option>
+                        </select>
+
+                        <select class="feedback-input" id="sewertype" name="sewertype">
+                            <option value="" disabled selected>Sewer Type</option>
+                            <option value="01">Foul Sewer</option>
+                            <option value="02">Combined Sewer</option>
+                            <option value="03">Surface Sewer</option>
+                            <option value="04">Rising Main</option>
+                            <option value="05">Vacuum Sewer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="well row">
+                    <div class="col-md-4 col-sm-4">
+                        <input name="psshortcode" type="text" class="feedback-input" placeholder="PS Short Code" id="psshortcode" />
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <input name="assetref" type="text" class="feedback-input" placeholder="Asset Ref" id="assetref" />
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                        <input name="gridref" type="text" class="feedback-input" placeholder="Grid Ref" id="gridref" />
+                        <!--<a type="button" data-toggle="modal" data-target="#myModal" >pick from map</a>-->
+                    </div>
+                </div>
+
+
+                <div class="well row">
+                    <div class="submit" id="sendEmail">
+                        <input type="button" value="SEND" id="button-blue" />
+                        <div class="ease"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--Hidded props passed by URL-->
+            <input type="hidden" id="workorder"/>
+            <input type="hidden" id="functionallocation"/>
+
+        </form>
+
+        <!--Map modal-->
+<!--        <div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+            <div class="modal-dialog modal-lg">
+                <h2>select from map</h2>
+                <div class="modal-content">
+                    <div id='map'></div>
+                    <label>Geographical Ref: </label>
+                    <label id="addGeoRef"></label>
+                </div>
+            </div>
+        </div>-->
+    </div>
+
+</body>
+
+<script>
+    $(function () {
+        $("#attendancedate").datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+        $('#flooddate').datepicker({
+            dateFormat: "dd/mm/yy"
+        });
+        //$('.hideOnLoad').hide();
+
+        //$('#btnShowFloodOptions').click(function () {
+        //    $('#btnShowFloodOptions').hide();
+        //    $('#flooddate').show();
+        //    $('#floodweather').show();
+        //});
+
+        //L.mapbox.accessToken = 'pk.eyJ1IjoiYmF6eno3MSIsImEiOiJjaWhjMTQxaG0wMDhkdjhrbHA1dzQzbHltIn0.kJv1_kakkNezrIaVMZbcLA';
+        //var map = L.mapbox.map('map', 'mapbox.streets')
+        //    .setView([51.5, 0.11], 12);
+
+        //$('#myModal').on('shown.bs.modal', function () {
+        //    setTimeout(function () {
+        //        map.invalidateSize();
+        //    }, 1);
+        //})
+        
+        $('.cause').change(function () {
+            var modelObj = $(".root");
+            var otherValue = $(this).find('option:selected').attr('data-value');
+            var selector = "option[class=" + otherValue.toLowerCase() + "]";
+            modelObj.children().hide();
+            modelObj.children(selector).show();
+        });
+
+        $('.btn-toggle').click(function () {
+            $(this).find('.btn').toggleClass('active');
+
+            if ($(this).find('.btn-primary').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-primary');
+            }
+            if ($(this).find('.btn-danger').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-danger');
+            }
+            if ($(this).find('.btn-success').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-success');
+            }
+            if ($(this).find('.btn-info').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-info');
+            }
+
+            $(this).find('.btn').toggleClass('btn-default');
+
+        });
+
+        $('form').submit(function () {
+            alert($(this["options"]).val());
+            return false;
+        });
+
+
+        $("#sendEmail").on("click", function () {
+
+            var attendancedate = $("#attendancedate").val();
+            var attendanceweather = $("#attendanceweather").val();
+            var flooddate = $("#flooddate").val();
+            var floodweather = $("#floodweather").val();
+
+            var prevflooding = $("#previousflooding").val();
+            var measurableimpact = $('#measurableimpact  > .btn.active').html();
+
+            var floodingsource = $("#floodingsource").val();
+            var causeofflood = $("#causeofflood").val();
+            var rootcause = $("#rootcause").val();
+            var spillsize = $("#spillsize").val();
+            var sewersize = $("#sewersize").val();
+            var sewertype = $("#sewertype").val();
+
+            var psshortcode = $("#psshortcode").val();
+            var assetref = $("#assetref").val();
+            var gridref = $("#gridref").val();
+
+            var workorder = $('#workorder').val();
+            var functionallocation = $('#functionallocation').val();
+
+            var date = getDateTime();
+            var localStorageKeys = Object.keys(localStorage);
+            var id = parseInt(localStorageKeys[localStorageKeys.length - 1]) + 1;
+            if (isNaN(id)){id = 1;}
+            localStorage.setItem(id, '{ "formDetails" : [' +
+                '{ "attendanceDate":' + attendancedate +
+                ', "attendanceWeather" :' + attendanceweather +
+                ',  "floodDate" :' + flooddate +
+                ', "floodWeather" :' + floodweather +
+                ', "prevflooding" :' + prevflooding +
+                ', "measurableimpact" :' + measurableimpact +
+                ', "floodingsource" :' + floodingsource +
+                ', "causeofflood" :' + causeofflood +
+                ', "rootcause" :' + rootcause +
+                ', "spillsize" :' + spillsize +
+                ', "sewersize" :' + sewersize +
+                ', "sewertype" :' + sewertype +
+                ', "psshortcode" :' + psshortcode +
+                ', "assetref" :' + assetref +
+                ', "gridref" :' + gridref +
+                ', "workorder" :' + workorder +
+                ', "functionallocation" :' + functionallocation +
+                ', "submitdatetime" :' + date + '} ] }');
+
+        });
+
+    });
+</script>
+</html>

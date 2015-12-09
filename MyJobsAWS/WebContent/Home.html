@@ -72,6 +72,7 @@ var mpointdefectdesc=[]
 var mpointdefectlt=[]
 var mpointdefects=[]
 var selectedDefect=0;
+var selectedDefectSwitch=true;
 var dispLog = 							new sap.m.Button("displayLog", {
     text: "Display Log",
     tap: [ function(oEvt) {		  
@@ -280,6 +281,9 @@ var formDefect = new sap.m.Dialog("dlgDefect",{
                                    icon:"sap-icon://sys-cancel",
                                          type: sap.m.ButtonType.Reject,
                                           press: [ function(){
+                                        	  sap.ui.getCore().byId(selectedDefectSwitch).setState(true)
+                                          
+                                        	 
                                                 formDefect.close();
                                          
                                                        }]
@@ -515,13 +519,16 @@ showMessageMiddle(evt.getParameters().id)
                         	   x=(evt.getParameters().id).split(":")
                                   if(!this.getState())
                                          {
-                                	     
+                                	     selectedDefectSwitch=evt.getParameters().id
                                 	     mpointdefects[parseInt(x[1])]="YES"
                                          PrepDefect(parseInt(x[1]))
                                          selectedDefect=parseInt(x[1])
                                          formDefect.open();
                                          }else{
                                          mpointdefects[parseInt(x[1])]="NO"	 
+                                         formDefect.setTitle("Defect: "+unescape(mpointdesc[n]))
+                                         mpointdefectdesc[parseInt(x[1])]=""	
+                                         mpointdefectlt[parseInt(x[1])]=""	
                                          }
                            }],
                            type: sap.m.SwitchType.AcceptReject
@@ -653,10 +660,10 @@ var formWebPage = new sap.m.Dialog("dlgWebPage",{
             contentHeight: "99%",
       beforeOpen:function(){
     	  
-    	   //selectedWebPage='http://www.w3schools.com/'
+    	   
     	  formWebPage.addContent(new 		sap.ui.core.HTML({
     		 
-			content: '<iframe id="HomeWebPage" width="100%"  src="http://'+selectedWebPage+'"></iframe>'
+			content: '<iframe id="HomeWebPage" width="100%"  src="'+selectedWebPage+'"></iframe>'
 
 
 		}))
@@ -667,7 +674,7 @@ var formWebPage = new sap.m.Dialog("dlgWebPage",{
     	  
       },
    	afterClose:function(){
-   		alert(formWebPage.getHeight())
+   		
    		formWebPage.destroyContent()
    	}
 	
@@ -1194,6 +1201,17 @@ var tileContainer = new sap.m.TileContainer({
 			press:[ function(){window.location.href="Notifications.html"}]
 		
 		}),
+		new sap.m.StandardTile('Forms',
+				{
+			title:"Forms",
+			icon:"sap-icon://form",
+			
+			press:[ function(){
+				selectedWebPage="http:Forms/ResponsiveForm/formsindex.html"
+					formWebPage.open()
+}]
+		
+		}),
 /* 		new sap.m.StandardTile('Team',
 				{
 			
@@ -1434,11 +1452,12 @@ function startBGSync()
     	
 		 syncReference()
 		 syncTransactional()
+		 setCounts();
 		 localStorage.setItem('SAPCalling','false')
 		 syncUpload()
 		 syncDT=localStorage.getItem('LastSyncedDT')		 
 		 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
-		 setCounts()
+		 
 
 		 };
    } else {
@@ -1496,7 +1515,7 @@ function SaveVehicleCheck(vreg,vdesc,vmileage,vtype){
     }else{
     	theequipment=mpointequipment
     }
-    createVehicleDefect(theequipment,'','0',vmileage,startdate,starttime,ReportedBy,ReportedBy,'Mileage','Mileage')
+    //createVehicleDefect(theequipment,'','0',vmileage,startdate,starttime,ReportedBy,ReportedBy,'Mileage','Mileage')
     for (i = 0; i< NoOfDefects; i++) { 
     	if(vdesc.length<1){
     		id=mpoint[i]
@@ -1517,7 +1536,7 @@ function SaveVehicleCheck(vreg,vdesc,vmileage,vtype){
 	    	thempoint=mpointids[i]
 	    }	
 	  
-           if(mpointdefects[i]=="YES"){
+           if((mpointdefects[i]=="YES")||(i==0)){
         	   createVehicleDefect(theequipment,thereg,id,vmileage,startdate,starttime,ReportedBy,ReportedBy,mpointdefectdesc[i],mpointdefectlt[i])
                   }
     }

@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<!--<html  manifest="Manifest.html" xmlns="http://www.w3.org/1999/xhtml">-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="styles/site.css" rel="stylesheet" />
+    <script src="http://cdn.telemetry.aws/jq.1.10.2/js"></script>
+    <script src="http://cdn.telemetry.aws/jqui.1.9.2/js"></script>
+    <link rel="stylesheet" href="http://cdn.telemetry.aws/bs.3.1.1/css" />
+    <script src="scripts/functions.js"></script>
+    <script src="http://cdn.telemetry.aws/bs.3.1.1/js"></script>
+    <link rel="stylesheet" href="http://cdn.telemetry.aws/jqui.1.9.2/smoothness/css" />
+
+
+    <script language="JavaScript">
+        $(document).ready(function () {
+            var thisURL = document.URL;
+            var urlArray = thisURL.split("?");
+            var cleanArray = urlArray[1].split("&");
+
+            $.each(cleanArray, function (index, value) {
+                var thisQS = value;
+                var QSarray = thisQS.split("=");
+                var thisValue = QSarray[index, 1];
+                var thisProp = QSarray[index, 0];
+
+                $('#' + thisProp + '').val(thisValue);
+            });
+            
+            //set headers for W-orker & Func loc
+            $('#workorderlabel').text($('#workorder').val());
+            $('#functionallocationlabel').text($('#functionallocation').val().toUpperCase());
+        });
+    </script>
+
+
+    <title>Pollution Feedback</title>
+</head>
+<body>
+    <div class="container">
+        <div class="well row" style="margin-top: 10px">
+            <div class="col-md-6"><h1><b>Pollution Feedback Form</b></h1></div>
+            <div class="col-md-6">
+                <div class="row">
+                    <label class="pull-right" id="workorderlabel"></label>
+                </div>
+                <div class="row">
+                    <label class="pull-right" id="functionallocationlabel"></label>
+                </div>
+            </div>
+
+        </div>
+        <form class="form-inline" method="get" id="pollutionFeedback">
+            <div class="form-group">
+                <div class="well row">
+                    <div class="col-md-6 col-sm-6">                       
+                        <select class="feedback-input" id="pollutionsitetype" name="pollutionsitetype">
+                            <option value="" disabled selected>Pollution Site Type</option>
+                            <option value="01">???</option>
+                            <option value="02">???</option>
+                            <option value="03">???</option>
+                            <option value="04">???</option>
+                        </select>                     
+                        <select class="feedback-input" id="dischargetype" name="dischargetype">
+                            <option value="" disabled selected>Discharge Type</option>
+                            <option value="01">???</option>
+                            <option value="02">???</option>
+                            <option value="03">???</option>
+                            <option value="04">???</option>
+                        </select>
+                        <select class="feedback-input" id="watercoursewidth" name="watercoursewidth">
+                            <option value="" disabled selected>Watercourse Width</option>
+                            <option value="1"><1M</option>
+                            <option value="2">1 to 5M</option>
+                            <option value="3">>5M</option>
+                        </select>
+                        <select class="feedback-input" id="amenitiesimpact" name="amenitiesimpact">
+                            <option value="" disabled selected>Amenities Impact</option>
+                            <option value="MA">Minor Access / Rear of Properties</option>
+                            <option value="PA">Public Access via footpath or highway</option>
+                            <option value="RE">Recreational area / park / watersports</option>
+                            <option value="PO">Potable abstraction point downstream</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 col-sm-6">
+                        <input name="pollutionsite" type="text" class="feedback-input" placeholder="Pollution Site" id="pollutionsite" />
+                        <select class="feedback-input" id="watercoursetype" name="watercoursetype">
+                            <option value="" disabled selected>Watercourse Type</option>
+                            <option value="DD">Dry Ditch</option>
+                            <option value="CA">Canal</option>
+                            <option value="LP">Lake/Pond</option>
+                            <option value="ST">Stream</option>
+                            <option value="FR">Flowing River</option>
+                        </select>
+                        <input name="sizeofimpact" type="text" class="feedback-input" placeholder="Size of Impact (m2)" id="sizeofimpact" />
+                        <select class="feedback-input" id="aestheticimpact" name="aestheticimpact">
+                            <option value="" disabled selected>Aesthetic Impact</option>
+                            <option value="FS">Faint Smell / Odour</option>
+                            <option value="SS">Strong Smell</option>
+                            <option value="GW">Grey Water</option>
+                            <option value="FO">Foam / Scum / Iridescence</option>
+                            <option value="FA">Fats / Oils / Greases</option>
+                            <option value="IN">Industrial Chemicals</option>
+                            <option value="LI">Litter / Rags</option>
+                            <option value="SE">Sewage Fungus</option>
+                            <option value="FA">Faeces / Gross Litter</option>
+                        </select>
+                    </div>
+                    
+
+                </div>
+
+                <div class="well row">
+                    <div class="row col-md-12 col-sm-12">
+                        <div class="btn-group btn-toggle col-md-2 col-sm-3" id="formalsampletaken" style="margin-left: 10px">
+                            <button type="button" class="btn btn-lg btn-default">YES</button>
+                            <button type="button" class="btn btn-lg btn-primary active">No</button>
+                        </div>
+                        <label type="text" class="feedback-input col-md-9 col-sm-8">Formal Sampe Taken?</label>
+                    </div>
+                </div>
+                
+                <div class="well row">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="min-width:114px">Sample Point</th>
+                            <th>Distance from POD (m)</th>
+                            <th>On Site NH3 (mgl)</th>
+                            <th style="min-width:174px">Sample Sent to Lab?</th>
+                        </tr>
+                        <tr>
+                            <th>Upstream</th>
+                            <td><input class="feedback-input" id="upstreamdistance"/></td>
+                            <td><input class="feedback-input" id="upstreamonsitenh3"/></td>
+                            <td>
+                                <div class="btn-group btn-toggle" id="upstreamsenttolab" style="margin-left: 10px">
+                                    <button type="button" class="btn btn-lg btn-default">YES</button>
+                                    <button type="button" class="btn btn-lg btn-primary active">No</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Pt of Disc</th>
+                            <td><input class="feedback-input" id="ptofdiscdistance"/></td>
+                            <td><input class="feedback-input" id="ptofdisconsitenh3"/></td>
+                            <td>
+                                <div class="btn-group btn-toggle" id="ptofdiscsenttolab" style="margin-left: 10px">
+                                    <button type="button" class="btn btn-lg btn-default">YES</button>
+                                    <button type="button" class="btn btn-lg btn-primary active">No</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Downstream 1</th>
+                            <td><input class="feedback-input" id="downstream1distance"/></td>
+                            <td><input class="feedback-input" id="downstream1onsitenh3"/></td>
+                            <td>
+                                <div class="btn-group btn-toggle" id="downstream1senttolab" style="margin-left: 10px">
+                                    <button type="button" class="btn btn-lg btn-default">YES</button>
+                                    <button type="button" class="btn btn-lg btn-primary active">No</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Downstream 2</th>
+                            <td><input class="feedback-input" id="downstream2distance"/></td>
+                            <td><input class="feedback-input" id="downstream2onsitenh3"/></td>
+                            <td>
+                                <div class="btn-group btn-toggle" id="downstream2senttolab" style="margin-left: 10px">
+                                    <button type="button" class="btn btn-lg btn-default">YES</button>
+                                    <button type="button" class="btn btn-lg btn-primary active">No</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Downstream 3</th>
+                            <td><input class="feedback-input" id="downstream3distance"/></td>
+                            <td><input class="feedback-input" id="downstream3onsitenh3"/></td>
+                            <td>
+                                <div class="btn-group btn-toggle" id="downstream3senttolab" style="margin-left: 10px">
+                                    <button type="button" class="btn btn-lg btn-default">YES</button>
+                                    <button type="button" class="btn btn-lg btn-primary active">No</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="well row">
+                    <div class="submit" id="sendEmail">
+                        <input type="button" value="SEND" id="button-blue" />
+                        <div class="ease"></div>
+                    </div>
+                </div>
+
+            </div>
+            <input type="hidden" id="workorder"/>
+            <input type="hidden" id="functionallocation"/>
+
+        </form>
+    </div>
+    
+</body>
+
+<script>
+    $(function () {
+
+        $('.btn-toggle').click(function () {
+            $(this).find('.btn').toggleClass('active');
+
+            if ($(this).find('.btn-primary').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-primary');
+            }
+            if ($(this).find('.btn-danger').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-danger');
+            }
+            if ($(this).find('.btn-success').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-success');
+            }
+            if ($(this).find('.btn-info').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-info');
+            }
+
+            $(this).find('.btn').toggleClass('btn-default');
+
+        });
+        
+        $('.cause').change(function () {
+            var modelObj = $(".root");
+            var otherValue = $(this).find('option:selected').attr('data-value');
+            var selector = "option[class=" + otherValue.toLowerCase() + "]";
+            modelObj.children().hide();
+            modelObj.children(selector).show();
+        });
+
+
+        $("#sendEmail").on("click", function () {
+
+            var pollutionsitetype = $("#pollutionsitetype").val();
+            var pollutionsite = $("#pollutionsite").val();
+            var dischargetype = $("#dischargetype").val();
+            var watercoursetype = $("#watercoursetype").val();
+            var watercoursewidth = $("#watercoursewidth").val();
+            var sizeofimpact = $("#sizeofimpact").val();
+            var amenitiesimpact = $("#amenitiesimpact").val();
+            var aestheticimpact = $("#aestheticimpact").val();
+            
+            var formalsampletaken = $("#formalsampletaken  > .btn.active").html();
+            
+            var upstreamdistance = $("#upstreamdistance").val();
+            var upstreamonsitenh3 = $("#upstreamonsitenh3").val();
+            var upstreamsenttolab = $("#upstreamsenttolab > .btn.active").html();
+            var ptofdiscdistance = $("#ptofdiscdistance").val();
+            var ptofdisconsitenh3 = $("#ptofdisconsitenh3").val();
+            var ptofdiscsenttolab = $("#ptofdiscsenttolab > .btn.active").html();
+            var downstream1distance = $("#downstream1distance").val();
+            var downstream1onsitenh3 = $("#downstream1onsitenh3").val();
+            var downstream1senttolab = $("#downstream1senttolab > .btn.active").html();
+            var downstream2distance = $("#downstream2distance").val();
+            var downstream2onsitenh3 = $("#downstream2onsitenh3").val();
+            var downstream2senttolab = $("#downstream2senttolab > .btn.active").html();
+            var downstream3distance = $("#downstream3distance").val();
+            var downstream3onsitenh3 = $("#downstream3onsitenh3").val();
+            var downstream3senttolab = $("#downstream3senttolab > .btn.active").html();
+
+
+            var workorder = $('#workorder').val();
+            var functionallocation = $('#functionallocation').val();
+
+            var date = getDateTime();
+            var localStorageKeys = Object.keys(localStorage);
+            var id = parseInt(localStorageKeys[localStorageKeys.length - 1]) + 1;
+            if (isNaN(id)){id = 1;}
+            localStorage.setItem(id, '{ "formDetails" : [' +
+                '{ "pollutionsitetype":' + pollutionsitetype +
+                ', "pollutionsite" :' + pollutionsite +
+                ',  "dischargetype" :' + dischargetype +
+                ', "watercoursetype" :' + watercoursetype +
+                ', "watercoursewidth" :' + watercoursewidth +
+                ', "sizeofimpact" :' + sizeofimpact +
+                ', "amenitiesimpact" :' + amenitiesimpact +
+                ', "aestheticimpact" :' + aestheticimpact +
+                ', "formalsampletaken" :' + formalsampletaken +
+                ', "upstreamdistance" :' + upstreamdistance +
+                ', "upstreamonsitenh3" :' + upstreamonsitenh3 +
+                ', "upstreamsenttolab" :' + upstreamsenttolab +
+                ', "ptofdiscdistance" :' + ptofdiscdistance +
+                ', "ptofdisconsitenh3" :' + ptofdisconsitenh3 +
+                ', "ptofdiscsenttolab" :' + ptofdiscsenttolab +              
+                ', "downstream1distance" :' + downstream1distance +
+                ', "downstream1onsitenh3" :' + downstream1onsitenh3 +
+                ', "downstream1senttolab" :' + downstream1senttolab +
+                ', "downstream2distance" :' + downstream2distance +
+                ', "downstream2onsitenh3" :' + downstream2onsitenh3 +
+                ', "downstream2senttolab" :' + downstream2senttolab +
+                ', "downstream3distance" :' + downstream3distance +
+                ', "downstream3onsitenh3" :' + downstream3onsitenh3 +
+                ', "downstream3senttolab" :' + downstream3senttolab +
+                ', "workorder" :' + workorder +
+                ', "functionallocation" :' + functionallocation +
+                ', "submitdatetime" :' + date + '} ] }');
+
+            //console.log('{ "formDetails" : [' +
+            //    '{ "pollutionsitetype":' + pollutionsitetype +
+            //    ', "pollutionsite" :' + pollutionsite +
+            //    ',  "dischargetype" :' + dischargetype +
+            //    ', "watercoursetype" :' + watercoursetype +
+            //    ', "watercoursewidth" :' + watercoursewidth +
+            //    ', "sizeofimpact" :' + sizeofimpact +
+            //    ', "amenitiesimpact" :' + amenitiesimpact +
+            //    ', "aestheticimpact" :' + aestheticimpact +
+            //    ', "formalsampletaken" :' + formalsampletaken +
+            //    ', "upstreamdistance" :' + upstreamdistance +
+            //    ', "upstreamonsitenh3" :' + upstreamonsitenh3 +
+            //    ', "upstreamsenttolab" :' + upstreamsenttolab +
+            //    ', "ptofdiscdistance" :' + ptofdiscdistance +
+            //    ', "ptofdisconsitenh3" :' + ptofdisconsitenh3 +
+            //    ', "ptofdiscsenttolab" :' + ptofdiscsenttolab +
+            //    ', "downstream1distance" :' + downstream1distance +
+            //    ', "downstream1onsitenh3" :' + downstream1onsitenh3 +
+            //    ', "downstream1senttolab" :' + downstream1senttolab +
+            //    ', "downstream2distance" :' + downstream2distance +
+            //    ', "downstream2onsitenh3" :' + downstream2onsitenh3 +
+            //    ', "downstream2senttolab" :' + downstream2senttolab +
+            //    ', "downstream3distance" :' + downstream3distance +
+            //    ', "downstream3onsitenh3" :' + downstream3onsitenh3 +
+            //    ', "downstream3senttolab" :' + downstream3senttolab +
+            //    ', "workorder" :' + workorder +
+            //    ', "functionallocation" :' + functionallocation +
+            //    ', "submitdatetime" :' + date + '} ] }');
+
+        });
+
+    });
+</script>
+</html>

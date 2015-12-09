@@ -811,6 +811,7 @@ function syncUpload(){
 var newDets="";
 var currentUser="";
 syncDetsSet=false;
+var codeval
 SAPServerPrefix=$.trim(localStorage.getItem('ServerName'));
 sapCalls = 0;
 	if (!CheckSyncInterval('UPLOAD')){return; }
@@ -828,7 +829,7 @@ var syncDetails = false	;
 				curremtUser="&username="+rowsArray[0].user;
 				SAPServerSuffix="?jsonCallback=?&sap-client="+localStorage.getItem('SAPClient')+"&sap-user="+rowsArray[0].user+"&sap-password="+rowsArray[0].password;
 // Process Vehicle Defects
-				html5sql.process("SELECT * from MyNewJobs where state = 'VEHICLEDEFECT'",
+				html5sql.process("SELECT * from MyVehicleCheck where state = 'NEW'",
 					function(transaction, results, rowsArray){
 						if( rowsArray.length > 0) {
 							if (syncDetails){
@@ -843,15 +844,26 @@ var syncDetails = false	;
 								
 								}
 							item = rowsArray[0];
-
-							newJobDets='&TYPE='+item['type']+'&EQUIPMENT='+item['equipment']+'&STARTDATE='+item['date']+'&STARTTIME='+item['time']+'&SHORTTEXT='+item['shorttext']+'&LONGTEXT='+escape(item['longtext'])+'&ID='+item['id']+'&REPORTEDBY='+item['reportedby']+'&DEFECT='+item['defect']+'&MPOINT='+item['mpoint']+'&MPVAL='+item['mpval'];
-							opMessage("NewJob Details="+newJobDets);
+							if(item['desc'].length<1){
+								codeval='Y'
+							}else{
+								codeval='N'	
+							}
+							
+							newVehicleCheck='&MEAS_POINT='+item['mpoint']+'&MEAS_EQUIP='+item['equipment']+'&MEAS_DATE='+item['mdate']+'&MEAS_TIME='+item['mtime']+'&MEAS_TEXT='+item['desc']+'&MEAS_LONG_TEXT='+item['longtext']+'&RECNO='+item['id']+'&MEAS_READ_BY='+item['mreadby']+'&USER='+item['user']+'&MEAS_READING='+item['mileage']+'&MEAS_VAL_CODE='+codeval;
+							opMessage("Vehicle Defect"+newVehicleCheck);
 							
 							sapCalls+=1;
 							
 							html5sql.process("UPDATE MyNewJobs SET state = 'SENDING' WHERE id='"+item['id']+"'",
 									 function(){
-										sendSAPData("MyJobsCreateVehicleDefect.htm","UPDATE MyNewJobs SET state = 'NEW' WHERE id='"+item['id']+"'");
+										if(item['reg'].length<1){
+											sendSAPData("MyJobsCreateVehicleDefect.htm",newVehicleCheck,"UPDATE MyVehicleCheck SET state = 'NEW' WHERE id='"+item['id']+"'");
+										}else{
+											sendSAPData("MyJobsCreateVehicleMileage.htm",newVehicleCheck,"UPDATE MyVehicleCheck SET state = 'NEW' WHERE id='"+item['id']+"'");
+										}
+										
+										
 										
 									 },
 									 function(error, statement){
@@ -3037,15 +3049,20 @@ opMessage("Callback sapCB triggured");
 //alert("File Uploaded response");
 			}		
 //Handle Vehicle Defect Response
+			if (MySAP.message[0].type=="createvehiclemileage"){
+				opMessage("VehicleMilege-->Message= "+MySAP.message[0].message+"-->NotifNo= "+MySAP.message[0].notifno+"-->measdoc= "+MySAP.message[0].measdoc);
+				
+				if(MySAP.message[0].message=="Success"){
+						sqlstatement+="delete from MyVehicleCheck WHERE id='"+MySAP.message[0].recno+"';";
+					}
+		
+			}	
 			if (MySAP.message[0].type=="createvehicledefect"){
 				opMessage("-->Message= "+MySAP.message[0].message);
 				opMessage("-->NotifNo= "+MySAP.message[0].notifno);
-			
+				opMessage("-->measdoc= "+MySAP.message[0].measdoc);
 				if(MySAP.message[0].message=="Success"){
-					
-					
-		
-						sqlstatement+="delete from MyNewJobs WHERE id='"+MySAP.message[0].recno+"';";
+					sqlstatement+="delete from MyVehicleCheck WHERE id='"+MySAP.message[0].recno+"';";
 						
 					}
 		
