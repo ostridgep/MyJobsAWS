@@ -2380,7 +2380,7 @@ function requestDEMOData(page){
 
 }
 function orderCB(MyOrders){
-	alert(MyOrders.order.length+" Orders")
+
 var sqlDelete="";
 var sqlstatement="";
 var sqlstatements=[];
