@@ -39,50 +39,31 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
                                          }),
                                          new sap.ui.layout.form.FormElement({
                                              label: "In Shift Time",
-                                             fields: [new sap.m.Slider('Close_InShiftTimeControl',
-                                                     {
-                                                 value: 0,
-                                                 max:720,
-                                                 min:0,
-                                                 step:5,
-                                                 change : function(){
-                                                        sap.ui.getCore().byId("Close_InShiftTime").setValue(sap.ui.getCore().byId("Close_InShiftTimeControl").getValue());}
-                                                 
-                                                               
-                                                               
-                                            }), 
+                                             fields: [new sap.m.DateTimeInput("Close_InShiftTime",{
+                        							placeholder : "Time Picker",
+                           							type : "Time",
+                           							valueFormat : "HH:mm",
+                           							value : "0:0",
+                           							displayFormat : "H'h' m'm'",
+                           							
+                           						})
                               
-                                            new sap.m.Input("Close_InShiftTime",{
-                                                value : sap.ui.getCore().byId("Close_InShiftTimeControl").getValue(),
-                                            type: sap.m.InputType.Input,
-                                            width:"20px",
-                                            change : function(){sap.ui.getCore().byId("Close_InShiftTimeControl").setValue(parseInt(sap.ui.getCore().byId("Close_InShiftTime").getValue(),10));}
-                                              })
                                              ]
                                       }),
                                         
                                          
                                       new sap.ui.layout.form.FormElement({
                                           label: "Out Of Shift Time",
-                                          fields: [new sap.m.Slider('Close_OutOfShiftTimeControl',
-                                                     {
-                                              value: 0,
-                                              max:720,
-                                              min:0,
-                                              step:5,
-                                              change : function(){
-                                                     sap.ui.getCore().byId("Close_OutOfShiftTime").setValue(sap.ui.getCore().byId("Close_OutOfShiftTimeControl").getValue());}
-                                              
-                                                            
-                                                            
-                                         }), 
+                                          fields: [new sap.m.DateTimeInput("Close_OutOfShiftTime",{
+                  							placeholder : "Time Picker",
+                   							type : "Time",
+                   							valueFormat : "HH:mm",
+                   							value : "0:0",
+                   							displayFormat : "H'h' m'm'",
+                   							
+                   						})
                            
-                                         new sap.m.Input("Close_OutOfShiftTime",{
-                                             value : sap.ui.getCore().byId("Close_OutOfShiftTimeControl").getValue(),
-                                         type: sap.m.InputType.Input,
-                                         width:"20px",
-                                         change : function(){sap.ui.getCore().byId("Close_OutOfShiftTimeControl").setValue(parseInt(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue(),10));}
-                                           })]
+                                        ]
                                       }),
                                          ],
                                   layoutData: new sap.ui.core.VariantLayoutData({

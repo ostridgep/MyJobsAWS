@@ -32,6 +32,22 @@ function diffInMinutes(StartDate, StartTime, EndDate, EndTime){
 	var minutes = Math.floor((diff/1000)/60);
 	return minutes
 }
+function diffInTime(StartDate, StartTime, EndDate, EndTime){
+	
+	var diff = Math.abs(new Date(StartDate+" "+StartTime) - new Date(EndDate+" "+EndTime));
+	var minutes = Math.floor((diff/1000)/60);
+	
+	var m = minutes % 60;
+	var h = (minutes-m)/60
+	
+	return h+":"+m
+}
+function convertToMinutes(time){
+x=time.split(":")
+minutes=((parseInt(x[0])*60)+parseInt(x[1]))
+
+return minutes.toString()
+}
 function getDate()	{			
 				var currentdate = new Date(); 
 	return zeroFill1(currentdate.getFullYear().toString()) + zeroFill1((currentdate.getMonth()+1).toString() ) + zeroFill1(currentdate.getDate().toString());

@@ -218,8 +218,8 @@ new sap.m.Button( {
     	 CloseError='0';
     	 if(((sap.ui.getCore().byId("Close_FunctionalLocation").getValue().length>0)||
     			 (sap.ui.getCore().byId("Close_Equipment").getValue().length>0))&&
-    			 (sap.ui.getCore().byId("Close_InShiftTime").getValue()>"0")&&
-    			 (sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()>"0"))
+    			 (sap.ui.getCore().byId("Close_InShiftTime").getValue()!="0:0")||
+    			 (sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()!="0:0"))
     			 {
     		 		CloseError='0'
     			 }else{
@@ -278,7 +278,7 @@ new sap.m.Button( {
     				followOnVariance=""
     		    	followOnReason=""
     				}
-    			if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()>0){
+    			if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()!="0:0"){
     				ofinal='X'
     				ofollowOnVariance=followOnVariance
     				ofollowOnReason=followOnReason
@@ -293,28 +293,29 @@ new sap.m.Button( {
         				ofollowOnReason=''
     			}
     			
-    			 if(sap.ui.getCore().byId("Close_InShiftTime").getValue()>0){
+    			 if(sap.ui.getCore().byId("Close_InShiftTime").getValue()!="0:0"){
     				 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'SMEPIS',
     					ifollowOnVariance,
     					 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
-    					 sap.ui.getCore().byId("Close_InShiftTime").getValue(),'',
+    					 convertToMinutes(sap.ui.getCore().byId("Close_InShiftTime").getValue()),'',
     		           		ifollowOnReason,
     		           		'',ifinal)
     			 }
-    			 if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()>0){
+    			 if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()!="0:0"){
     				 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'SMEPOS',
     						 ofollowOnVariance,
         					 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
-        					 sap.ui.getCore().byId("Close_OutOfShiftTime").getValue(),'',
+        					 convertToMinutes(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()),'',
         		           		ofollowOnReason,
         		           		'',ofinal)
     			 }
+    			 if(sap.ui.getCore().getElementById("DG51F1C2").getVisible()){
              createAWSJobClose(CurrentOrderNo, CurrentOpNo, currentNotifNo,  sap.ui.getCore().byId("Close_LongText").getValue(),localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
             		 statusUpdateDate,statusUpdateTime,
             		 sap.ui.getCore().byId("Close_FunctionalLocation").getValue(),
         			 sap.ui.getCore().byId("Close_Equipment").getValue(),
-        			 sap.ui.getCore().byId("Close_InShiftTime").getValue(),
-        			 sap.ui.getCore().byId("Close_OutOfShiftTime").getValue(),
+        			 convertToMinutes(sap.ui.getCore().byId("Close_InShiftTime").getValue()),
+        			 convertToMinutes(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()),
         			 sap.ui.getCore().byId("Close_ProblemGroup").getSelectedItem().getKey(),
         			 sap.ui.getCore().byId("Close_ProblemCode").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ActionGroup").getSelectedItem().getKey(),
@@ -322,8 +323,23 @@ new sap.m.Button( {
 					 sap.ui.getCore().byId("Close_ImpactGroup").getSelectedItem().getKey(),
 					 sap.ui.getCore().byId("Close_ImpactCode").getSelectedItem().getKey(),
 					 followOnWork,followOnVariance,followOnReason )
+    			 }else{
+    	             createAWSJobClose(CurrentOrderNo, CurrentOpNo, currentNotifNo,  '',localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
+    	            		 statusUpdateDate,statusUpdateTime,
+    	            		 sap.ui.getCore().byId("Close_FunctionalLocation").getValue(),
+    	        			 sap.ui.getCore().byId("Close_Equipment").getValue(),
+    	        			 convertToMinutes(sap.ui.getCore().byId("Close_InShiftTime").getValue()),
+    	        			 convertToMinutes(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()),
+    	        			 '','','','','','',
+    						 followOnWork,followOnVariance,followOnReason )  				 
+    			 }
 					updateJobDetsStatus(CurrentOrderNo, CurrentOpNo, "CLOSED")
+					currentStatus="CLOSED"
+					prepareChangeStatus()
 					localStorage.setItem('totalAccepted','0');
+					document.getElementById("JobHead_Status").innerHTML = "<Font color='RED'>Closed</font>";
+					
+					 document.getElementById('L'+CurrentOrderNo+'-'+CurrentOpNo).innerHTML = "Closed";
 					}else{
 						if (CloseError=="1"){
 						DisplayErrorMessage("Close Job Error", "Close Details must be Completed\n-Functional Location\n-Equipment\n-Time Entries")
@@ -403,7 +419,7 @@ function confirmAcceptStatus()
                                              text: "Save",
                                              tap: [ function(oEvt) { 
                                                 
- 												if(sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").getValue()>1){
+ 												if(sap.ui.getCore().byId("StatusOnSiteTravelTime").getValue()!="0:0"){
  													setStatusChangeDT()
  													formChangeStatusOnSite.close()       
                                                 	changeStatus("SITE")
@@ -435,27 +451,16 @@ function confirmAcceptStatus()
                                          
                                                               new sap.m.Label({text:"On Site Arrival Time"}),
                                                               new sap.m.Input("StatusOnSiteTime",{ type: sap.m.InputType.Input, enabled:false}),
-                                                       
-                                                              new sap.m.Label({text:"Travel Time"}),
-                                                   new sap.m.Slider('StatusOnSiteTravelTimeControl',
-                                                              {
-                                                       value: 0,
-                                                       max:720,
-                                                       min:0,
-                                                       step:5,
-                                                       change : function(){
-                                                              sap.ui.getCore().byId("StatusOnSiteTravelTime").setValue(sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").getValue());}
-                                                       
-                                                                     
-                                                                     
-                                                  }), 
-                                    
-                                                  new sap.m.Input("StatusOnSiteTravelTime",{
-                                                      value : sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").getValue(),
-                                                  type: sap.m.InputType.Input,
-                                                  width:"50px",
-                                                  change : function(){sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").setValue(parseInt(sap.ui.getCore().byId("StatusOnSiteTravelTime").getValue(),10));}
-                                                    }),
+                                                         	 new sap.m.Label({text:"Remaining Work"}),
+                                                             new sap.m.DateTimeInput("StatusOnSiteTravelTime",{
+                                     							placeholder : "Time Picker",
+                                     							type : "Time",
+                                     							valueFormat : "HH:mm",
+                                     							value : "0:0",
+                                     							displayFormat : "H'h' m'm'",
+                                     							
+                                     						}),
+                                                            
                                                               
                                                               
                                                     
@@ -486,7 +491,7 @@ function confirmAcceptStatus()
                                                 
                                                 
                                                
-												if((sap.ui.getCore().byId("StatusParkActualWorkControl").getValue()>1)&&
+												if((sap.ui.getCore().byId("StatusParkActualWork").getValue()!="0:0")&&
 												(sap.ui.getCore().byId("StatusParkReasonText").getValue().length>0)){
 	                                                formChangeStatusPark.close()   
 	                                                setStatusChangeDT()
@@ -515,25 +520,15 @@ function confirmAcceptStatus()
                                   maxContainerCols : 2,
                                   content : [
                                                               new sap.m.Label({text:"Actual Work"}),
-                                                              new sap.m.Slider('StatusParkActualWorkControl',
-                                                                           {
-                                                                     value: 0,
-                                                                     max:720,
-                                                                     min:0,
-                                                                     step:5,
-                                                                     change : function(){
-                                                                            sap.ui.getCore().byId("StatusParkActualWork").setValue(sap.ui.getCore().byId("StatusParkActualWorkControl").getValue());}
-                                                                     
-                                                                                  
-                                                                                   
-                                                              }), 
+                                                              new sap.m.DateTimeInput("StatusParkActualWork",{
+                                       							placeholder : "Time Picker",
+                                       							type : "Time",
+                                       							valueFormat : "HH:mm",
+                                       							value : "0:0",
+                                       							displayFormat : "H'h' m'm'",
+                                       							
+                                       						}),
                                                               
-                                                              new sap.m.Input("StatusParkActualWork",{
-                                                                    value : sap.ui.getCore().byId("StatusParkActualWorkControl").getValue(),
-                                                                type: sap.m.InputType.Input,
-                                                                width:"50px",
-                                                                change : function(){sap.ui.getCore().byId("StatusParkActualWorkControl").setValue(parseInt(sap.ui.getCore().byId("StatusParkActualWork").getValue(),10));}
-                                                                  }),
                                                            new sap.m.Label({text:"Activity"}),
                                                            new sap.m.Select('StatusParkActivityCode',{
                                                                      
@@ -587,8 +582,8 @@ function confirmAcceptStatus()
                                              type: 	sap.m.ButtonType.Accept,
                                              tap: [ function(oEvt) { 
                                                 
-                                            	 if((sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue()>0)&&
-                                            			 (sap.ui.getCore().byId("StatusUpdateRemainingWorkControl").getValue()>0)&&
+                                            	 if((sap.ui.getCore().byId("StatusUpdateActualWork").getValue()!="")&&
+                                            			 (sap.ui.getCore().byId("StatusUpdateRemainingWork").getValue()!="0:0")&&
          												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
                                             		
                                             		 setStatusChangeDT()
@@ -596,8 +591,8 @@ function confirmAcceptStatus()
                                                     				sap.ui.getCore().byId("StatusUpdateActivityCode").getSelectedItem().getKey(),
                                                     				sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey(),
                                                     				statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime,
-                                                    				sap.ui.getCore().getElementById("StatusUpdateActualWork").getValue(),
-                                                    				sap.ui.getCore().getElementById("StatusUpdateRemainingWork").getValue(),
+                                                    				convertToMinutes(sap.ui.getCore().getElementById("StatusUpdateActualWork").getValue()),
+                                                    				convertToMinutes(sap.ui.getCore().getElementById("StatusUpdateRemainingWork").getValue()),
                                                     				
                                                               		sap.ui.getCore().byId("StatusUpdateReasonText").getValue(),
                                                                		sap.ui.getCore().byId("StatusUpdateReasonDetails").getValue(),'')
@@ -624,55 +619,37 @@ function confirmAcceptStatus()
                                   minWidth : 1024,
                                   maxContainerCols : 2,
                                   content : [
-                                                              new sap.m.Label({text:"Actual Work"}),
-                                                              new sap.m.Slider('StatusUpdateActualWorkControl',
-                                                                           {
-                                                                     value: 0,
-                                                                     max:720,
-                                                                     min:0,
-                                                                     step:5,
-                                                                     change : function(){
-                                                                            sap.ui.getCore().byId("StatusUpdateActualWork").setValue(sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue());}
-                                                                     
-                                                                                  
-                                                                                   
-                                                              }), 
+
+                                             new sap.m.Label({text:"Actual Work"}),
+                                             new sap.m.DateTimeInput("StatusUpdateActualWork",{
+                     							placeholder : "Time Picker",
+                     							type : "Time",
+                     							valueFormat : "HH:mm",
+                     							value : "0:0",
+                     							displayFormat : "H'h' m'm'",
+                     							
+                     						}),
                                                               
-                                                              new sap.m.Input("StatusUpdateActualWork",{
-                                                                    value : sap.ui.getCore().byId("StatusUpdateActualWorkControl").getValue(),
-                                                                type: sap.m.InputType.Input,
-                                                                width:"50px",
-                                                                change : function(){sap.ui.getCore().byId("StatusUpdateActualWorkControl").setValue(parseInt(sap.ui.getCore().byId("StatusUpdateActualWork").getValue(),10));}
-                                                                  }),
-
-                                                                     new sap.m.Label({text:"Remaining Work"}),
-                                                                     new sap.m.Slider('StatusUpdateRemainingWorkControl',
-                                                                                  {
-                                                                           value: 0,
-                                                                           max:720,
-                                                                           min:0,
-                                                                           step:5,
-                                                                           change : function(){
-                                                                                  sap.ui.getCore().byId("StatusUpdateRemainingWork").setValue(sap.ui.getCore().byId("StatusUpdateRemainingWorkControl").getValue());}
-                                                                           
-                                                                                         
-                                                                                          
-                                                                     }), 
-                                                                     new sap.m.Input("StatusUpdateRemainingWork",{
-                                                                           value : sap.ui.getCore().byId("StatusUpdateRemainingWorkControl").getValue(),
-                                                                       type: sap.m.InputType.Input,
-                                                                       width:"50px",
-                                                                       change : function(){sap.ui.getCore().byId("StatusUpdateRemainingWorkControl").setValue(parseInt(sap.ui.getCore().byId("StatusUpdateRemainingWork").getValue(),10));}
-                                                                         }),                                                                    
-                                                           new sap.m.Label({text:"Activity"}),
-                                                           new sap.m.Select('StatusUpdateActivityCode',{
+                                                              
+                                                              
                                                                      
-                                                                     items: [
-                                                                           
-                                                                     ],
+                                                                    	 new sap.m.Label({text:"Remaining Work"}),
+                                                                         new sap.m.DateTimeInput("StatusUpdateRemainingWork",{
+                                                 							placeholder : "Time Picker",
+                                                 							type : "Time",
+                                                 							valueFormat : "HH:mm",
+                                                 							value : "0:0",
+                                                 							displayFormat : "H'h' m'm'",
+                                                 							
+                                                 						}),
+                                                 					   new sap.m.Label({text:"Activity"}),
+                                                                       new sap.m.Select('StatusUpdateActivityCode',{
+                                                                                 
+                                                                                 items: [
+                                                                                       
+                                                                                 ],
 
-
-                                                              }),
+                                                                          }),
                                                               new sap.m.Label({text:"Variance"}),
                                                            new sap.m.Select('StatusUpdateVarianceCode',{
                                                                      
@@ -1589,6 +1566,7 @@ var detailFooterAWS = new sap.m.Bar({
 							   					formChangeStatus.close()
 						   						formChangeStatusPark.open()
 							   				}else{
+							   						localStorage.setItem("totalParked","0")
 							   						changeStatus("ACPT")
 							   						
 							   				}
@@ -2049,6 +2027,7 @@ function prepareChangeStatus(){
 
 
 	}else if((currentStatus=="REJ1")||(currentStatus=="REJ2")||(currentStatus=="CLOSED")){
+		
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(false);
@@ -2088,14 +2067,14 @@ function prepareChangeStatus(){
 		sap.ui.getCore().getElementById('btnStatusClose').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setEnabled(true);
 
-	}else if(currentStatus=="CLOSE"){
+	}else if(currentStatus=="CLOSED"){
 	
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setVisible(true);
 		sap.ui.getCore().getElementById('btnStatusUpdate').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusOnSite').setVisible(false);
-		sap.ui.getCore().getElementById('btnStatusClose').setVisible(true);
+		sap.ui.getCore().getElementById('btnStatusClose').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setEnabled(false);
 }	
 
@@ -2169,12 +2148,13 @@ function changeStatus(Status){
 			 StatusIcon="decline"
 		} else if(Status=="PARK"){
 			localStorage.setItem('totalParked','1');
+			localStorage.setItem('totalAccepted','0');
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "PARK", "Job Suspended")
 		createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
 				sap.ui.getCore().byId("StatusParkActivityCode").getSelectedItem().getKey(),
 				sap.ui.getCore().byId("StatusParkReasonCode").getSelectedItem().getKey(),
                 statusUpdateDate,statusUpdateTime,statusUpdateDate,statusUpdateTime,
-           		sap.ui.getCore().byId("StatusParkActualWork").getValue(),'',
+           		convertToMinutes(sap.ui.getCore().byId("StatusParkActualWork").getValue()),'',
            		sap.ui.getCore().byId("StatusParkReasonText").getValue(),
            		sap.ui.getCore().byId("StatusParkReasonDetails").getValue(),'')
                                                             
@@ -2187,7 +2167,7 @@ function changeStatus(Status){
 	 }else if(Status=="SITE"){
 		 updateOperationStatus(CurrentOrderNo, CurrentOpNo, "SITE", "Job Started")
 		  createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'TRVL','',
-				  statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, sap.ui.getCore().getElementById("StatusOnSiteTravelTime").getValue(),'','On-Site','','')
+				  statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, convertToMinutes(sap.ui.getCore().getElementById("StatusOnSiteTravelTime").getValue()),'','On-Site','','')
 		
 
 
@@ -4513,9 +4493,9 @@ function BuildChangeStatusOnSite(){
 					if( rowsArray.length>0) {
 						
 						sap.ui.getCore().getElementById("StatusOnSiteAcceptedTime").setValue(rowsArray[0].acpt_date+" "+rowsArray[0].acpt_time)
-						travelTime = diffInMinutes(rowsArray[0].acpt_date,rowsArray[0].acpt_time,getFormattedDate(),getFormattedTime())
-							sap.ui.getCore().getElementById("StatusOnSiteTravelTime").setValue(travelTime)
-						sap.ui.getCore().byId("StatusOnSiteTravelTimeControl").setValue(parseInt(travelTime,10))
+						travelTime = diffInTime(rowsArray[0].acpt_date,rowsArray[0].acpt_time,getFormattedDate(),getFormattedTime())
+						sap.ui.getCore().getElementById("StatusOnSiteTravelTime").setValue(travelTime)
+						
 						
 					}
 				
@@ -4573,9 +4553,9 @@ function BuildChangeStatusPark(){
 													if( rowsArray.length>0) {
 														
 														
-														workTime = diffInMinutes(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
+														workTime = diffInTime(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
 														sap.ui.getCore().getElementById("StatusParkActualWork").setValue(workTime)
-														sap.ui.getCore().byId("StatusParkActualWorkControl").setValue(parseInt(workTime,10))
+														
 														
 													}
 												
@@ -4602,8 +4582,8 @@ function BuildChangeStatusPark(){
 
 function BuildChangeStatusUpdate(){
 
-	sap.ui.getCore().getElementById("StatusUpdateRemainingWork").setValue("0")
-	sap.ui.getCore().getElementById("StatusUpdateRemainingWorkControl").setValue(0)
+	sap.ui.getCore().getElementById("StatusUpdateRemainingWork").setValue("0:0")
+
 	sap.ui.getCore().getElementById("StatusUpdateReasonText").setValue("")
 	sap.ui.getCore().getElementById("StatusUpdateReasonDetails").setValue("")
 
@@ -4615,7 +4595,7 @@ function BuildChangeStatusUpdate(){
 			html5sql.process(SQLStatement,
 			 function(transaction, results, rowsArray){
 				
-				sap.ui.getCore().getElementById("StatusUpdateActivityCode").destroyItems();
+ 				sap.ui.getCore().getElementById("StatusUpdateActivityCode").destroyItems();
 				
 					for (var n = 0; n < rowsArray.length; n++) {
 						item = rowsArray[n];
@@ -4624,9 +4604,10 @@ function BuildChangeStatusUpdate(){
 									key: item.activity,
 									text: item.activity_desc
 								}))
-					}
+					} 
 					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
 							 function(transaction, results, rowsArray){
+						
 						 	sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
 								
 									for (var n = 0; n < rowsArray.length; n++) {
@@ -4645,9 +4626,9 @@ function BuildChangeStatusUpdate(){
 													if( rowsArray.length>0) {
 														
 														
-														workTime = diffInMinutes(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
+														workTime = diffInTime(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
 														sap.ui.getCore().getElementById("StatusUpdateActualWork").setValue(workTime)
-														sap.ui.getCore().byId("StatusUpdateActualWorkControl").setValue(parseInt(workTime,10))
+													
 														
 													}
 												
@@ -4814,6 +4795,26 @@ sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
 																				}))
 																	}
 
+																html5sql.process("select * from myjobdets where orderno =  '"+CurrentOrderNo+"' and opno =  '"+CurrentOpNo+"'",
+																		 function(transaction, results, rowsArray){
+																			
+																			
+																				if( rowsArray.length>0) {
+																				
+																					
+																					travelTime = diffInTime(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
+																					
+																					sap.ui.getCore().getElementById("Close_InShiftTime").setValue(travelTime)
+																					
+																					
+																				}
+																			
+																				
+																		 },
+																		 function(error, statement){
+																			
+																		 }        
+																		)
 																	
 															 },
 															 function(error, statement){

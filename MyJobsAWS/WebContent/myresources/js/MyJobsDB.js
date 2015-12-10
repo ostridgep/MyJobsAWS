@@ -71,6 +71,7 @@ function requestSAPData(page,params){
 					
 				    if( status == "timeout" ) {
 				    	console.log(page+status)
+				    	opMessage(page+status);
 				    }
 			  	}
 			}).always(function() {
@@ -1453,7 +1454,7 @@ function updateJobDetsStatus(orderno, opno, status)
 
 	html5sql.process("update  myjobdets set status = '"+status+"', status_s = '"+status+"', status_l =  '"+status+"' ,tconf_date = '"+statusUpdateDate+"', tconf_time = '"+statusUpdateTime+"' where  orderno = '"+orderno+"' and opno = '"+ opno+"';",
 		function(){
-		buildJobs()	
+		
 				
 		},
 		function(error, statement){
@@ -2018,14 +2019,14 @@ function emptyTables(type) {
 						 function(){
 							demoDataLoaded=type;
 							
-							SetConfigParam("TRACE", "ON");
+							SetConfigParam("TRACE", "OFF");
 							SetConfigParam("SYNC_REFERENCE_FREQUENCY", "8400000");
 							SetConfigParam("SYNC_TRANSACTIONAL_FREQUENCY", "600000");
 							SetConfigParam("SYNC_UPLOAD_FREQUENCY", "300");
 							SetConfigParam("LASTSYNC_REFERENCE", "20130316170000");
 							SetConfigParam("LASTSYNC_TRANSACTIONAL", "20130316224900");
 							SetConfigParam("LASTSYNC_UPLOAD", "20130316214900");
-							SetConfigParam("SERVERNAME", "xhttp://awssvstol411.globalinfra.net:8000/sap/bc/bsp/sap/zbsp_myjobs/");
+							SetConfigParam("SERVERNAME", "http://awssvstol411.globalinfra.net:8000/sap/bc/bsp/sap/zbsp_myjobs/");
 							SetConfigParam("SAPCLIENT", "120");
 							
 							busycreateDB.close()
