@@ -587,7 +587,7 @@ function confirmAcceptStatus()
                                             			 (sap.ui.getCore().byId("StatusUpdateRemainingWork").getValue()!="0:0")&&
          												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
                                             		
-                                            		 setStatusChangeDT()
+                                            		     setStatusChangeDT()
                                                      		createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
                                                     				sap.ui.getCore().byId("StatusUpdateActivityCode").getSelectedItem().getKey(),
                                                     				sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey(),
