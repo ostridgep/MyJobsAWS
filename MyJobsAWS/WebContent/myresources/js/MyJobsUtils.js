@@ -45,7 +45,7 @@ function diffInTime(StartDate, StartTime, EndDate, EndTime){
 function convertToMinutes(time){
 x=time.split(":")
 minutes=((parseInt(x[0])*60)+parseInt(x[1]))
-alert(time+"-"+minutes.toString())
+//alert(time+"-"+minutes.toString())
 return minutes.toString()
 }
 function getDate()	{			
