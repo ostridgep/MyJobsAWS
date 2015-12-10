@@ -57,7 +57,7 @@ function requestSAPData(page,params){
 
 	opMessage(SAPServerPrefix+page);
 	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
-	
+	alert(myurl)
 	$.ajax({
 	    dataType: "json",
 	    url: myurl,
@@ -818,7 +818,7 @@ sapCalls = 0;
 		console.log("SAP is being Called")
 		return
 		}
-	opMessage("Synchronizing Upload Data");
+	//opMessage("Synchronizing Upload Data");
 	
 var syncDetails = false	;
 	html5sql.process(
@@ -1104,8 +1104,8 @@ var syncDetails = false	;
 																html5sql.process("SELECT * from MyMessages where state = 'READ'",
 																	function(transaction, results, rowsArray){
 																		
-																		opMessage("done READ Message Select");
-																		opMessage("READ Messages = "+rowsArray.length);
+																		//opMessage("done READ Message Select");
+																		//opMessage("READ Messages = "+rowsArray.length);
 																		if( rowsArray.length > 0) {
 																			if (syncDetails){
 																				localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Read Messages:"+String(rowsArray.length));
@@ -1142,8 +1142,8 @@ var syncDetails = false	;
 																		html5sql.process("SELECT * from MyMessages where state = 'NEW'",
 																			function(transaction, results, rowsArray){
 																			
-																				opMessage("done SEND Message Select");
-																				opMessage("SEND Messages = "+rowsArray.length);
+																				//opMessage("done SEND Message Select");
+																				//opMessage("SEND Messages = "+rowsArray.length);
 																				if( rowsArray.length > 0) {
 																					if (syncDetails){
 																						localStorage.setItem('LastSyncUploadDetails',localStorage.getItem('LastSyncUploadDetails')+", Messages:"+String(rowsArray.length));
