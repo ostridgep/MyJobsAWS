@@ -64,19 +64,20 @@ function requestSAPData(page,params){
 	    
 	    timeout: 300000
 		}).done(function() {
-		    console.log("call success"+page );
+		    opMessage("call success"+page );
 		  }).fail( function( xhr, status ) {
-			  console.log(page+status+":"+xhr)
+			  alert(page+status)
+			  opMessage(page+status)
 			  	if (status!="parsererror"){
 					
 				    if( status == "timeout" ) {
-				    	console.log(page+status)
+				    	//opMessage(page+status)
 				    	opMessage(page+status);
 				    }
 			  	}
 			}).always(function() {
 
-					console.log( "Complete"+page );
+					opMessage("Complete"+page );
 					
 				
 			  });
