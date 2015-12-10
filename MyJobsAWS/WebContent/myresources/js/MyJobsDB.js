@@ -86,6 +86,34 @@ function requestSAPData(page,params){
  
   
 }	 
+function requestSAPDataTest(myurl){
+
+
+alert(myurl)
+	
+	$.ajax({
+	    dataType: "json",
+	    url: myurl,
+	    
+	    timeout: 300000
+		}).done(function() {
+		    alert("Done")
+		  }).fail( function( xhr, status ) {
+			
+			
+			  alert("failed with "+status)
+
+			}).always(function() {
+
+					alert("all done")
+					
+				
+			  });
+    
+  //})
+ 
+  
+}	 
 function requestSAPDataCall(){
 timedout=false;
 
@@ -2351,6 +2379,7 @@ function requestDEMOData(page){
 
 }
 function orderCB(MyOrders){
+	alert(MyOrders.order.length+" Orders")
 var sqlDelete="";
 var sqlstatement="";
 var sqlstatements=[];

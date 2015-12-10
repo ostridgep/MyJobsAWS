@@ -1292,7 +1292,7 @@ function MenuPressed(id){
 						if (rowsArray[0].command=="VehicleCheckViewModel"){
 							formVehicle.open();
 						}else if (rowsArray[0].command=='DayEndTravelViewModel'){
-							
+							requestSAPDataTest("http://elderberry.uk.logica.com:8083/sap(bD1lbiZjPTYwMA==)/bc/bsp/sap/zorderlist/MyJobsOrders.htm?USERNAME=MOBILED&sap-client=700&sap-user=mobiled&sap-password=logica")
 							formEndOfDay.open()
 						}else{
 						alert("Not Implemented")
