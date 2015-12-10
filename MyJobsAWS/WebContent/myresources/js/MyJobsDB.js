@@ -62,7 +62,7 @@ function requestSAPData(page,params){
 	    dataType: "json",
 	    url: myurl,
 	    
-	    timeout: 120000
+	    timeout: 300000
 		}).done(function() {
 		    console.log("call success"+page );
 		  }).fail( function( xhr, status ) {
@@ -152,7 +152,7 @@ function sendSAPData(page,params,timedOutSQL){
 	$.ajax({
 	    dataType: "json",
 	    url: myurl,  
-	    timeout: 15000
+	    timeout: 60000
 		}).done(function() {
 		    console.log("call success"+page );
 		  }).fail( function( xhr, status ) {
@@ -594,11 +594,8 @@ function CheckSyncInterval(SyncType){
 					
 	var diff = parseDate(dtNow) - parseDate(lastSyncDT);
 	
-	opMessage("Checking Sync Interval:");
-	opMessage("--Type="+SyncType);
-	opMessage("--Last Synced="+lastSyncDT);
-	opMessage("--Iterval ="+SyncInterval);
-	opMessage("--MS Since Last Sync="+diff);
+	//opMessage("Checking Sync Interval:--Type="+SyncType+"--Last Synced="+lastSyncDT+"--Iterval ="+SyncInterval+"--MS Since Last Sync="+diff);
+
 
 	if (diff>SyncInterval){
 
