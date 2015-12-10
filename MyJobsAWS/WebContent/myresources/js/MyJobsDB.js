@@ -102,6 +102,7 @@ alert(myurl)
 			
 			
 			  alert("failed with "+status)
+			  alert("xhr"+xhr.statusCode())
 
 			}).always(function() {
 
