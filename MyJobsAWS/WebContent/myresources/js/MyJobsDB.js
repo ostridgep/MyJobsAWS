@@ -57,7 +57,7 @@ function requestSAPData(page,params){
 
 	opMessage(SAPServerPrefix+page);
 	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
-	alert(myurl)
+	
 	$.ajax({
 	    dataType: "json",
 	    url: myurl,
@@ -66,7 +66,7 @@ function requestSAPData(page,params){
 		}).done(function() {
 		    opMessage("call success"+page );
 		  }).fail( function( xhr, status ) {
-			  alert(page+status)
+			
 			  opMessage(page+status)
 			  	if (status!="parsererror"){
 					
@@ -107,7 +107,7 @@ timedout=false;
 					var myurl=SAPServerPrefix+rowsArray[0].acall+SAPServerSuffix+rowsArray[0].aparams;
 					console.log("Called URL:"+myurl)
 					$.ajax({
-					    dataType: "json",
+					    dataType: "jsonp",
 					    url: myurl,
 					    timeout: 120000
 						}).done(function() {
