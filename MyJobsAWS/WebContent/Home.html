@@ -1415,7 +1415,7 @@ function startBGSync()
       // Update timer div with output from Web Worker
       w.onmessage = function (event) {   
     	
-		 syncReference()
+		 //syncReference()
 		 syncTransactional()
 		 setCounts();
 		 localStorage.setItem('SAPCalling','false')
