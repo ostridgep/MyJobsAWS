@@ -1491,6 +1491,22 @@ function updateJobDetsStatus(orderno, opno, status)
 		}
 	);
 }
+function updateJobDetsDateTime(orderno, opno)
+{
+
+
+
+	html5sql.process("update  myjobdets set tconf_date = '"+statusUpdateDate+"', tconf_time = '"+statusUpdateTime+"' where  orderno = '"+orderno+"' and opno = '"+ opno+"';",
+		function(){
+		
+				
+		},
+		function(error, statement){
+		opMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		
+		}
+	);
+}
 function countStatus()
 {
 

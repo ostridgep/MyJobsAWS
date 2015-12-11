@@ -593,6 +593,7 @@ function confirmAcceptStatus()
          												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
                                             		
                                             		     setStatusChangeDT()
+                                            		     updateJobDetsDateTime(CurrentOrderNo, CurrentOpNo)
                                                      		createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,
                                                     				sap.ui.getCore().byId("StatusUpdateActivityCode").getSelectedItem().getKey(),
                                                     				sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey(),
@@ -2087,7 +2088,7 @@ function prepareChangeStatus(){
 		sap.ui.getCore().getElementById('btnStatusClose').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusSuspend').setEnabled(true);
 
-	}else if(currentStatus=="CLOSED"){
+	}else if(currentStatus=="CLOSED")if(currentStatus=="CONF"){
 	
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
@@ -2280,7 +2281,7 @@ html5sql.process(SQLStatement,
                                   jobType=item.jobtype;
                            //}
                              
-                            if(item.status_s=="JFIN"){
+                            if(item.status_s=="CONF"){
                                   StatusText="Complete"
                                   StatusState=sap.ui.core.ValueState.Success
                                   StatusIcon="complete"
@@ -2566,7 +2567,7 @@ html5sql.process(SQLStatement,
 						JobType=rowsArray[0].notiftype;
 					 }
                      if(item.status_s=="JFIN"){
-                         currentStatus="JFIN"
+                         currentStatus="CLOSED"
                          StatusText="Complete"
                          StatusColour="Green"
                          StatusState=sap.ui.core.ValueState.Success
@@ -2619,7 +2620,7 @@ html5sql.process(SQLStatement,
                          StatusText="Deployed"
                          StatusState=sap.ui.core.ValueState.None
                          StatusIcon="create"
-                   }else if(item.status_s=="CLOSED"){
+                   }else if((item.status_s=="CLOSED")||(item.status_s=="CONF")){
                        currentStatus="CLOSED"
                            StatusColour="Red"
                            StatusText="Complete"
