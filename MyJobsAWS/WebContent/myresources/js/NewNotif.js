@@ -7,8 +7,8 @@ var selectedAssetSearchSite="";
 var selectedAssetSearchGroup="";
 var selectedAssetSearchType="";
 var newEQField = 			new sap.m.Input("NewEquipment",{ type: sap.m.InputType.Input,
-			 icon:"images//barcode.png",
-			 showValueHelp: true,
+			// icon:"images//barcode.png",
+			 //showValueHelp: true,
 			valueHelpRequest: [function(event){
 				//Scan()
 			

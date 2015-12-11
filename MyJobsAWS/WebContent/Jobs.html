@@ -147,6 +147,7 @@ var selectedFormQuestionGroupTitle;
 var CurrentOrderNo="";
 var CurrentOpNo="";
 var CurrentJobWorkCentre=""
+var CurrentJobWorkCentreOp=""
 var CurrentJobFL=""
 var CurrentJobEQ=""
 var CurrentJobProfile=""
@@ -2513,7 +2514,7 @@ var StatusColour=""
        SQLStatement="SELECT MyNotifications.pcode, MyNotifications.id as notifid, MyNotifications.type as jobtype, refnotificationtypes.notifprofile,MyRefOrderTypes.description as JobDescription, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
 	   SQLStatement+=" MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, "
 	   SQLStatement+=" MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext, "
-	   SQLStatement+=" MyOperations.shorttext as operationdesc , MyOrders.contact , MyJobDets.eworkcentre, MyJobDets.status_s,MyJobDets.site, MyJobDets.equipment_code, MyJobDets.equipment_desc,MyJobDets.equipment_gis, MyJobDets.funcloc_code, MyJobDets.funcloc_desc, MyJobDets.funcloc_gis, " 
+	   SQLStatement+=" MyOperations.shorttext as operationdesc , MyOrders.contact , MyJobDets.eworkcentre, MyJobDets.oworkcentre, MyJobDets.status_s,MyJobDets.site, MyJobDets.equipment_code, MyJobDets.equipment_desc,MyJobDets.equipment_gis, MyJobDets.funcloc_code, MyJobDets.funcloc_desc, MyJobDets.funcloc_gis, " 
        SQLStatement+="(SELECT GROUP_CONCAT(status ) "
        SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) as opstat,"
        SQLStatement+="(SELECT GROUP_CONCAT(statuscode ) "
@@ -2699,7 +2700,9 @@ html5sql.process(SQLStatement,
                      currentJob="job:"+rowsArray[0].orderno+':'+rowsArray[0].opno;
                      CurrentOrderNo=rowsArray[0].orderno
                      CurrentOpNo=rowsArray[0].opno
+                     
                      CurrentJobWorkCentre=rowsArray[0].eworkcentre
+                     CurrentJobWorkCentreOp=rowsArray[0].oworkcentre
                      CurrentJobProfile=rowsArray[0].notifprofile
                      CurrentJobFL =rowsArray[0].funcloc_code 
                      CurrentJobEQ =rowsArray[0].equipment_code 
