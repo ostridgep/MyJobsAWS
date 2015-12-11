@@ -68,6 +68,7 @@ span.tip {
 <script src="myresources/js/DG5.js"></script>
 <script src="myresources/js/gmaps.js"></script>
 <script src="myresources/js/NewNotif.js"></script>
+<script src="myresources/js/webPage.js"></script>
 <style>
 .formHdr {
 				font-weight: bold;
@@ -1518,18 +1519,23 @@ var detailFooterAWS = new sap.m.Bar({
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		
-		});
+		}); 
 								  ref1.show();
+								  
+								//	selectedWebPage='http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return'
+								//	formWebPage.open()
 								  }else if (currentFuncLoc_GIS.length>6)
 								  {
 									 
 								  x=convertToLatLon(currentFuncLoc_GIS)
-								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+ 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		//alert("Back")
 		});
-								  ref1.show();
+								  ref1.show(); 
+									/* selectedWebPage='http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return'
+									formWebPage.open() */
 								  }
 								  
 						    	  

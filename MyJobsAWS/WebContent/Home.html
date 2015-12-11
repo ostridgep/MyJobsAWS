@@ -47,6 +47,7 @@ font-size: 150%;
 <script src="myresources/js/MyJobsDB.js"></script>
 <script src="myresources/js/MyJobsUtils.js"></script>
 <script src="myresources/js/NewNotif.js"></script>
+<script src="myresources/js/webPage.js"></script>
 
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript">
@@ -61,7 +62,7 @@ var TotalNotificationsCnt=0;
 var EmployeeID = localStorage.getItem("EmployeeID")
 var OrdersCnt=0
 var NotificationsCnt=0
-var selectedWebPage=""
+
 var selectedMenuItem=""
  // initialize variable
 var mpointdefaults=[]
@@ -636,52 +637,7 @@ function loadConfigValues(){
 	}
 	
 }
-var formWebPage = new sap.m.Dialog("dlgWebPage",{
-   
-   
-    horizontalScrolling:true,
-    verticalScrolling:true,
-    modal: true,
-    contentWidth:"1em",
-    buttons: [
 
-
-					new sap.m.Button( {
-					    text: "Close",
-					    icon:"sap-icon://sys-cancel",
-					    type: sap.m.ButtonType.Reject,
-					    tap: [ function(oEvt) {		  
-							 
-					    	formWebPage.close()} ]   
-					}),
-					
-					],					
-    content:[
-
-            ],
-            contentWidth:"99%",
-            contentHeight: "99%",
-      beforeOpen:function(){
-    	  
-    	   
-    	  formWebPage.addContent(new 		sap.ui.core.HTML({
-    		 
-			content: '<iframe id="HomeWebPage" width="100%"  src="'+selectedWebPage+'"></iframe>'
-
-
-		}))
-
-      },
-      afterOpen:function(){
-    	  document.getElementById('HomeWebPage').style.height=document.getElementById("dlgWebPage").offsetHeight-130+"px"  
-    	  
-      },
-   	afterClose:function(){
-   		
-   		formWebPage.destroyContent()
-   	}
-	
-	 })
 var formConfig = new sap.m.Dialog("dlgConfig",{
     title:"Sync Config",
     modal: true,
@@ -1211,7 +1167,9 @@ var tileContainer = new sap.m.TileContainer({
 			
 			press:[ function(){
 				selectedWebPage="Forms\\ResponsiveForm\\formsindex.html"
-					openWebPage(selectedWebPage)
+					
+					formWebPage.open()
+					//openWebPage(selectedWebPage)
 					
 }]
 		
@@ -1262,14 +1220,13 @@ function BuildMenuBar(){
 	
 }
 function openWebPage(url){
-	selectedWebPage=url
-	formWebPage.open()
-	/* ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return')
+
+	ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return')
 	ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
-		alert("Back")
+		//alert("Back")
 		});
-	ref1.show(); */
+	ref1.show();
 }
 
 function MenuPressed(id){
