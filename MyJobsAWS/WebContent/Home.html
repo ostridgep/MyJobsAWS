@@ -1262,13 +1262,14 @@ function BuildMenuBar(){
 	
 }
 function openWebPage(url){
-
-	ref1=window.open(url, "_blnk", 'location=no,closebuttoncaption=Return')
+	selectedWebPage=url
+	formWebPage.open()
+	/* ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return')
 	ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		alert("Back")
 		});
-	ref1.show();
+	ref1.show(); */
 }
 
 function MenuPressed(id){

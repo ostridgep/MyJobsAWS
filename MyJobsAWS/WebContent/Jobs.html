@@ -1517,7 +1517,7 @@ var detailFooterAWS = new sap.m.Bar({
 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
-		alert("Back")
+		
 		});
 								  ref1.show();
 								  }else if (currentFuncLoc_GIS.length>6)
@@ -1527,7 +1527,7 @@ var detailFooterAWS = new sap.m.Bar({
 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
-		alert("Back")
+		//alert("Back")
 		});
 								  ref1.show();
 								  }
@@ -4711,7 +4711,7 @@ sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
 
 		var SQLStatement="";
 		var FirstVal="";
-		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
+		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' group by codegrp"
 		
 		var HTMLToOutput="";
 			html5sql.process(SQLStatement,
@@ -4738,7 +4738,7 @@ sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
 									text: item.kurztext_group
 								}))
 					}
-					SQLStatement="select * from refpaicodes where catalogue = 'R' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
+					SQLStatement="select * from refpaicodes where catalogue = 'R' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' group by codegrp"
 					html5sql.process(SQLStatement,
 							 function(transaction, results, rowsArray){
 						
@@ -4763,7 +4763,7 @@ sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
 												}))
 									}
 								
-									SQLStatement="select * from refpaicodes where catalogue = 'S' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"'"
+									SQLStatement="select * from refpaicodes where catalogue = 'S' and level='1' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' group by codegrp"
 									html5sql.process(SQLStatement,
 											 function(transaction, results, rowsArray){
 										
