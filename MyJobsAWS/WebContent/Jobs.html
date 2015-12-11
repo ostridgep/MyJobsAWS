@@ -296,7 +296,7 @@ new sap.m.Button( {
         				ofollowOnReason=''
     			}
     			
-    			 if(sap.ui.getCore().byId("Close_InShiftTime").getValue()!="0:0"){
+    			 if((sap.ui.getCore().byId("Close_InShiftTime").getValue()!="0:0")&&(sap.ui.getCore().byId("Close_InShiftTime").getValue()!="00:00")){
     				 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'SMEPIS',
     					ifollowOnVariance,
     					 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
@@ -304,7 +304,7 @@ new sap.m.Button( {
     		           		ifollowOnReason,
     		           		'',ifinal)
     			 }
-    			 if(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()!="0:0"){
+    			 if((sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()!="0:0")&&(sap.ui.getCore().byId("Close_OutOfShiftTime").getValue()!="00:00")){
     				 createAWSTConf(CurrentOrderNo, CurrentOpNo,localStorage.getItem("EmployeeID"),CurrentJobWorkCentre,'SMEPOS',
     						 ofollowOnVariance,
         					 statusUpdateDate,statusUpdateTime,statusUpdateDate, statusUpdateTime, 
@@ -337,6 +337,7 @@ new sap.m.Button( {
     						 followOnWork,followOnVariance,followOnReason )  				 
     			 }
 					updateJobDetsStatus(CurrentOrderNo, CurrentOpNo, "CLOSED")
+					updateOperationStatus(CurrentOrderNo, CurrentOpNo, "CONF" ,"Confirmed")
 					currentStatus="CLOSED"
 					prepareChangeStatus()
 					localStorage.setItem('totalAccepted','0');
@@ -360,7 +361,7 @@ new sap.m.Button( {
                                       icon:"sap-icon://sys-cancel",
                                       type: sap.m.ButtonType.Reject,
                                       tap: [ function(oEvt) {         
-                                                 
+                                    	   
                                          formDG5.close()} ]   
                                   }),
                                   
@@ -495,7 +496,8 @@ function confirmAcceptStatus()
                                                 
                                                
 												if((sap.ui.getCore().byId("StatusParkActualWork").getValue()!="0:0")&&
-												(sap.ui.getCore().byId("StatusParkReasonText").getValue().length>0)){
+												(sap.ui.getCore().byId("StatusParkReasonText").getValue().length>0)&&
+												(sap.ui.getCore().byId("StatusParkReasonCode").getSelectedItem().getKey()!="NOTSELECTED")){
 	                                                formChangeStatusPark.close()   
 	                                                setStatusChangeDT()
 	                                                 changeStatus("PARK")   
@@ -586,6 +588,7 @@ function confirmAcceptStatus()
                                              tap: [ function(oEvt) { 
                                                 
                                             	 if((sap.ui.getCore().byId("StatusUpdateActualWork").getValue()!="")&&
+                                            			 (sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey()!="NOTSELECTED")
                                             			 (sap.ui.getCore().byId("StatusUpdateRemainingWork").getValue()!="0:0")&&
          												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
                                             		
@@ -602,7 +605,7 @@ function confirmAcceptStatus()
                                                      
                                             		 formChangeStatusUpdate.close()  
          												}else{
-         													DisplayErrorMessage("Update Job Error", "Actual Work must be > 0\n Remaining Work must be > 0\n and Reason must be completed")
+         													DisplayErrorMessage("Update Job Error", "Actual Work must be > 0\n Remaining Work must be > 0\n Variance must be seleted\n and Reason must be completed")
          												}    
                                                       
                                                        
@@ -691,7 +694,8 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                                              tap: [ function(oEvt) { 
                                                 
                                                 
-                                            	 if(sap.ui.getCore().byId("StatusRejectReasonText").getValue().length>0){
+                                            	 if((sap.ui.getCore().byId("StatusRejectReasonText").getValue().length>0)&&
+                                            			 (sap.ui.getCore().byId("StatusRejectVarianceCode").getSelectedItem().getKey()!="NOTSELECTED")){
                                             		 setStatusChangeDT()
                                             		 formChangeStatusReject.close()
                                                      
@@ -699,7 +703,7 @@ var formChangeStatusReject = new sap.m.Dialog("dlgStatusReject",{
                                                     
                                                       prepareChangeStatus()   
          												}else{
-         													DisplayErrorMessage("Reject Job Error", "Reason must be completed")
+         													DisplayErrorMessage("Reject Job Error", "Variance and Reason must be completed")
          												}        
                                                                                                               
                                                          } ]
@@ -1516,7 +1520,7 @@ var detailFooterAWS = new sap.m.Bar({
 							  if(currentEquipment_GIS.length>6){
 								 
 								  x=convertToLatLon(currentEquipment_GIS)
-								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_system", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		
@@ -1529,7 +1533,7 @@ var detailFooterAWS = new sap.m.Bar({
 								  {
 									 
 								  x=convertToLatLon(currentFuncLoc_GIS)
- 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+ 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_system", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		//alert("Back")
@@ -2510,10 +2514,12 @@ var jobType;
 var surveyID;
 var jobicons=[]
 var StatusColour=""
+var Longtext='';
+var NLongtext=''
 
        SQLStatement="SELECT MyNotifications.pcode, MyNotifications.id as notifid, MyNotifications.type as jobtype, refnotificationtypes.notifprofile,MyRefOrderTypes.description as JobDescription, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, "
 	   SQLStatement+=" MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, "
-	   SQLStatement+=" MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext, "
+	   SQLStatement+=" MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext,MyNotifications.longtext as notiflongtext, "
 	   SQLStatement+=" MyOperations.shorttext as operationdesc , MyOrders.contact , MyJobDets.eworkcentre, MyJobDets.oworkcentre, MyJobDets.status_s,MyJobDets.site, MyJobDets.equipment_code, MyJobDets.equipment_desc,MyJobDets.equipment_gis, MyJobDets.funcloc_code, MyJobDets.funcloc_desc, MyJobDets.funcloc_gis, " 
        SQLStatement+="(SELECT GROUP_CONCAT(status ) "
        SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) as opstat,"
@@ -2734,6 +2740,7 @@ html5sql.process(SQLStatement,
                        sap.ui.getCore().getElementById('Equipment').setText(rowsArray[0].equipment_code+" "+rowsArray[0].equipment_desc)   */
 					  
 					   //sap.ui.getCore().getElementById('Equipment').setCustomContent(sap.m.icon("images/"+jobicons[0]))				   
+                       NLongtext=rowsArray[0].notiflongtext
                        Longtext=rowsArray[0].orderlongtext    
 
              
@@ -2746,6 +2753,7 @@ html5sql.process(SQLStatement,
 
                                   
                              sap.ui.getCore().getElementById('LongText').setText(Longtext)      
+                              sap.ui.getCore().getElementById('NLongText').setText(NLongtext)      
 
                            buildDetailsTabContent(orderno,opno,"FORM",surveyID)
                      }else{
@@ -2785,7 +2793,8 @@ html5sql.process(SQLStatement,
                      oDetailPage.addContent(buildDetailsTabs("NORMAL","0"))
 
                      
-                       sap.ui.getCore().getElementById('LongText').setText(Longtext)      
+                       sap.ui.getCore().getElementById('LongText').setText(Longtext)   
+                       sap.ui.getCore().getElementById('NLongText').setText(NLongtext)      
 
                      buildDetailsTabContent(orderno,opno,"NORMAL","0")
 
@@ -3564,6 +3573,7 @@ formtab=null;
 					
 					  if(oEvt.getParameters().key=="Assets"){oDetailPage.setFooter(detailFooterAWS)}
 					  if(oEvt.getParameters().key=="LongText"){oDetailPage.setFooter(detailFooterAWS)}
+					  if(oEvt.getParameters().key=="OLongText"){oDetailPage.setFooter(detailFooterAWS)}
 					  if(oEvt.getParameters().key=="Partners"){oDetailPage.setFooter(detailFooterAWS)}
 					  if(oEvt.getParameters().key=="Materials"){oDetailPage.setFooter(detailFooterAWS)}
 					  if(oEvt.getParameters().key=="TConf"){oDetailPage.setFooter(detailFooterAWS)}
@@ -3574,8 +3584,17 @@ formtab=null;
 
 
        	                new sap.m.IconTabFilter( 'LONGTEXT',{
-       	                	text:'LongText',
+       	                	text:'Notification',
     	                   key:'LongText',
+    	                   tooltip: 'Long Text',
+    	                   icon: "sap-icon://document-text",
+    	                   content:[
+									new sap.m.Text( 'NLongText',{})
+    	                            ]
+    	                }),
+    	                new sap.m.IconTabFilter( 'OLONGTEXT',{
+       	                	text:'Order',
+    	                   key:'OLongText',
     	                   tooltip: 'Long Text',
     	                   icon: "sap-icon://document-text",
     	                   content:[
@@ -4551,11 +4570,15 @@ function BuildChangeStatusPark(){
 									text: item.activity_desc
 								}))
 					}
-					html5sql.process("select * from refvariancesrfv where job_activity = 'PRK'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
+					html5sql.process("select * from refvariancesrfv where job_activity = 'PRK'  and  work_cntr = '"+CurrentJobWorkCentre+"'  order  by dev_reas_txt",
 							 function(transaction, results, rowsArray){
 								
 								sap.ui.getCore().getElementById("StatusParkReasonCode").destroyItems();
-								
+								sap.ui.getCore().getElementById("StatusParkReasonCode").addItem(
+										new sap.ui.core.Item({
+											key: "NOTSELECTED",
+											text: 'Please Select'
+										}))
 									for (var n = 0; n < rowsArray.length; n++) {
 										item = rowsArray[n];
 										sap.ui.getCore().getElementById("StatusParkReasonCode").addItem(
@@ -4623,11 +4646,15 @@ function BuildChangeStatusUpdate(){
 									text: item.activity_desc
 								}))
 					} 
-					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
+					html5sql.process("select * from refvariancesrfv where job_activity = 'UPD'  and  work_cntr = '"+CurrentJobWorkCentre+"' order  by dev_reas_txt",
 							 function(transaction, results, rowsArray){
 						
 						 	sap.ui.getCore().getElementById("StatusUpdateVarianceCode").destroyItems();
-								
+						 	sap.ui.getCore().getElementById("StatusUpdateVarianceCode").addItem(
+									new sap.ui.core.Item({
+										key: "NOTSELECTED",
+										text: 'Please Select'
+									}))	
 									for (var n = 0; n < rowsArray.length; n++) {
 										item = rowsArray[n];
 										sap.ui.getCore().getElementById("StatusUpdateVarianceCode").addItem(
@@ -4679,11 +4706,15 @@ function BuildChangeStatusReject(){
 		var FirstVal="";
 		SQLStatement="select * from refactivity where action = 'P'  and  work_center = '"+CurrentJobWorkCentre+"'"
 		var HTMLToOutput="";
-					html5sql.process("select * from refvariancesrfv where job_activity = 'REJ'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
+					html5sql.process("select * from refvariancesrfv where job_activity = 'REJ'  and  work_cntr = '"+CurrentJobWorkCentre+"'  order  by dev_reas_txt",
 							 function(transaction, results, rowsArray){
 								
 								sap.ui.getCore().getElementById("StatusRejectVarianceCode").destroyItems();
-								
+							 	sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
+										new sap.ui.core.Item({
+											key: "NOTSELECTED",
+											text: 'Please Select'
+										}))	
 									for (var n = 0; n < rowsArray.length; n++) {
 										item = rowsArray[n];
 										sap.ui.getCore().getElementById("StatusRejectVarianceCode").addItem(
@@ -4796,7 +4827,7 @@ sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
 																	text: item.kurztext_group
 																}))
 													}
-													html5sql.process("select * from refvariancesrfv where job_activity = 'ADD'  and  work_cntr = '"+CurrentJobWorkCentre+"'",
+													html5sql.process("select * from refvariancesrfv where job_activity = 'ADD'  and  work_cntr = '"+CurrentJobWorkCentre+"'  order  by dev_reas_txt",
 															 function(transaction, results, rowsArray){
 																
 																sap.ui.getCore().getElementById("Close_Variance").destroyItems();
@@ -4863,7 +4894,7 @@ sap.ui.getCore().getElementById("FEClose_LongText").setVisible(PAIVisible)
 	
 		var SQLStatement="";
 		var FirstVal="";
-		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"'"
+		SQLStatement="select * from refpaicodes where catalogue = 'P' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"' group  by code"
 		
 		var HTMLToOutput="";
 			html5sql.process(SQLStatement,
@@ -4897,7 +4928,7 @@ function BuildCloseActionCodes(grp){
 	
 	var SQLStatement="";
 	var FirstVal="";
-	SQLStatement="select * from refpaicodes where catalogue = 'R' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"'"
+	SQLStatement="select * from refpaicodes where catalogue = 'R' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"' group  by code"
 	
 	var HTMLToOutput="";
 		html5sql.process(SQLStatement,
@@ -4931,7 +4962,7 @@ function BuildCloseImpactCodes(grp){
 	
 	var SQLStatement="";
 	var FirstVal="";
-	SQLStatement="select * from refpaicodes where catalogue = 'S' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"'"
+	SQLStatement="select * from refpaicodes where catalogue = 'S' and level='2' and work_cntr='"+CurrentJobWorkCentre+"' and stsma = '"+CurrentJobProfile+"' and codegrp = '"+grp+"' group  by code"
 	
 
 		html5sql.process(SQLStatement,
