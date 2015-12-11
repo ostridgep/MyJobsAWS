@@ -1656,6 +1656,7 @@ html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, details, emp
 
 function createAWSTConf(order,opno,empid,work_cntr,acttype,reasontype,startdate,starttime,enddate, endtime, actwork,remwork,text,details,finalconf)
 {
+/*	alert(work_cntr+":"+CurrentJobWorkCentreOp)
 html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,reason,type, confno , description , longtext, date , time , enddate, endtime, act_work, rem_work, empid, work_cntr, final , datestamp, user, state) VALUES ("+
 			 "'"+order+"','"+opno+"','"+reasontype+"','"+acttype+"','NEW','"+text+"','"+details+"','"+startdate+"','"+starttime+"','"+enddate+"','"+endtime+"','"+actwork+"','"+remwork+"','"+empid+"','"+work_cntr+"','"+finalconf+"','"+getDate()+" "+getTime()+"','"+localStorage.getItem("MobileUser")+"','');",
 	 function(){
@@ -1665,7 +1666,18 @@ html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,reason,type, confno ,
 
 		opMessage("Error: " + error.message + " when createTConf processing " + statement);
 	 }        
-	);
+	);*/
+
+	html5sql.process("INSERT INTO  MyTimeConfs (orderno , opno,reason,type, confno , description , longtext, date , time , enddate, endtime, act_work, rem_work, empid, work_cntr, final , datestamp, user, state) VALUES ("+
+				 "'"+order+"','"+opno+"','"+reasontype+"','"+acttype+"','NEW','"+text+"','"+details+"','"+startdate+"','"+starttime+"','"+enddate+"','"+endtime+"','"+actwork+"','"+remwork+"','"+empid+"','"+CurrentJobWorkCentreOp+"','"+finalconf+"','"+getDate()+" "+getTime()+"','"+localStorage.getItem("MobileUser")+"','');",
+		 function(){
+			rebuildTimeConfs();
+		 },
+		 function(error, statement){
+
+			opMessage("Error: " + error.message + " when createTConf processing " + statement);
+		 }        
+		);
 }
 function createTConf(order,opno,empid,type,startdate,enddate,duration,finalconf,comments)
 {
