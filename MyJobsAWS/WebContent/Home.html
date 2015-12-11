@@ -1212,8 +1212,7 @@ var tileContainer = new sap.m.TileContainer({
 			press:[ function(){
 				selectedWebPage="Forms\\ResponsiveForm\\formsindex.html"
 					openWebPage(selectedWebPage)
-					selectedWebPage="Forms/ResponsiveForm/formsindex.html"
-					openWebPage(selectedWebPage)
+					
 }]
 		
 		}),
@@ -1264,7 +1263,11 @@ function BuildMenuBar(){
 }
 function openWebPage(url){
 
-	ref1=window.open(url, "_blnk", 'location=yes,closebuttoncaption=Return')
+	ref1=window.open(url, "_blnk", 'location=no,closebuttoncaption=Return')
+	ref1.addEventListener('exit', function(event) {
+		//window.location.href="Home.html"; 
+		alert("Back")
+		});
 	ref1.show();
 }
 

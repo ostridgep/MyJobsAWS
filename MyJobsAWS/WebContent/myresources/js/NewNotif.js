@@ -10,10 +10,10 @@ var newEQField = 			new sap.m.Input("NewEquipment",{ type: sap.m.InputType.Input
 			 icon:"images//barcode.png",
 			 showValueHelp: true,
 			valueHelpRequest: [function(event){
-				Scan()
+				//Scan()
 			
 		}]});
-		newEQField._getValueHelpIcon().setSrc("sap-icon://bar-code");
+		//newEQField._getValueHelpIcon().setSrc("sap-icon://bar-code");
 var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
     title:" Notification",
     modal: true,

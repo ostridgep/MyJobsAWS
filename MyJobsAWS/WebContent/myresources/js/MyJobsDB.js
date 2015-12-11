@@ -71,7 +71,7 @@ function requestSAPData(page,params){
 			  	if (status!="parsererror"){
 					
 				    if( status == "timeout" ) {
-				    	//opMessage(page+status)
+				    	
 				    	opMessage(page+status);
 				    }
 			  	}

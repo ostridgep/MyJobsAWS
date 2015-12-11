@@ -1515,12 +1515,20 @@ var detailFooterAWS = new sap.m.Bar({
 								 
 								  x=convertToLatLon(currentEquipment_GIS)
 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+								  ref1.addEventListener('exit', function(event) {
+		//window.location.href="Home.html"; 
+		alert("Back")
+		});
 								  ref1.show();
 								  }else if (currentFuncLoc_GIS.length>6)
 								  {
 									 
 								  x=convertToLatLon(currentFuncLoc_GIS)
 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blnk", 'location=yes,closebuttoncaption=Return')
+								  ref1.addEventListener('exit', function(event) {
+		//window.location.href="Home.html"; 
+		alert("Back")
+		});
 								  ref1.show();
 								  }
 								  
