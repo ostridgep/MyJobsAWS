@@ -588,7 +588,7 @@ function confirmAcceptStatus()
                                              tap: [ function(oEvt) { 
                                                 
                                             	 if((sap.ui.getCore().byId("StatusUpdateActualWork").getValue()!="")&&
-                                            			 (sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey()!="NOTSELECTED")
+                                            			 (sap.ui.getCore().byId("StatusUpdateVarianceCode").getSelectedItem().getKey()!="NOTSELECTED")&&
                                             			 (sap.ui.getCore().byId("StatusUpdateRemainingWork").getValue()!="0:0")&&
          												(sap.ui.getCore().byId("StatusUpdateReasonText").getValue().length>0)){
                                             		
