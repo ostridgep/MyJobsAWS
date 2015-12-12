@@ -406,8 +406,8 @@ function BuildPriorities(selectedId){
 		         		    dataType: "xml",
 		         		    success: function (xml) {    
 		         		       xmlDoc=xml 
-		         		      BuildAssetSites("ESVN");
-		         		      $.ajax({
+		         		      BuildAssetSites();
+/*		         		      $.ajax({
 				         		    type: "GET",
 				         		    url: "TestData/T2_MPLT_LSVM.XML",
 				         		    dataType: "xml",
@@ -481,7 +481,7 @@ function BuildPriorities(selectedId){
 						         		});
 				         		    }    
 				         		       
-				         		});
+				         		});*/
 		         		    }    
 		         		       
 		         		});
@@ -506,21 +506,21 @@ function BuildPriorities(selectedId){
 }
 
 
-		function BuildAssetSites(fname){
-			if(fname=="ESVN"){
+		function BuildAssetSites(){
+			
 				sites=[]
 				
-			}
-			console.log(fname)
+			
+		
 		       
 		       $(xmlDoc).find('ASSET_EXTRACT ASSET').each(function(){
 		              
 		              var text= $(this).attr('SITE');
 		               if ($.inArray(text, sites)===-1){
-		                   sites.push(text+":"+fname);
+		                   sites.push(text);
 		               }
 		   })
-
+		   LoadSites()
 
 
 		}
@@ -534,12 +534,12 @@ function BuildPriorities(selectedId){
 			   selectedAssetSearchType="ALL"
 			   for (i=0;i<sites.length;i++)
 			   {
-			      x=sites[i].split(":")
+			     
 
 			          sap.ui.getCore().getElementById("AssetSite").addItem(
 			                           new sap.ui.core.Item({
 			                                  key: sites[i],
-			                                  text: x[0]
+			                                  text:  sites[i]
 			                           }))   
 
 
@@ -602,12 +602,7 @@ function BuildPriorities(selectedId){
 
 		}
 		function BuildAssetPlantGroups(site){
-			x=site.split(":")
-			$.ajax({
-     		    type: "GET",
-     		    url: "TestData/T2_MPLT_"+x[1]+".XML",
-     		    dataType: "xml",
-     		    success: function (xml) {    
+   
      		       xmlDoc=xml 
      		      selectedAssetSearchSite=site;
                    sap.ui.getCore().getElementById('AssetGroup').destroyItems()
@@ -648,20 +643,12 @@ function BuildPriorities(selectedId){
 					                                              key: "ALL",
 					                                              text: "ALL"
 					                                       })) 
-		     		    }    
-		     		       
-		     		});
+
 		       
 		}
 		
 		function BuildAssetTypes(AssetGroup){
-			x=selectedAssetSearchSite.split(":")
-			$.ajax({
-     		    type: "GET",
-     		    url: "TestData/T2_MPLT_"+x[1]+".XML",
-     		    dataType: "xml",
-     		    success: function (xml) {    
-     		       xmlDoc=xml 
+
      		      selectedAssetSearchGroup=AssetGroup;
     		       sap.ui.getCore().getElementById('AssetType').destroyItems()
 					$(xmlDoc).find('ASSET_EXTRACT ASSET[SITE="'+selectedAssetSearchSite+'"]').each(function(){
@@ -697,47 +684,9 @@ function BuildPriorities(selectedId){
     			                           text: "ALL"
     			                     })) 
 			 
-		     		    }    
-		     		       
-		     		});
-		       
-		}
-		function BuildAssetTypes(AssetGroup){
-		       selectedAssetSearchGroup=AssetGroup;
-		       sap.ui.getCore().getElementById('AssetType').destroyItems()
-		       $(xmlDoc).find('ASSET_EXTRACT ASSET[SITE="'+selectedAssetSearchSite+'"]').each(function(){
-		              
-		              var text= $(this).attr('ASSET_DESC');
-		              
-		               
-		               if ($(this).attr('PLANT_GROUP')==AssetGroup){
-		               if ($.inArray(text, assets)===-1){
-		                   assets.push(text);
-		               }
-		              }
-		    })
-		assets.sort();
-
-		   for (i=0;i<assets.length;i++)
-		   {
-		      
-
-		          sap.ui.getCore().getElementById("AssetType").addItem(
-		                           new sap.ui.core.Item({
-		                                  key: assets[i],
-		                                  text: assets[i]
-		                           }))   
-
-
-		  
-		   }
-		   sap.ui.getCore().getElementById("AssetType").addItem(
-		                     new sap.ui.core.Item({
-		                           key: "ALL",
-		                           text: "ALL"
-		                     })) 
 
 		}
+
 		function BuildAssetSearchResults(type){
 		       selectedAssetSearchType=type;
 		}

@@ -2803,7 +2803,7 @@ function InsertOrder(sqlstatement,orderno,changeddatetime){
 						html5sql.process(sqlstatement1+sqlstatement,
 								 function(transaction, results, rowsArray){
 
-								
+									//addNewJobToList(orderno){
 			
 										
 								 },

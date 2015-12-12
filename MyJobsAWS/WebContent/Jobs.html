@@ -2260,6 +2260,7 @@ html5sql.process(SQLStatement,
               function(transaction, results, rowsArray){
 	 
                      cnt = 0;
+                     oMasterPage.setTitle("Jobs: "+rowsArray.length)
                      while (cnt<rowsArray.length){
                            item=rowsArray[cnt];
                            if(cnt==0){
@@ -2360,6 +2361,7 @@ html5sql.process(SQLStatement,
 						}));
 					  cnt++;
 			 }
+
 			oMasterPage.destroyContent()
 			oMasterPage.addContent(standardList);
 			selectListDefault();
@@ -2375,6 +2377,171 @@ cnt = 0;
 
 
 }
+function addNewJobToList(orderno){
+	var item;     
+	var lStatus="";
+	var StatusState="";
+	var StatusIcon="";
+	var res;
+	var jobType;
+	var xOrderNo=-1
+	var jobicons=[]
+	var jobtooltip=[]
+	var priorityicons=[]
+	var prioritytooltip=[]
+	countStatus()
+	       SQLStatement="SELECT MyNotifications.pcode, myjobdets.status_s, MyNotifications.type as jobtype, MyOperations.orderno, MyOperationsSplit.assignedto as empid, MyOperations.opno, MyOrders.type, MyOperations.startdate, MyOperations.enddate, MyOrders.address,  MyOrders.postcode,MyOrders.notifno, MyOrders.gis, MyOperations.status, MyOrders.priority, MyOperations.apptstart, MyOperations.apptend, MyOrders.shorttext as orderdesc , MyOrders.longtext as orderlongtext ,MyOperations.shorttext as operationdesc , MyOrders.contact , " 
+	       SQLStatement+="(SELECT GROUP_CONCAT(status ) "
+	       SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) as opstat,"
+	       SQLStatement+="(SELECT GROUP_CONCAT(statuscode ) "
+	       SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) AS statuscode,"
+	       SQLStatement+="(SELECT GROUP_CONCAT(statusdesc ) "
+	       SQLStatement+="FROM myuserstatus  where MyOperations.orderno =myuserstatus.orderno and MyOperations.opno = myuserstatus.opno) AS statusdesc, "
+	       SQLStatement+="(SELECT GROUP_CONCAT(value1 ) "
+	       SQLStatement+="FROM myoperationinfo  where MyOperations.orderno =myoperationinfo.orderno and MyOperations.opno = myoperationinfo.opno and myoperationinfo.type = 'JOBICON') AS jobicon_filename, "
+	       SQLStatement+="(SELECT GROUP_CONCAT(value2 ) "
+	       SQLStatement+="FROM myoperationinfo  where MyOperations.orderno =myoperationinfo.orderno and MyOperations.opno = myoperationinfo.opno and myoperationinfo.type = 'JOBICON') AS jobicon_description, "
+	       SQLStatement+="(SELECT GROUP_CONCAT(value1 ) "
+	       SQLStatement+="FROM myoperationinfo  where MyOperations.orderno =myoperationinfo.orderno and MyOperations.opno = myoperationinfo.opno and myoperationinfo.type = 'PRIORITYICON') AS priorityicon_filename, "
+	       SQLStatement+="(SELECT GROUP_CONCAT(value2 ) "
+	       SQLStatement+="FROM myoperationinfo  where MyOperations.orderno =myoperationinfo.orderno and MyOperations.opno = myoperationinfo.opno and myoperationinfo.type = 'PRIORITYICON') AS priorityicon_description "
+	      
+	      
+	       
+	       SQLStatement+=" From MyOperations "
+
+	       SQLStatement+="left join myoperationssplit on myoperations.orderno = myoperationssplit.orderno "
+	       SQLStatement+="      and myoperations.opno = myoperationssplit.opno "
+	    	   SQLStatement+="left join myjobdets on myoperations.orderno = myjobdets.orderno "
+	    	       SQLStatement+="      and myoperations.opno = myjobdets.opno "
+	                     
+	              SQLStatement+="left join myorders on myoperations.orderno = myorders.orderno "
+	                     SQLStatement+="left join mynotifications on myorders.notifno = mynotifications.notifno "
+	                     SQLStatement+=" where myjobdets.orderno = '"+orderno+"'  and myoperationssplit.assignedto = '"+EmployeeID+"' and myjobdets.status not in ('CLOSED','CONF', 'REJ1', 'REJ2') order by  MyOperations.orderno,  MyOperations.opno"
+	html5sql.process(SQLStatement,
+	              function(transaction, results, rowsArray){
+		 
+	                     cnt = 0;
+	                     oMasterPage.setTitle("Jobs: "+rowsArray.length)
+	                     while (cnt<rowsArray.length){
+	                           item=rowsArray[cnt];
+	                           if(cnt==0){
+	                                  firstJob="job:"+item.orderno+':'+item.opno
+	                           }
+	                           
+	                           if(MapJobPar[0]=="job"){
+	                                  if (MapJobPar[1]==item.orderno){
+	                                         if (MapJobPar[2]==item.opno)
+	                                                selectedListItem=cnt;
+	                                                firstJob="job:"+item.orderno+':'+item.opno
+	                                  }
+	                           }
+	                           //alert(item.jobtyp+":"+item.opstat+":"+item.statuscode+":"+item.statusdesc)  
+	                           //res=item.jobtype.split(":");
+	                           //if(res[0]=="FORM"){
+	                           //       jobType=getJobType(res[1])
+	                           //}else{
+	                                  jobType=item.jobtype;
+	                           //}
+	                             
+	                            if(item.status_s=="CONF"){
+	                                  StatusText="Complete"
+	                                  StatusState=sap.ui.core.ValueState.Success
+	                                  StatusIcon="complete"
+	                           }else if(item.status_s=="CLOSED"){
+	                               StatusText="Complete"
+	                                   StatusState=sap.ui.core.ValueState.Success
+	                                   StatusIcon="complete"
+	                            }else if(item.status_s=="SITE"){
+	                                  StatusText="On Site"
+	                                  StatusState=sap.ui.core.ValueState.Success
+	                                  StatusIcon="building"
+	                           }else if(item.status_s=="JONR"){
+	                                  StatusText="On Route"
+	                                  StatusState=sap.ui.core.ValueState.Success
+	                                  StatusIcon="car-rental"
+	                           }else if(item.status_s=="ACPT"){
+	                                  StatusText="Accepted"
+	                                  StatusState=sap.ui.core.ValueState.Success
+	                                  StatusIcon="accept"
+	                           }else if((item.status_s=="REJ1")||(item.status_s=="REJ2")){
+	                                  StatusText="Rejected"
+	                                  StatusState=sap.ui.core.ValueState.Error
+	                                  StatusIcon="decline"
+	                           }else if(item.status_s=="PARK"){
+	                                  StatusText="Parked"
+	                                  StatusState=sap.ui.core.ValueState.Warning
+	                                  StatusIcon="pause"
+	                           }else if(item.status_s=="DEPL"){
+	                                  StatusText="Deployed"
+	                                         StatusState=sap.ui.core.ValueState.None
+	                                         StatusIcon="create"
+	                                  }else {
+	                                  StatusText=""
+	                                  StatusState=sap.ui.core.ValueState.None
+	                                  StatusIcon="create"
+	                           }
+							   if(item.jobicon_filename==null){
+									jobicons=[]
+							   }else{
+									jobicons = item.jobicon_filename.split(",")
+									}
+								if(item.jobicon_description==null){
+									jobtooltip=[]
+							   }else{
+									jobtooltip = item.jobicon_description.split(",")
+									}
+							  
+								priorityIcon="XX"+item.priorityicon_filename;		   
+							   var iconsToDisplay=''
+							   for (var n=0;n <jobicons.length;n++)
+							   {
+									iconsToDisplay+='<img src="images/'+jobicons[n]+'" onclick="showMessage(\''+jobtooltip[n]+'\')">'
+							   }
+							   if(priorityIcon.length>2){
+							   		priorityiconsToDisplay='<img src="images/'+item.priorityicon_filename+'" onclick="showMessage(\''+item.priorityicon_description+'\')">'
+							   }else{
+								   priorityiconsToDisplay=""
+							   }
+							  
+	                           standardList.addItem(
+	                           new sap.m.CustomListItem("Jobx:"+item.orderno+":"+item.opno,{
+								type:sap.m.ListType.Active,
+								  content: [new sap.ui.core.HTML({  
+								      content: 
+								    	    [
+	"<TABLE width='100%'><TR><TD width='25%'><TD width='50%'><TD width='25%'></TD></TR><TR><TD  colspan='2' align='left'>"+item.operationdesc+"</TD><TD  align='right'><H4>"+item.type+"</H4></TD></TR>"+
+	"<TR><TD colspan='3'  align='right'><B>"+item.orderno+'-'+item.opno+"</B></TD></TR>"+
+	"<TR><TD align='left'><font size='2'>Start:</TD><TD align='left'><font size='2'>"+formatDateTime1(item.startdate)+"</font></TD><td  align='right'><p id='L"+item.orderno+'-'+item.opno+"'>"+StatusText+"</P></TD></TR>"+
+	"<TR><TD align='left'><font size='2'>End:</TD><TD align='left'><font size='2'>"+formatDateTime1(item.enddate)+"</font></TD><td  align='right'></TD></TR>"+
+	"<TR><TD align='left'><font size='2'>Job Type:</font></TD><TD colspan='2' align='left'><font size='2'>"+jobType+"</font></TD></TR>"+
+	"<TR><TD align='left'>"+priorityiconsToDisplay+"</TD><TD colspan='2' align='right'>"+iconsToDisplay+"</TD></TR></TABLE>"
+								  			]
+						
+								})
+							]
+							}));
+	                           x=oMasterPage.getTitle()
+	                           y=x.split(":")
+	                           z=parseInt(y[1])+1
+	                           
+	                           oMasterPage.setTitle("Jobs: "+z.toString())
+						  cnt++;
+				 }
+
+				
+				
+			 },
+			 function(error, statement){
+				 alert(error+statement)
+			 }        
+			);	
+	cnt = 0;
+
+
+
+
+	}
 function buildDetails(){
 	var detsHead=new sap.ui.core.HTML('JobHeader',{  
 	      content: 
@@ -5024,13 +5191,27 @@ function startBGSync()
       }
       // Update timer div with output from Web Worker
       w.onmessage = function (event) {   
-    	
+    	 
+    	  tim=+getTime()
+/*     	  standardList.addItem(
+                  new sap.m.CustomListItem("J"+tim,{
+					type:sap.m.ListType.Active,
+					  content: [new sap.ui.core.HTML({  
+					      content: 
+					    	    [
+"<H1>customItem"+tim+"</H1>"
+					  			]
+			
+					})]
+                  })) */
+             
+       
 		 //syncReference()
 		 syncTransactional()
 		 localStorage.setItem('SAPCalling','false')
 		 syncUpload()
 		 syncDT=localStorage.getItem('LastSyncedDT')		 
-
+		 //standardList.removeItem("J1111")
 
 		 };
    } else {
