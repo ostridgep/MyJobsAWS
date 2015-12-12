@@ -406,7 +406,82 @@ function BuildPriorities(selectedId){
 		         		    dataType: "xml",
 		         		    success: function (xml) {    
 		         		       xmlDoc=xml 
-		         		      BuildAssetSites();
+		         		      BuildAssetSites("ESVN");
+		         		      $.ajax({
+				         		    type: "GET",
+				         		    url: "TestData/T2_MPLT_LSVM.XML",
+				         		    dataType: "xml",
+				         		    success: function (xml) {    
+				         		       xmlDoc=xml 
+				         		      BuildAssetSites("LSVM");
+				         		       console.log("done")
+				         		      $.ajax({
+						         		    type: "GET",
+						         		    url: "TestData/T2_MPLT_LSVS.XML",
+						         		    dataType: "xml",
+						         		    success: function (xml) {    
+						         		       xmlDoc=xml 
+						         		      BuildAssetSites("LSVS");
+						         		      $.ajax({
+								         		    type: "GET",
+								         		    url: "TestData/T2_MPLT_NSVE.XML",
+								         		    dataType: "xml",
+								         		    success: function (xml) {    
+								         		       xmlDoc=xml 
+								         		      BuildAssetSites("NSVE");
+								         		      $.ajax({
+										         		    type: "GET",
+										         		    url: "TestData/T2_MPLT_NSVM.XML",
+										         		    dataType: "xml",
+										         		    success: function (xml) {    
+										         		       xmlDoc=xml 
+										         		      BuildAssetSites("NSVM");
+										         		      $.ajax({
+												         		    type: "GET",
+												         		    url: "TestData/T2_MPLT_NSVW.XML",
+												         		    dataType: "xml",
+												         		    success: function (xml) {    
+												         		       xmlDoc=xml 
+												         		      BuildAssetSites("NSVW");
+												         		      $.ajax({
+														         		    type: "GET",
+														         		    url: "TestData/T2_MPLT_RSVM.XML",
+														         		    dataType: "xml",
+														         		    success: function (xml) {    
+														         		       xmlDoc=xml 
+														         		      BuildAssetSites("RSVM");
+														         		      $.ajax({
+																         		    type: "GET",
+																         		    url: "TestData/T2_MPLT_RSVN.XML",
+																         		    dataType: "xml",
+																         		    success: function (xml) {    
+																         		       xmlDoc=xml 
+																         		      BuildAssetSites("RSVN");
+																         		      LoadSites();
+																         		    }    
+																         		       
+																         		});
+														         		      
+														         		    }    
+														         		       
+														         		});
+												         		      
+												         		    }    
+												         		       
+												         		});
+										         		      
+										         		    }    
+										         		       
+										         		});
+								         		    }    
+								         		       
+								         		});
+						         		    }    
+						         		       
+						         		});
+				         		    }    
+				         		       
+				         		});
 		         		    }    
 		         		       
 		         		});
@@ -431,37 +506,88 @@ function BuildPriorities(selectedId){
 }
 
 
-		function BuildAssetSites(){
-		    sap.ui.getCore().getElementById('AssetSite').destroyItems()
-		       sap.ui.getCore().getElementById('AssetGroup').destroyItems()
-		       sap.ui.getCore().getElementById('AssetType').destroyItems()
+		function BuildAssetSites(fname){
+			if(fname=="ESVN"){
+				sites=[]
+				
+			}
+			console.log(fname)
 		       
 		       $(xmlDoc).find('ASSET_EXTRACT ASSET').each(function(){
 		              
 		              var text= $(this).attr('SITE');
 		               if ($.inArray(text, sites)===-1){
-		                   sites.push(text);
+		                   sites.push(text+":"+fname);
 		               }
 		   })
 
 
-		   sites.sort();
-		   selectedAssetSearchSite=sites[0]
-		   selectedAssetSearchGroup="ALL"
-		   selectedAssetSearchType="ALL"
-		   for (i=0;i<sites.length;i++)
-		   {
-		      
 
-		          sap.ui.getCore().getElementById("AssetSite").addItem(
-		                           new sap.ui.core.Item({
-		                                  key: sites[i],
-		                                  text: sites[i]
-		                           }))   
+		}
+		function LoadSites(){
+			sap.ui.getCore().getElementById('AssetSite').destroyItems()
+		    sap.ui.getCore().getElementById('AssetGroup').destroyItems()
+		    sap.ui.getCore().getElementById('AssetType').destroyItems()
+			   sites.sort();
+			   selectedAssetSearchSite=sites[0]
+			   selectedAssetSearchGroup="ALL"
+			   selectedAssetSearchType="ALL"
+			   for (i=0;i<sites.length;i++)
+			   {
+			      x=sites[i].split(":")
 
+			          sap.ui.getCore().getElementById("AssetSite").addItem(
+			                           new sap.ui.core.Item({
+			                                  key: sites[i],
+			                                  text: x[0]
+			                           }))   
+
+
+			  
+			   }
+			   sap.ui.getCore().getElementById("AssetGroup").addItem(
+			                     new sap.ui.core.Item({
+			                           key: "ALL",
+			                           text: "ALL"
+			                     })) 
+			                        sap.ui.getCore().getElementById("AssetType").addItem(
+			                                         new sap.ui.core.Item({
+			                                                key: "ALL",
+			                                                text: "ALL"
+			                                         })) 
+
+
+		}
+		function BuildAssetSitesxxxx(){
+		    sap.ui.getCore().getElementById('AssetSite').destroyItems()
+		       sap.ui.getCore().getElementById('AssetGroup').destroyItems()
+		       sap.ui.getCore().getElementById('AssetType').destroyItems()
+		       
+		html5sql.process("Select SITE from assetdetails group by SITE",
+		 function(transaction, results, rowsArray){
+			 selectedAssetSearchSite=rowsArray[0].SITE
+				for (var n = 0; n < rowsArray.length; n++) {
+					item = rowsArray[n];
+			          sap.ui.getCore().getElementById("AssetSite").addItem(
+	                           new sap.ui.core.Item({
+	                                  key: item.SITE,
+	                                  text: item.SITE
+	                           }))
+					
+				}
+					
+				
+		 },
+		 function(error, statement){
+			
+		 }        
+		);
 
 		  
-		   }
+		   
+		   selectedAssetSearchGroup="ALL"
+		   selectedAssetSearchType="ALL"
+
 		   sap.ui.getCore().getElementById("AssetGroup").addItem(
 		                     new sap.ui.core.Item({
 		                           key: "ALL",
@@ -476,45 +602,105 @@ function BuildPriorities(selectedId){
 
 		}
 		function BuildAssetPlantGroups(site){
-		       selectedAssetSearchSite=site;
-		                     sap.ui.getCore().getElementById('AssetGroup').destroyItems()
-		                     sap.ui.getCore().getElementById('AssetType').destroyItems()
-		       $(xmlDoc).find('ASSET_EXTRACT ASSET[SITE="'+site+'"]').each(function(){
-		              
-		              var text= $(this).attr('PLANT_GROUP');
-		               if ($.inArray(text, plants)===-1){
-		                   plants.push(text);
-		               }
-		   })
+			x=site.split(":")
+			$.ajax({
+     		    type: "GET",
+     		    url: "TestData/T2_MPLT_"+x[1]+".XML",
+     		    dataType: "xml",
+     		    success: function (xml) {    
+     		       xmlDoc=xml 
+     		      selectedAssetSearchSite=site;
+                   sap.ui.getCore().getElementById('AssetGroup').destroyItems()
+                   sap.ui.getCore().getElementById('AssetType').destroyItems()
+					     $(xmlDoc).find('ASSET_EXTRACT ASSET[SITE="'+site+'"]').each(function(){
+					            
+					            var text= $(this).attr('PLANT_GROUP');
+					             if ($.inArray(text, plants)===-1){
+					                 plants.push(text);
+					             }
+					 })
+					
+					 plants.sort();
+					                      
+					                      selectedAssetSearchGroup=plants[0]
+					                      selectedAssetSearchType="ALL"
+					 for (i=0;i<plants.length;i++)
+					 {
+					    
+					
+					        sap.ui.getCore().getElementById("AssetGroup").addItem(
+					                         new sap.ui.core.Item({
+					                                key: plants[i],
+					                                text: plants[i]
+					                         }))   
+					
+					
+					
+					 }
+					
+					 sap.ui.getCore().getElementById("AssetGroup").addItem(
+					                   new sap.ui.core.Item({
+					                         key: "ALL",
+					                         text: "ALL"
+					                   })) 
+					                      sap.ui.getCore().getElementById("AssetType").addItem(
+					                                       new sap.ui.core.Item({
+					                                              key: "ALL",
+					                                              text: "ALL"
+					                                       })) 
+		     		    }    
+		     		       
+		     		});
+		       
+		}
+		
+		function BuildAssetTypes(AssetGroup){
+			x=selectedAssetSearchSite.split(":")
+			$.ajax({
+     		    type: "GET",
+     		    url: "TestData/T2_MPLT_"+x[1]+".XML",
+     		    dataType: "xml",
+     		    success: function (xml) {    
+     		       xmlDoc=xml 
+     		      selectedAssetSearchGroup=AssetGroup;
+    		       sap.ui.getCore().getElementById('AssetType').destroyItems()
+					$(xmlDoc).find('ASSET_EXTRACT ASSET[SITE="'+selectedAssetSearchSite+'"]').each(function(){
+							              
+							              var text= $(this).attr('ASSET_DESC');
+							              
+							               
+							               if ($(this).attr('PLANT_GROUP')==AssetGroup){
+							               if ($.inArray(text, assets)===-1){
+							                   assets.push(text);
+							               }
+							              }
+							    })
+							assets.sort();
+					                      
 
-		   plants.sort();
-		                        
-		                        selectedAssetSearchGroup=plants[0]
-		                        selectedAssetSearchType="ALL"
-		   for (i=0;i<plants.length;i++)
-		   {
-		      
+    			   for (i=0;i<assets.length;i++)
+    			   {
+    			      
 
-		          sap.ui.getCore().getElementById("AssetGroup").addItem(
-		                           new sap.ui.core.Item({
-		                                  key: plants[i],
-		                                  text: plants[i]
-		                           }))   
+    			          sap.ui.getCore().getElementById("AssetType").addItem(
+    			                           new sap.ui.core.Item({
+    			                                  key: assets[i],
+    			                                  text: assets[i]
+    			                           }))   
 
 
-		  
-		   }
-
-		   sap.ui.getCore().getElementById("AssetGroup").addItem(
-		                     new sap.ui.core.Item({
-		                           key: "ALL",
-		                           text: "ALL"
-		                     })) 
-		                        sap.ui.getCore().getElementById("AssetType").addItem(
-		                                         new sap.ui.core.Item({
-		                                                key: "ALL",
-		                                                text: "ALL"
-		                                         })) 
+    			  
+    			   }
+    			   sap.ui.getCore().getElementById("AssetType").addItem(
+    			                     new sap.ui.core.Item({
+    			                           key: "ALL",
+    			                           text: "ALL"
+    			                     })) 
+			 
+		     		    }    
+		     		       
+		     		});
+		       
 		}
 		function BuildAssetTypes(AssetGroup){
 		       selectedAssetSearchGroup=AssetGroup;

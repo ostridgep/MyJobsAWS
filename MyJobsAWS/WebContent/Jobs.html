@@ -2255,7 +2255,7 @@ countStatus()
                      
               SQLStatement+="left join myorders on myoperations.orderno = myorders.orderno "
                      SQLStatement+="left join mynotifications on myorders.notifno = mynotifications.notifno "
-                     SQLStatement+=" where myoperationssplit.assignedto = '"+EmployeeID+"' and myjobdets.status not in ('CLOSED', 'REJ1', 'REJ2') order by  MyOperations.orderno,  MyOperations.opno"
+                     SQLStatement+=" where myoperationssplit.assignedto = '"+EmployeeID+"' and myjobdets.status not in ('CLOSED','CONF', 'REJ1', 'REJ2') order by  MyOperations.orderno,  MyOperations.opno"
 html5sql.process(SQLStatement,
               function(transaction, results, rowsArray){
 	 

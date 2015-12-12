@@ -21,6 +21,8 @@ var demoDataLoaded=0;
 var syncTransactionalDetsUpdated=false;
 var syncReferenceDetsUpdated=false;
 
+var xmlDoc="";
+
 function sendSMS(to, message)
 {
     $.post("https://sms.cginotify.com/api/SMS/Send",{ LicenseKey: "hmJks0HcfKplAP2i4vuVrXxThFbj4JYfHmRRB1Dw", PhoneNumbers: to, Message : message}, function(data, status){
@@ -1274,6 +1276,78 @@ var syncDetails = false	;
 	
 
 }
+function loadAssetXML(fname){
+	 $.ajax({
+		    type: "GET",
+		    url: fname,
+		    dataType: "xml",
+		    success: function (xml) {    
+		       xmlDoc=xml 
+		      BuildAssetDetails();
+		    }    
+		       
+		});
+         
+};
+function BuildAssetDetails(){
+	var sqlinsert1=""
+	var sqlinsert2=""
+	var sqlstatement=""
+		var opsql=0;
+	    txt = "";
+	    x = xmlDoc.documentElement.childNodes;
+	    for (i = 0; i < x.length; i++) { 
+	        if (x[i].nodeType == 1) {
+	           
+	            y = x[i].attributes;
+				
+	            var first=0
+				var len=x[i].attributes.length
+				
+	            for (n = 0; n < 22; n++) { 
+	                if(first==0){
+	                         sqlinsert1=y[0].name
+	                         sqlinsert2='"'+escape(y[n].value)+'"'
+	                         first=1
+	                         }else{
+	                         sqlinsert1+=","+y[n].name
+	                         sqlinsert2+=',"'+escape(y[n].value)+'"'
+	                         }
+	               
+	            } 
+	             sqlstatement+="insert into assetdetails ("+sqlinsert1+") values ("+sqlinsert2+");"
+			sqlinsert1=""
+			sqlinsert2=""
+	        }
+        if((i!=0)&&((i%1000)==0)){
+        	
+        		insertAssetDetails(sqlstatement)
+        		
+        	sqlstatement=""
+
+        	}
+	        
+	    }
+	   
+	    insertAssetDetails(sqlstatement)
+
+	 
+	}
+
+function insertAssetDetails(sql){
+	console.log("isertig stuff")
+	html5sql.process(sql,
+			 function(){
+			
+		console.log("write ok")
+			 },
+			 function(error, statement){
+				 console.log("Error: " + error.message + " when loading Assets " + statement);
+				 opMessage("Error: " + error.message + " when loading Assets " + statement);
+			 }        
+	);
+}	
+
 
 function syncReference(){
 
@@ -1300,6 +1374,14 @@ function syncReference(){
 							requestSAPData("MyJobsUsers.htm",'');
 							requestSAPData("MyJobsVehiclesDefault.htm",'');
 							requestSAPData("MyJobsVehicles.htm",'');
+							///loadAssetXML("TestData\\T2_MPLT_ESVN.XML")
+							//loadAssetXML("TestData\\T2_MPLT_LSVM.XML")
+							//loadAssetXML("TestData\\T2_MPLT_LSVS.XML")
+							//loadAssetXML("TestData\\T2_MPLT_NSVE.XML")
+							//loadAssetXML("TestData\\T2_MPLT_NSVM.XML")
+							//loadAssetXML("TestData\\T2_MPLT_NSVW.XML")
+							//loadAssetXML("TestData\\T2_MPLT_RSVM.XML")
+							//loadAssetXML("TestData\\T2_MPLT_RSVN.XML")
 							//requestSAPData("MyJobsFunclocs.htm",'');
 							//requestSAPData("MyJobsEquipment.htm",'');
 						 }
@@ -1868,6 +1950,7 @@ function createTables(type) {
 					 'CREATE TABLE IF NOT EXISTS HRAbsence     			( id integer primary key autoincrement, requesteddate TEXT, startdate TEXT, enddate TEXT, type TEXT, days TEXT, status TEXT, comments TEXT);'+
 					 
 					 'CREATE TABLE IF NOT EXISTS HRTravel     			( id integer primary key autoincrement, requesteddate TEXT, startdate TEXT, enddate TEXT, travelfrom TEXT, travelto TEXT, status TEXT, comments TEXT);'+
+					 'CREATE TABLE IF NOT EXISTS AssetDetails     		( id integer primary key autoincrement,PLAN_PLANT TEXT, MTCE_PLANT TEXT, SITE TEXT, FUNC_LOC TEXT, FUNC_LOC_DESC TEXT, EQUIP TEXT, EQUIP_DESC TEXT, PLANT_GROUP TEXT, ASSET_TYPE TEXT, ASSET_DESC TEXT, MAKE TEXT, MODEL TEXT, SERIAL_NO TEXT, OBJ_TYPE TEXT, EQTYPE_DESC TEXT, EFUNC_TYPE TEXT, FTYPE_DESC TEXT, SYS_CODE TEXT, SCODE_DESC TEXT, ASSET_TAG TEXT, START_UP_DATE TEXT, STATUS TEXT);'+
 
 					 'CREATE TABLE IF NOT EXISTS JobAnswers     		( id integer primary key autoincrement, orderno TEXT, opno TEXT, user TEXT, updateddate TEXT, item TEXT, task TEXT, value TEXT);'+
 					 'CREATE TABLE IF NOT EXISTS StockSearch     		( id integer primary key autoincrement, materialno TEXT, description TEXT, depot TEXT, available TEXT);'+
@@ -1928,6 +2011,7 @@ function dropTables() {
 						'DROP TABLE IF EXISTS MyOperationsSplit;'+
 						'DROP TABLE IF EXISTS MyPartners;'+
 						'DROP TABLE IF EXISTS MyAssets;'+
+						'DROP TABLE IF EXISTS MyAssetsDetails;'+
 						'DROP TABLE IF EXISTS MyMaterials;'+
 						'DROP TABLE IF EXISTS MyUserStatus;'+
 						'DROP TABLE IF EXISTS MyOperationInfo;'+
@@ -2009,6 +2093,7 @@ function emptyTables(type) {
 						'DELETE FROM  MyPartners;'+
 						'DELETE FROM  MyMaterials;'+
 						'DELETE FROM  MyAssets;'+
+						'DELETE FROM  MyAssetsDetails;'+
 						'DELETE FROM  MyUserStatus;'+
 						'DELETE FROM  MyOperationInfo;'+
 						'DELETE FROM  MyNotifications;'+
@@ -2108,6 +2193,7 @@ function loadDemoData() {
 					'DELETE FROM  MyPartners;'+
 					'DELETE FROM  MyMaterials;'+
 					'DELETE FROM  MyAssets;'+
+					'DELETE FROM  AssetDetails;'+
 					'DELETE FROM  MyUserStatus;'+
 					'DELETE FROM  MyOperationInfo;'+
 					'DELETE FROM  MyNotifications;'+
@@ -2183,7 +2269,14 @@ function loadDemoData() {
 						SetConfigParam("LASTSYNC_UPLOAD", "20180316214900");
 						SetConfigParam("SERVERNAME", "xhttp://awssvstol411.globalinfra.net:8000/sap/bc/bsp/sap/zbsp_myjobs/");
 						SetConfigParam("SAPCLIENT", "120");
-						
+						//loadAssetXML("TestData\\T2_MPLT_ESVN.XML")
+						//loadAssetXML("TestData\\T2_MPLT_LSVM.XML")
+						//loadAssetXML("TestData\\T2_MPLT_LSVS.XML")
+						//loadAssetXML("TestData\\T2_MPLT_NSVE.XML")
+						//loadAssetXML("TestData\\T2_MPLT_NSVM.XML")
+						//loadAssetXML("TestData\\T2_MPLT_NSVW.XML")
+						//loadAssetXML("TestData\\T2_MPLT_RSVM.XML")
+						//loadAssetXML("TestData\\T2_MPLT_RSVN.XML")
 						
 						requestDEMOData('MyJobsOrders.json');
 					
@@ -2200,6 +2293,7 @@ function loadDemoData() {
 						//requestDEMOData('funclocs.json');
 						requestDEMOData('MyJobsVehicles.json');
 						requestDEMOData('MyJobsVehiclesDefault.json');
+						
 					
 						//requestDEMOData('GASSurvey.json');
 					
@@ -2234,6 +2328,7 @@ function resetTables() {
 					'DELETE FROM  MyPartners;'+
 					'DELETE FROM  MyMaterials;'+
 					'DELETE FROM  MyAssets;'+
+					'DELETE FROM  MyAssetsDetails;'+
 					'DELETE FROM  MyUserStatus;'+
 					'DELETE FROM  MyOperationInfo;'+
 					'DELETE FROM  MyNotifications;'+
