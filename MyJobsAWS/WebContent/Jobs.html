@@ -2377,7 +2377,7 @@ cnt = 0;
 
 
 }
-function addNewJobToList(orderno){
+function addNewJobToList(orderno,opno){
 	var item;     
 	var lStatus="";
 	var StatusState="";
@@ -2417,7 +2417,7 @@ function addNewJobToList(orderno){
 	                     
 	              SQLStatement+="left join myorders on myoperations.orderno = myorders.orderno "
 	                     SQLStatement+="left join mynotifications on myorders.notifno = mynotifications.notifno "
-	                     SQLStatement+=" where myjobdets.orderno = '"+orderno+"'  and myoperationssplit.assignedto = '"+EmployeeID+"' and myjobdets.status not in ('CLOSED','CONF', 'REJ1', 'REJ2') order by  MyOperations.orderno,  MyOperations.opno"
+	                     SQLStatement+=" where myjobdets.orderno = '"+orderno+"' and myjobdets.opno = '"+opno+"' and myoperationssplit.assignedto = '"+EmployeeID+"' and myjobdets.status not in ('CLOSED','CONF', 'REJ1', 'REJ2') order by  MyOperations.orderno,  MyOperations.opno"
 	html5sql.process(SQLStatement,
 	              function(transaction, results, rowsArray){
 		 
@@ -5191,7 +5191,7 @@ function startBGSync()
       }
       // Update timer div with output from Web Worker
       w.onmessage = function (event) {   
-    	 
+    	  //refreshJobList()
     	  tim=+getTime()
 /*     	  standardList.addItem(
                   new sap.m.CustomListItem("J"+tim,{
@@ -5211,8 +5211,9 @@ function startBGSync()
 		 localStorage.setItem('SAPCalling','false')
 		 syncUpload()
 		 syncDT=localStorage.getItem('LastSyncedDT')		 
-		 //standardList.removeItem("J1111")
-
+		// standardList.removeItem("Job:000050646820:0010").destroy()
+		 
+		// refreshJobList()
 		 };
    } else {
       // Web workers are not supported by your browser
@@ -5220,7 +5221,30 @@ function startBGSync()
       showMessage("Sorry, your browser does not support Web Workers ...");
    }
 }
+function refreshJobList(){
+	html5sql.process("Select orderno, opno from MyJobdets",
+			 function(transaction, results, rowsArray){
+			
+				
+					for (var n = 0; n < rowsArray.length; n++) {
+						item = rowsArray[n];
+						x=sap.ui.getCore().byId("Job:"+item.orderno+":"+item.opno)
+						if (item.orderno=="000050646820"){
+							x=sap.ui.getCore().byId("Job:"+item.orderno+":"+item.opno)
+							alert(x)
+							addNewJobToList(item.orderno,item.opno)
+						}
+							
+						
+					}
 
+					
+			 },
+			 function(error, statement){
+				 alert("2")
+			 }        
+			);	
+}
 
 </script>
 </body>
