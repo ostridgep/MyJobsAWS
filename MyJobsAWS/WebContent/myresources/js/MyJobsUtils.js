@@ -40,7 +40,7 @@ function diffInTime(StartDate, StartTime, EndDate, EndTime){
 	var m = minutes % 60;
 	var h = (minutes-m)/60
 	
-	return h.toString()+":"+m.toString()
+	return zeroFill1(h.toString())+":"+zeroFill1(m.toString())
 }
 function convertToMinutes(time){
 x=time.split(":")
