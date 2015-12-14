@@ -66,7 +66,7 @@ span.tip {
 <script src="myresources/js/NotificationFunctions.js"></script>
 <script src="myresources/js/Globals1.js"></script>
 <script src="myresources/js/DG5.js"></script>
-<script src="myresources/js/gmaps.js"></script>
+
 <script src="myresources/js/NewNotif.js"></script>
 <script src="myresources/js/webPage.js"></script>
 <style>
@@ -120,8 +120,8 @@ loadScript('http://maps.googleapis.com/maps/api/js?sensor=false',
 	  directionsDisplay = new google.maps.DirectionsRenderer(); 
 	  directionsService = new google.maps.DirectionsService(); 
 	}); */
-directionsDisplay = new google.maps.DirectionsRenderer(); 
-directionsService = new google.maps.DirectionsService(); 
+//directionsDisplay = new google.maps.DirectionsRenderer(); 
+//directionsService = new google.maps.DirectionsService(); 
 html5sql.openDatabase("com.pjo.myjobsbackfill","myjobsbackfill", 5*1024*1024);		
 
 
@@ -205,8 +205,66 @@ var Locs = [
                 html: '<h3>Finish</h3>'
             }
         ];
+function loadLastSyncValues(){
+	sap.ui.getCore().getElementById('lastSyncServer').setValue(localStorage.getItem('ServerName'))
+	sap.ui.getCore().getElementById('RefDate').setText("Reference: "+formatDateTime(localStorage.getItem('LastSyncReference')))
+	sap.ui.getCore().getElementById('TrxDate').setText("Transactional: "+formatDateTime(localStorage.getItem('LastSyncTransactional')))
+	sap.ui.getCore().getElementById('UplDate').setText("Upload: "+formatDateTime(localStorage.getItem('LastSyncUpload')))
+	sap.ui.getCore().getElementById('lastSyncReferenceData').setValue(localStorage.getItem('LastSyncReferenceDetails'))
+	sap.ui.getCore().getElementById('lastSyncTransactionalData').setValue(localStorage.getItem('LastSyncTransactionalDetails'))
+	sap.ui.getCore().getElementById('lastSyncUploadData').setValue(localStorage.getItem('LastSyncUploadDetails'))
+	if(localStorage.getItem('Trace')=="ON"){
+		sap.ui.getCore().getElementById('lastSyncLogState').setState(true)
+	}else{
+		sap.ui.getCore().getElementById('lastSyncLogState').setState(false)
+	}
+	
+}
+var formLastSync = new sap.m.Dialog("dlgLastSync",{
+    title:"Last Synchronise",
+    modal: true,
+    contentWidth:"1em",
+    buttons: [
+   
+				new sap.m.Button("dlgLastSyncCancel", {
+				    text: "Cancel",
+				    type: 	sap.m.ButtonType.Reject,
+				    tap: [ function(oEvt) {		  
+						 
+				    	formLastSync.close()
+						  } ]
+				})
+				],					
+    content:[
+ 			new sap.ui.layout.form.SimpleForm({
+				minWidth : 1024,
+				maxContainerCols : 2,
+				content : [
+							
+			                new sap.m.Label({text:"Server"}),
+							new sap.m.Input("lastSyncServer",{type: sap.m.InputType.Input, enabled: false}),
+							new sap.m.Label("RefDate",{text:"Reference Data"}),
+							new sap.m.TextArea("lastSyncReferenceData",{enabled: false}),
+					        new sap.m.Label("TrxDate",{text:"Sync Transactional Data"}),
+							new sap.m.TextArea("lastSyncTransactionalData",{enabled: false}),
+							new sap.m.Label("UplDate",{text:"Sync Upload Data"}),
+							new sap.m.TextArea("lastSyncUploadData",{enabled: false}),
+							new sap.m.Label({text:"Logging"}),
+							new sap.m.Switch('lastSyncLogState',{
+								state: true,
+								enabled: false,
+								type: sap.m.SwitchType.AcceptReject
+							})
 
+									 
+					
+			               
+			                 
+						]
+ 					})
 
+            ]
+ })
 var formDG5 = new sap.m.Dialog("dlgDG5",{
        title:"Job Close",
     modal: true,
@@ -1521,7 +1579,7 @@ var detailFooterAWS = new sap.m.Bar({
 							  if(currentEquipment_GIS.length>6){
 								 
 								  x=convertToLatLon(currentEquipment_GIS)
-								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_system", 'location=yes,closebuttoncaption=Return')
+								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blank", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		
@@ -1534,7 +1592,7 @@ var detailFooterAWS = new sap.m.Bar({
 								  {
 									 
 								  x=convertToLatLon(currentFuncLoc_GIS)
- 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_system", 'location=yes,closebuttoncaption=Return')
+ 								  ref1=window.open('http://maps.google.com/maps?q='+x[0]+','+x[1], "_blank", 'location=yes,closebuttoncaption=Return')
 								  ref1.addEventListener('exit', function(event) {
 		//window.location.href="Home.html"; 
 		//alert("Back")
@@ -1637,8 +1695,14 @@ var detailFooterAWS = new sap.m.Bar({
 										}
 									)
 					 				],
-					contentRight : [
-									]
+					 				contentRight: [new sap.m.Button("LastSyncMess", {
+					 	      			 text:"",
+					 	      			 
+					 	      				 press: [ function(){
+					 	      					loadLastSyncValues();
+					 	      					 sap.ui.getCore().byId("dlgLastSync").open(); ;
+					 	      						}]
+					 	      			 })]
 	
 })
 var detailFooter = new sap.m.Bar({
@@ -2047,7 +2111,7 @@ function prepareChangeStatus(){
 		sap.ui.getCore().getElementById('btnStatusOnSite').setEnabled(true);
 
 
-	}else if((currentStatus=="REJ1")||(currentStatus=="REJ2")||(currentStatus=="CLOSED")){
+	}else if((currentStatus=="REJ1")||(currentStatus=="REJ2")||(currentStatus=="CLOSED")||(currentStatus=="NOJOBS")){
 		
 		sap.ui.getCore().getElementById('btnStatusAccept').setVisible(false);
 		sap.ui.getCore().getElementById('btnStatusReject').setVisible(false);
@@ -2422,7 +2486,7 @@ function addNewJobToList(orderno,opno){
 	              function(transaction, results, rowsArray){
 		 
 	                     cnt = 0;
-	                     oMasterPage.setTitle("Jobs: "+rowsArray.length)
+	                   
 	                     while (cnt<rowsArray.length){
 	                           item=rowsArray[cnt];
 	                           if(cnt==0){
@@ -2505,7 +2569,7 @@ function addNewJobToList(orderno,opno){
 							   }
 							  
 	                           standardList.addItem(
-	                           new sap.m.CustomListItem("Jobx:"+item.orderno+":"+item.opno,{
+	                           new sap.m.CustomListItem("Job:"+item.orderno+":"+item.opno,{
 								type:sap.m.ListType.Active,
 								  content: [new sap.ui.core.HTML({  
 								      content: 
@@ -2521,11 +2585,7 @@ function addNewJobToList(orderno,opno){
 								})
 							]
 							}));
-	                           x=oMasterPage.getTitle()
-	                           y=x.split(":")
-	                           z=parseInt(y[1])+1
 	                           
-	                           oMasterPage.setTitle("Jobs: "+z.toString())
 						  cnt++;
 				 }
 
@@ -2667,7 +2727,12 @@ function  buildHistoryForm(did){
 	}
 
 function  buildDetailsContent(aid){
-
+if(aid.length<2){
+	currentStatus="NOJOBS"
+		prepareChangeStatus()
+	return;
+}
+	
 currentOrderListItem=aid;
 var res = aid.split(":")
 var orderno=res[1];
@@ -2827,7 +2892,7 @@ html5sql.process(SQLStatement,
 		oDetailPage.addContent(	new sap.ui.core.HTML('JobHeader',{  
 	      content: 
 	    	    [
-"<TABLE width='100%' height='200' ><tr height='100'><TD valign='top' colspan='3' align='left' ><h3>"+rowsArray[0].orderdesc+"</h3></TD><TD valign='top'  colspan='2' align='Right' ><h2 id='JobHead_JobNo'>"+rowsArray[0].orderno+"-"+rowsArray[0].opno+"</h2></TD></TR>"
+"<TABLE width='100%' height='200' ><tr height='100'><TD valign='top' colspan='3' align='left' ><h3>"+unescape(rowsArray[0].orderdesc)+"</h3></TD><TD valign='top'  colspan='2' align='Right' ><h2 id='JobHead_JobNo'>"+rowsArray[0].orderno+"-"+rowsArray[0].opno+"</h2></TD></TR>"
 +"<TR ><TD valign='top' width='20%' align='left'>Start Date:</TD><TD valign='top'  width='20%' align='left'>"+formatDate(rowsArray[0].startdate)+"</TD ><TD valign='top'  width='20%' align='left'>End Date:</TD ><TD valign='top'  width='20%' align='left'>"+formatDate(rowsArray[0].enddate)+"</TD ><TD valign='top'  width='20%'></TD></TR>"
 +"<tr ><TD valign='top'  width='20%' align='left'>Site:</TD><TD valign='top'  width='20%' align='left'>"+rowsArray[0].site+"</TD><TD valign='top'  width='20%'></TD><TD valign='top'  width='20%'></TD><TD valign='top'  width='20%'></TD></TR>"
 +"<tr><TD valign='top'  width='20%' align='left'>Address:</TD><TD valign='top'  colspan='4' align='left'>"+rowsArray[0].address+"</TD></TR>"
@@ -2908,8 +2973,8 @@ html5sql.process(SQLStatement,
                        sap.ui.getCore().getElementById('Equipment').setText(rowsArray[0].equipment_code+" "+rowsArray[0].equipment_desc)   */
 					  
 					   //sap.ui.getCore().getElementById('Equipment').setCustomContent(sap.m.icon("images/"+jobicons[0]))				   
-                       NLongtext=rowsArray[0].notiflongtext
-                       Longtext=rowsArray[0].orderlongtext    
+                       NLongtext=unescape(rowsArray[0].notiflongtext)
+                       Longtext=unescape(rowsArray[0].orderlongtext) 
 
              
                       
@@ -4408,7 +4473,18 @@ function rebuildTimeConfs()
 					  						
 					  							}]
 										 })
-								]
+								],
+						contentRight : [
+										new sap.m.Button("Syncit", {
+											//type: 	sap.m.ButtonType.Accept,
+						   					 //text: "Sync",
+						   					icon:"sap-icon://synchronize",
+						  					 press: [ function(){						  						
+						  						SetConfigParam('LASTSYNC_TRANSACTIONAL', "20120101010101");
+						  						syncTransactional()
+						  							}]
+											 })
+									]
 						})			 
 
 			});
@@ -4698,7 +4774,7 @@ function BuildChangeStatusOnSite(){
 					if( rowsArray.length>0) {
 						
 						sap.ui.getCore().getElementById("StatusOnSiteAcceptedTime").setValue(rowsArray[0].acpt_date+" "+rowsArray[0].acpt_time)
-						travelTime = diffInTime(rowsArray[0].acpt_date,rowsArray[0].acpt_time,getFormattedDate(),getFormattedTime())
+						travelTime = diffInTime(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
 						
 						sap.ui.getCore().getElementById("StatusOnSiteTravelTime").setValue(travelTime)
 						
@@ -4835,8 +4911,6 @@ function BuildChangeStatusUpdate(){
 								
 									html5sql.process("select * from myjobdets where orderno =  '"+CurrentOrderNo+"' and opno =  '"+CurrentOpNo+"'",
 											 function(transaction, results, rowsArray){
-												
-												
 													if( rowsArray.length>0) {
 														
 														
@@ -5206,15 +5280,16 @@ function startBGSync()
 					})]
                   })) */
              
-       
+                 
 		 //syncReference()
 		 syncTransactional()
 		 localStorage.setItem('SAPCalling','false')
 		 syncUpload()
-		 syncDT=localStorage.getItem('LastSyncedDT')		 
+		 syncDT=localStorage.getItem('LastSyncedDT')	
+		 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
 		// standardList.removeItem("Job:000050646820:0010").destroy()
 		 
-		// refreshJobList()
+		
 		 };
    } else {
       // Web workers are not supported by your browser
@@ -5226,23 +5301,25 @@ function refreshJobList(){
 	html5sql.process("Select orderno, opno from MyJobdets",
 			 function(transaction, results, rowsArray){
 			
-				
+				    console.log("found "+rowsArray.length+" Jobs")
 					for (var n = 0; n < rowsArray.length; n++) {
 						item = rowsArray[n];
-						x=sap.ui.getCore().byId("Job:"+item.orderno+":"+item.opno)
-						if (item.orderno=="000050646820"){
-							x=sap.ui.getCore().byId("Job:"+item.orderno+":"+item.opno)
-							alert(x)
+						x="x"+sap.ui.getCore().byId("Job:"+item.orderno+":"+item.opno)
+						console.log("listentry "+item.orderno+"-"+item.opno+" item:"+x+" length "+x.length)
+						if (x.length<30){
+							console.log("about to add "+item.orderno+"-"+item.opno)
 							addNewJobToList(item.orderno,item.opno)
 						}
 							
 						
 					}
-
+				   
+                    console.log("Jobs: "+rowsArray.length)
+                    oMasterPage.setTitle("Jobs: "+rowsArray.length)
 					
 			 },
 			 function(error, statement){
-				 alert("2")
+				
 			 }        
 			);	
 }

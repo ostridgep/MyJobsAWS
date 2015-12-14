@@ -34,13 +34,28 @@ function diffInMinutes(StartDate, StartTime, EndDate, EndTime){
 }
 function diffInTime(StartDate, StartTime, EndDate, EndTime){
 	
-	var diff = Math.abs(new Date(StartDate+" "+StartTime) - new Date(EndDate+" "+EndTime));
-	var minutes = Math.floor((diff/1000)/60);
+	if(("x"+StartDate).length<8){
+		StartDate=EndDate
+		StartTime = EndTime
+	}
+
+
+	StartTime=StartTime.substring(0, 6)+"00";
+	var sd=new Date(EndDate.substring(0,4),EndDate.substring(5,7),EndDate.substring(8,10),EndTime.substring(0,2),EndTime.substring(3,5),EndTime.substring(6,8))
+	var ed=new Date(StartDate.substring(0,4),StartDate.substring(5,7),StartDate.substring(8,10),StartTime.substring(0,2),StartTime.substring(3,5),StartTime.substring(6,8))
+	var diff=0;
+	
+	diff =    Math.abs( sd-ed)
+	
+	var minutes =diff/1000;
+	minutes = (diff/1000) 
+	minutes -= (minutes%60) 
+	minutes = minutes /60
 	
 	var m = minutes % 60;
 	var h = (minutes-m)/60
 	
-	return zeroFill1(h.toString())+":"+zeroFill1(m.toString())
+	return h.toString()+":"+m.toString()
 }
 function convertToMinutes(time){
 x=time.split(":")

@@ -91,7 +91,7 @@ function requestSAPData(page,params){
 function requestSAPDataTest(myurl){
 
 
-alert(myurl)
+//alert(myurl)
 	
 	$.ajax({
 	    dataType: "json",
@@ -99,16 +99,16 @@ alert(myurl)
 	    
 	    timeout: 300000
 		}).done(function() {
-		    alert("Done")
+		    //alert("Done")
 		  }).fail( function( xhr, status ) {
 			
 			
-			  alert("failed with "+status)
-			  alert("xhr"+xhr.statusCode())
+			  //alert("failed with "+status)
+			 // alert("xhr"+xhr.statusCode())
 
 			}).always(function() {
 
-					alert("all done")
+					//alert("all done")
 					
 				
 			  });
@@ -751,6 +751,7 @@ function syncTransactional(){
 	if (!CheckSyncInterval('TRANSACTIONAL')){return; }
 	opMessage("Synchronizing Transactional Data");
 
+   console.log("Transactional Call "+getTime())
 	html5sql.process(
 		["SELECT * from MyUserDets"],
 		function(transaction, results, rowsArray){
@@ -768,6 +769,9 @@ function syncTransactional(){
 									requestSAPData("MyJobsOrdersObjects.htm",'');
 									requestSAPData("MyJobsNotifications.htm",'');
 									//requestSAPData("MyJobsMessages.htm",'');
+									
+									
+									
 						 }
 						 
 					},
@@ -1081,7 +1085,7 @@ var syncDetails = false	;
 																			
 																		 },
 																		 function(error, statement){
-																			 alert("Error: " + error.message + " when processing " + statement);
+																			// alert("Error: " + error.message + " when processing " + statement);
 																			 opMessage("Error: " + error.message + " when processing " + statement);
 																		 }        
 																);
@@ -2011,7 +2015,7 @@ function dropTables() {
 						'DROP TABLE IF EXISTS MyOperationsSplit;'+
 						'DROP TABLE IF EXISTS MyPartners;'+
 						'DROP TABLE IF EXISTS MyAssets;'+
-						'DROP TABLE IF EXISTS MyAssetsDetails;'+
+						'DROP TABLE IF EXISTS AssetDetails;'+
 						'DROP TABLE IF EXISTS MyMaterials;'+
 						'DROP TABLE IF EXISTS MyUserStatus;'+
 						'DROP TABLE IF EXISTS MyOperationInfo;'+
@@ -2093,7 +2097,7 @@ function emptyTables(type) {
 						'DELETE FROM  MyPartners;'+
 						'DELETE FROM  MyMaterials;'+
 						'DELETE FROM  MyAssets;'+
-						'DELETE FROM  MyAssetsDetails;'+
+						'DELETE FROM  AssetDetails;'+
 						'DELETE FROM  MyUserStatus;'+
 						'DELETE FROM  MyOperationInfo;'+
 						'DELETE FROM  MyNotifications;'+
@@ -2184,7 +2188,9 @@ function emptyTables(type) {
 				);
 }
 function loadDemoData() { 
-	
+	 var path = window.location.pathname;
+     var page = path.split("/").pop();
+     
 	localStorage.setItem("LastSyncedDT",getDate()+getTime())
 	sqlstatement=	'DELETE FROM  MyOrders;'+
 					'DELETE FROM  MyAjax;'+
@@ -2328,7 +2334,7 @@ function resetTables() {
 					'DELETE FROM  MyPartners;'+
 					'DELETE FROM  MyMaterials;'+
 					'DELETE FROM  MyAssets;'+
-					'DELETE FROM  MyAssetsDetails;'+
+					'DELETE FROM  AssetDetails;'+
 					'DELETE FROM  MyUserStatus;'+
 					'DELETE FROM  MyOperationInfo;'+
 					'DELETE FROM  MyNotifications;'+
@@ -2389,6 +2395,7 @@ function resetTables() {
 
 					html5sql.process(sqlstatement,
 					 function(){
+						
 						var x = window.location.href.split("/")
 						if(x[x.length-1]=="Home.html"){
 							
@@ -2403,6 +2410,7 @@ function resetTables() {
 
 					 },
 					 function(error, statement){
+					
 						 opMessage("Error: " + error.message + " when delete processing " + statement);
 					 }        
 			);
@@ -2499,7 +2507,7 @@ function requestDEMOData(page){
 			}
   })
   .fail(function(data,status) {
-    alert( "error:"+status+":"+data );
+    //alert( "error:"+status+":"+data );
   })
 
 }
@@ -2554,9 +2562,14 @@ var orderlist="";
 				orderlist+="'"+MyOrders.order[cntx].orderno+"'"
 				ordernos.push(MyOrders.order[cntx].orderno)
 				changeddatetime.push(MyOrders.order[cntx].changed_date+MyOrders.order[cntx].changed_time)
-				
+				stext=unescape(MyOrders.order[cntx].shorttext).replace(/'/g, "");;
+				stext=stext.replace("\/", "");;
+				stext=stext.replace(/&/g, "");;
+				ltext=unescape(MyOrders.order[cntx].longtext).replace(/'/g, "");;
+				ltext=stext.replace("\/", "");;
+				ltext=stext.replace(/&/g, "");;
 				sqlstatement='INSERT INTO MyOrders (orderno , changedby, changeddatetime, shorttext , longtext , startdate ,  enddate ,contact , telno , type , priority , address ,workaddress, house, houseno, street, district, city, postcode, gis,  property, funcloc, equipment, propertygis, funclocgis, equipmentgis, notifno) VALUES ('+
-					 '"'+MyOrders.order[cntx].orderno+ '","'+ MyOrders.order[cntx].changed_by+ '","'+ MyOrders.order[cntx].changed_date+MyOrders.order[cntx].changed_time+ '","'+ MyOrders.order[cntx].shorttext + '","'+ MyOrders.order[cntx].longtext + '","'+ MyOrders.order[cntx].startdate + '","'+ MyOrders.order[cntx].enddate + '","'+MyOrders.order[cntx].contact+'",'+ 
+					 '"'+MyOrders.order[cntx].orderno+ '","'+ MyOrders.order[cntx].changed_by+ '","'+ MyOrders.order[cntx].changed_date+MyOrders.order[cntx].changed_time+ '","'+ stext + '","'+ ltext + '","'+ MyOrders.order[cntx].startdate + '","'+ MyOrders.order[cntx].enddate + '","'+MyOrders.order[cntx].contact+'",'+ 
 					 '"'+MyOrders.order[cntx].telno + '","'+MyOrders.order[cntx].type + '","'+MyOrders.order[cntx].priority + '","'+MyOrders.order[cntx].address + '","'+MyOrders.order[cntx].workaddress+ '","'+MyOrders.order[cntx].house+'",'+ 
 					 '"'+MyOrders.order[cntx].houseno+ '","'+MyOrders.order[cntx].street+ '","'+MyOrders.order[cntx].district+ '","'+MyOrders.order[cntx].city+ '","'+MyOrders.order[cntx].postcode+ '","'+MyOrders.order[cntx].gis+'",'+ 
 					 '"'+MyOrders.order[cntx].property+  '","'+MyOrders.order[cntx].funcloc+  '","'+MyOrders.order[cntx].equipment+'",'+ 
@@ -2757,18 +2770,21 @@ var orderlist="";
 			
 			html5sql.process(sqldeleteorders,
 					 function(transaction, results, rowsArray){
-
+				 var path = window.location.pathname;
+			     var page = path.split("/").pop();
+			     if(page=="Jobs.html"){
+						console.log("about to refreshList")
+						refreshJobList()
+					}else if(page=="Home.html"){
+						setCounts()
+					}
 					 },
 					 function(error, statement){
 					
 					 }        
 					);
 
-		var x = window.location.href.split("/")
-		if(x[x.length-1]=="Home.html"){
-			setCounts()
 
-			}
 	
 		}
 
@@ -2905,14 +2921,17 @@ opMessage("Callback Notifications triggured");
 				}else{
 					notiftype=MyNotifications.notification[cntx].sortfield;
 				}*/
-				x=MyNotifications.notification[cntx].shorttext.replace(/'/g, "");;
+				x=unescape(MyNotifications.notification[cntx].shorttext).replace(/'/g, "");;
 				x=x.replace("\/", "");;
 				x=x.replace(/&/g, "");;
+				y=unescape(MyNotifications.notification[cntx].longtext).replace(/'/g, "");;
+			y=y.replace("\/", "");;
+				y=y.replace(/&/g, "");;
 				sqlstatement1='INSERT INTO MyNotifications (notifno , changedby, changeddatetime, shorttext , longtext , startdate , priority , type, funcloc, equipment,orderno, reportedon , reportedby , plant, funclocgis, equipmentgis, cattype, pgroup, pcode, grouptext, codetext) VALUES ( '+ 
 					'"'+MyNotifications.notification[cntx].notifno +'",'+
 					'"'+MyNotifications.notification[cntx].changed_by+'",'+ 
 					'"'+MyNotifications.notification[cntx].changed_date +MyNotifications.notification[cntx].changed_time +'",'+ 
-					'"'+x+'",'+ 
+					'"'+MyNotifications.notification[cntx].shorttext+'",'+ 
 					'"'+MyNotifications.notification[cntx].longtext +'",'+ 
 					'"'+MyNotifications.notification[cntx].startdate+'",'+ 
 					'"'+MyNotifications.notification[cntx].priority+'",'+
@@ -3110,7 +3129,7 @@ opMessage("Callback Notifications triggured");
 							
 							 },
 							 function(error, statement){
-								 alert("Error: " + error.message + " when processing " + statement);
+								// alert("Error: " + error.message + " when processing " + statement);
 								 opMessage("Error: " + error.message + " when processing " + statement);
 							 }        
 			);	
@@ -4262,7 +4281,7 @@ opMessage("Callback Reference Data triggured");
 								
 								 },
 							 function(error, statement){
-									 alert("Error: " + error.message + " when processing " + statement);
+									// alert("Error: " + error.message + " when processing " + statement);
 									 opMessage("Error: " + error.message + " when processing " + statement);
 
 								 }        
@@ -4353,7 +4372,7 @@ opMessage("Callback Reference Data Codes triggured");
 					 //alert("Success - Finished Reference Codes");
 				 },
 				 function(error, statement){
-					 alert("Error: " + error.message + " when processing " + statement);
+					// alert("Error: " + error.message + " when processing " + statement);
 				 }        
 			);		
 					rcgcnt=0;

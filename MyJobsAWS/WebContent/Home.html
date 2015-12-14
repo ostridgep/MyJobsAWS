@@ -1248,7 +1248,7 @@ function MenuPressed(id){
 						openWebPage(selectedWebPage)
 
 					}else if (rowsArray[0].type=='U'){
-						selectedWebPage=rowsArray[0].command
+						selectedWebPage=rowsArray[0].command.replace("{SUPUSERNAME}", localStorage.getItem("MobileUser"));
 						openWebPage(selectedWebPage)
 						
 					}else if(rowsArray[0].type=='C'){
@@ -1422,7 +1422,7 @@ function startBGSync()
 		 syncUpload()
 		 syncDT=localStorage.getItem('LastSyncedDT')		 
 		 sap.ui.getCore().byId("LastSyncMess").setText(formatDateTime(localStorage.getItem("LastSyncedDT")));
-		 
+		 setCounts();
 
 		 };
    } else {
